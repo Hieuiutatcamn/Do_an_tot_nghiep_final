@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Details</title>
+    <meta name="description" content="" >
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/font/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+     <!-- font-awesome CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nice-select/nice-select.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="./assets/plugin/slick/slick.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <link rel="stylesheet" href="./assets/css/chat-widget.css">
+    <style>
+        .detail-gallery {
+            width: 100%;
+        }
+
+        .detail-main-swiper {
+            position: relative;
+            width: 100%;
+            border-radius: 8px;
+            background: #f6f7f9;
+            overflow: hidden;
+        }
+
+        .detail-main-swiper .swiper-slide {
+            aspect-ratio: 4 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f6f7f9;
+        }
+
+        .detail-main-swiper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .detail-thumb-swiper {
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .detail-thumb-swiper .swiper-slide {
+            aspect-ratio: 1;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+            opacity: 0.65;
+            background: #fff;
+        }
+
+        .detail-thumb-swiper .swiper-slide-thumb-active {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+            opacity: 1;
+        }
+
+        .detail-thumb-swiper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .detail-gallery-nav {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            color: #212529;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+
+        .detail-gallery-prev {
+            left: 12px;
+        }
+
+        .detail-gallery-next {
+            right: 12px;
+        }
+
+        .detail-gallery-nav.swiper-button-disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        @media (max-width: 575.98px) {
+            .detail-gallery-nav {
+                width: 34px;
+                height: 34px;
+            }
+
+            .detail-thumb-swiper {
+                margin-top: 10px;
+            }
+        }
+    </style>
+      <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"  rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section Start -->
+  <header>
+        <!-- Navbar -->
+            <div class="container py-lg-2 mt-0 mt-lg-2">
+                <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-2  mb-2 mb-lg-3 pt-3 pt-lg-2">
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                                        <!-- Logo -->
+                                        <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="index.html">
+                                            <img src="./assets/images/logo.png" class="logo main-logo" alt="eCommerce HTML Template">
+                                        </a>
+                                        <!-- Logo -->
+                                        </div>
+                                    
+                                        <div class="col-12">
+                                        <div class="list-inline  d-lg-none d-flex justify-content-between">
+
+                                            <div class="list-inline-item d-inline-block d-lg-none">
+                                                <button class="navbar-toggler border-0 collapsed" type="button" data-bs-toggle="offcanvas"
+                                                    data-bs-target="#navbar-default" aria-controls="navbar-default"
+                                                    aria-label="Toggle navigation">
+                                                    <i class="bi bi-text-indent-left"></i>
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="dang_nhap.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                                        <i class="bi bi-person"></i>
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Tài khoản</span>
+                                                    </a>
+                                                </div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="thiet_bi.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                                        <i class="bi bi-heart"></i>
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Yêu thích</span>
+                                                    </a>
+                                                </div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="gio_hang.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                                        <div class="position-relative">
+                                                            <i class="bi bi-cart"></i>
+                                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                                                5
+                                                            </span>
+                                                        </div> 
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Giỏ hàng</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-7">
+                            <nav class="navbar navbar-expand-lg navbar-light navbar-default py-0 pb-lg-2" aria-label="Offcanvas navbar large">
+                            <div class="container">
+                                <div class="offcanvas offcanvas-start pt-2" tabindex="-1" id="navbar-default"
+                                    aria-labelledby="navbar-defaultLabel">
+                                    <div class="offcanvas-header pb-1">
+                                        <a href="index.html"><img src="./assets/images/logo.png"
+                                                alt="eCommerce HTML Template"></a>
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div class="d-block d-lg-none mb-4">
+                                            <form action="#">
+                                                <div class="input-group">
+                                                    <input class="form-control" type="search" placeholder="Search for products">
+                                                    <span class="input-group-append">
+                                                        <button
+                                                            class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end"
+                                                            type="button">
+                                                            <span class="bi bi-search"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="mx-auto">
+                                            <ul class="navbar-nav align-items-center ms-lg-5">
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link" href="index.html">Trang chủ</a>
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                  <a class="nav-link" href="gioi_thieu.html">Giới thiệu</a>
+                                                  
+                                                </li>
+                                               <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="thiet_bi.html" role="button">Sản phẩm</a>
+                                                   
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="tin_tuc.html" role="button">Tin tức</a>
+                                                   
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="lien_he.html" role="button">Liên hệ</a>
+                                                    
+                                                </li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-none d-lg-block">
+                                <!-- Navbar Actions -->
+                                <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+                                    <div class="offcanvas-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div class="mt-50">
+                                            <form action="#">
+                                                <div class="input-group">
+                                                    <input class="form-control py-3" type="search" placeholder="Search for products">
+                                                    <span class="input-group-append">
+                                                        <button
+                                                            class="btn bg-white border border-start-0 ms-n10 py-3 rounded-0 rounded-end"
+                                                            type="button">
+                                                            <span class="bi bi-search"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                <div class="list-inline  d-flex pt-2">
+                                    <div class="list-inline-item me-4">
+                                        <a href="dang_nhap.html"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-search"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Tìm kiếm</span>
+                                        </a>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="dang_nhap.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-person"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Tài khoản</span>
+                                        </a>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="gio_hang.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-cart"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Giỏ hàng</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Navbar Actions -->
+                        </div>
+                </div>
+            </div>
+        <!-- Navbar -->
+    </header>
+    <!-- Header Section End -->
+
+    <div class="product-details">
+    <main>
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-main">
+            <div class="container">
+                <div class="breadcrumb-container">
+                    <h2 class="page-title" id="detail-page-title">Chi tiết thiết bị</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">Trang chủ</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="#">Thuê máy ảnh</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chi tiết -->
+        <section class="mt-5">
+            <div class="container">
+                <div class="row">
+
+                    <!-- Hình -->
+                    <div class="col-lg-5">
+                        <div class="detail-gallery">
+                            <div class="swiper detail-main-swiper" id="detail-main-swiper">
+                                <div class="swiper-wrapper" id="detail-main-wrapper">
+                                    <div class="swiper-slide">
+                                        <img src="./assets/images/no-image.png" alt="Chi tiết thiết bị">
+                                    </div>
+                                </div>
+                                <button type="button" class="detail-gallery-nav detail-gallery-prev" aria-label="Ảnh trước">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <button type="button" class="detail-gallery-nav detail-gallery-next" aria-label="Ảnh sau">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="swiper detail-thumb-swiper" id="detail-thumb-swiper">
+                                <div class="swiper-wrapper" id="detail-thumb-wrapper"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nội dung -->
+                    <div class="col-lg-7">
+                        <h1 id="detail-title">Đang tải sản phẩm...</h1>
+
+                        <!-- Giá thuê -->
+                        <div class="fs-4 mt-3">
+                            <span class="fw-bold text-danger" id="detail-price">-</span>
+                        </div>
+
+                        <hr>
+
+                        <!-- Thông tin -->
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>Mã thiết bị:</td>
+                                <td id="detail-id">-</td>
+                            </tr>
+                            <tr>
+                                <td>Tình trạng:</td>
+                                <td id="detail-status">-</td>
+                            </tr>
+                            <tr>
+                                <td>Danh mục:</td>
+                                <td id="detail-category">-</td>
+                            </tr>
+                            <tr>
+                                <td>Số lượng còn lại:</td>
+                                <td id="detail-quantity">-</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                          <!-- Thời gian thuê -->
+                          <div class="mb-3">
+                              <label>Ngày nhận</label>
+                              <input type="date" class="form-control" id="rental-start" name="ngay_nhan">
+                          </div>
+
+                          <div class="mb-3">
+                              <label>Ngày trả</label>
+                              <input type="date" class="form-control" id="rental-end" name="ngay_tra">
+                          </div>
+                          <div class="small mb-3" id="detail-availability-message"></div>
+
+                          <!-- Số lượng -->
+                        <div class="mb-3">
+                            <label>Số lượng</label>
+                            <input type="number" value="1" min="1" class="form-control w-25" id="detail-quantity-input">
+                        </div>
+
+                        <!-- Nút -->
+                        <button type="button" class="btn btn-primary w-100 mb-2 add-to-cart" id="add-to-cart-btn" disabled>
+                            Thêm vào giỏ
+                        </button>
+
+                        <a href="thanh_toan.html" class="btn btn-danger w-100 disabled" id="rent-now-btn">
+                            Thuê ngay
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mô tả -->
+        <section class="mt-5">
+            <div class="container">
+                <h3>Mô tả thiết bị</h3>
+                <p id="detail-description">Đang tải mô tả thiết bị...</p>
+            </div>  
+        </section>
+           <!-- footer Section -->
+<footer class="mt-0 footer-section">
+    <div class="container">
+        <div class="row gy-4">
+
+            <!-- Thông tin -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer_logo mb-3">
+                    <img loading="lazy"
+                        src="./assets/images/logo.png"
+                        class="logo"
+                        alt="Sunlens Camera">
+                </div>
+
+                <div class="footer-contact">
+                    <h5 class="fw-bold mb-3">Sunlens Camera</h5>
+
+                    <p class="mb-2">
+                        <strong>Địa chỉ:</strong><br>
+                        382 Hùng Vương, Thanh Khê, Đà Nẵng
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Hotline:</strong><br>
+                        <a href="tel:0906586982">0906 586 982</a>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:conghieu2k4@gmail.com">
+                            conghieu2k4@gmail.com
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <div class="col-lg-4 col-md-6">
+                <div class="row">
+
+                    <div class="col-6">
+                        <div class="footer_menu">
+                            <h4 class="footer_title">Liên hệ hỗ trợ</h4>
+
+                            <ul class="m-0 p-0 list-unstyled">
+                                <li>
+                                    <a href="https://www.facebook.com/tran.cong.hieu.78479/" target="_blank">
+                                        Facebook
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="https://www.instagram.com/_.hiuuss.ig?igsh=MWpvaTg4ZDY2YTdxZQ%3D%3D&utm_source=qr"
+                                        target="_blank">
+                                        Instagram
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="tel:0906586982">
+                                        Hotline
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="https://www.tiktok.com/@trh2k4"
+                                        target="_blank">
+                                        TikTok
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="footer_menu">
+                            <h4 class="footer_title">Thông tin</h4>
+
+                            <ul class="m-0 p-0 list-unstyled">
+                                <li>
+                                    <a href="gioi_thieu.html#gioithieu">
+                                        Về chúng tôi
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="gioi_thieu.html#quytrinh">
+                                        Quy trình thuê máy
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="gioi_thieu.html#camket">
+                                         Cam kết của chúng tôi
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="lien_he.html">
+                                        Liên hệ
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Google Map -->
+            <div class="col-lg-4">
+                <div class="footer_map">
+                    <h4 class="footer_title mb-3">Vị trí cửa hàng</h4>
+
+                    <div class="map-frame rounded overflow-hidden">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.9709561168374!2d108.20923530925882!3d16.066996884547994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142184af001a607%3A0xbe0595a463b5ff95!2zMzY4NitRUFcsIDM4MiBIw7luZyBWxrDGoW5nLCBUaGFuaCBLaMOqLCDEkMOgIE7hurVuZyA1NTAwMDAsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1778154533540!5m2!1svi!2s"
+                            width="100%"
+                            height="250"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center py-3 mt-4 text-white px-3 copyright">
+        <span>
+            Bản quyền © 2026 Sunlens Camera.
+            Tất cả quyền được bảo lưu.
+        </span>
+    </div>
+</footer>
+   <!-- footer Section -->
+
+<script src="./assets/js/jquery-3.6.0.min.js"></script>
+<script src="./assets/js/bootstrap.bundle.min.js"></script>
+<script src="./assets/plugin/nice-select/jquery.nice-select.min.js"></script>
+<script src="./assets/plugin/OwlCarousel2-2.3.4/dist/owl.carousel.min.js"></script>
+<script src="./assets/plugin/nouislider/nouislider.min.js"></script>
+<script src="./assets/plugin/slick/slick.min.js"></script>
+<script src="./assets/js/trang_chinh.js"></script>
+<script src="./assets/js/menu_tai_khoan.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="./assets/js/tien_ich_gio_hang.js"></script>
+<script src="./assets/js/chi_tiet_thiet_bi.js"></script>
+    </main>
+</div>
+<script src="./assets/js/hop_thoai_ho_tro.js?v=20260613-2"></script>
+
+</html>
+

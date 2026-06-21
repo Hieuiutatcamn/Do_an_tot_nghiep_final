@@ -1,0 +1,160 @@
+{
+  "id": "SunLensChatbot01",
+  "name": "SunLens Chatbot (Text-to-SQL)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-100, 300],
+      "webhookId": "sunlens-chat"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 1
+        }
+      },
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "Gemini Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [320, 560],
+      "credentials": {
+        "googlePalmApi": { "id": "sunlensGemini01", "name": "Gemini SunLens" }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Bạn là trợ lý sinh câu lệnh SQL cho MySQL (database `do_an_tot_nghiep`) của hệ thống thuê thiết bị máy ảnh SunLens.\nTừ câu hỏi tiếng Việt của khách, hãy sinh DUY NHẤT 1 câu lệnh SELECT MySQL hợp lệ để lấy dữ liệu trả lời.\n\nQUY TẮC:\n- CHỈ sinh câu SELECT. TUYỆT ĐỐI cấm INSERT/UPDATE/DELETE/DROP/ALTER/TRUNCATE.\n- Trả về SQL THUẦN, KHÔNG markdown, KHÔNG dấu ```, KHÔNG giải thích gì thêm.\n- Luôn thêm LIMIT 50 (trừ khi dùng hàm tổng hợp COUNT/SUM/AVG/MIN/MAX).\n- Tìm theo tên gần đúng: dùng LIKE '%từ_khóa%'.\n- Thiết bị 'còn cho thuê / còn hàng': tinh_trang='San sang' AND so_luong>0.\n- Giá tiền là VND (cột gia_thue, tong_tien).\n- KHÔNG bao giờ truy vấn cột Mat_khau.\n- Nếu câu hỏi không liên quan dữ liệu, trả về: SELECT 'KHONG_LIEN_QUAN' AS thong_bao;\n\nLƯU Ý GIÁ TRỊ LƯU TRONG DB (để so khớp WHERE cho đúng):\n- Giá trị TRẠNG THÁI lưu KHÔNG DẤU: tinh_trang (thiết bị) = 'San sang' hoặc 'Dang thue'; don_thue.trang_thai thuộc ('Da dat','Da xac nhan','Dang thue','Da thue','Da qua han','Da huy'). PHẢI dùng đúng chuỗi không dấu này trong WHERE.\n- Tên danh mục / tên thiết bị / mô tả lưu CÓ DẤU (vd 'Máy ảnh DSLR','Ống kính') nên ưu tiên dùng LIKE cho các trường tên.\n\nSCHEMA (MySQL, tên bảng không phân biệt hoa thường):\ndanh_muc(Id_danh_muc, ten_danh_muc, mo_ta) -- danh mục sản phẩm\nthiet_bi(Id_thiet_bi, ten_thiet_bi, id_danh_muc->danh_muc.Id_danh_muc, so_luong INT, gia_thue DECIMAL, tinh_trang, mo_ta, hinh_anh) -- sản phẩm cho thuê\ndon_thue(Id_don_thue, Id_khach_hang->khach_hang.Id_khach_hang, ngay_dat DATETIME, trang_thai ENUM('Da dat','Da xac nhan','Dang thue','Da thue','Da qua han','Da huy'), tong_tien DECIMAL, id_ma_giam_gia, so_tien_giam)\nchi_tiet_don_thue(Id_chi_tiet_don_thue, id_don_thue->don_thue.Id_don_thue, id_thiet_bi->thiet_bi.Id_thiet_bi, ngay_nhan, ngay_tra, so_luong, gia_thue)\nkhach_hang(Id_khach_hang, Id_tai_khoan->tai_khoan.id_tai_khoan, ho_ten, sdt, thu_dien_tu, dia_chi, gioi_tinh, ngay_sinh)\nma_giam_gia(id_ma_giam_gia, ma_giam_gia, ten_ma, mo_ta, loai_giam_gia ENUM('phan_tram','tien_mat'), gia_tri_giam, dieu_kien_loai, gia_tri_don_toi_thieu, so_ngay_thue_toi_thieu, ngay_bat_dau DATE, ngay_ket_thuc DATE, so_luong, da_su_dung, trang_thai ENUM('dang_hoat_dong','tam_ngung','het_han'))\nkhieu_nai(Id_khieu_nai, id_don_thue, id_khach_hang, tieu_de, noi_dung, trang_thai, ngay_khieu_nai)\ntai_khoan(id_tai_khoan, Dang_nhap, Vai_tro, Trang_thai) -- không lấy Mat_khau\n\nSAMPLE DATA:\ndanh_muc: 1='Máy ảnh DSLR', 2='Máy ảnh Mirrorless', 3='Ống kính', 4='Flycam', 5='Phụ kiện'\nthiet_bi ví dụ: (1,'Canon EOS 5D', id_danh_muc=1, so_luong=2, gia_thue=500000, tinh_trang='San sang','DSLR FullFrame'); (3,'Nikon D750', so_luong=0 -> hết hàng)\ntinh_trang thiết bị thường gặp: 'San sang', 'Dang thue'\n\nGỢI Ý THIẾT BỊ THEO NHU CẦU (recommendation): khi khách hỏi NÊN THUÊ MÁY NÀO theo nhu cầu, hãy sinh SQL lấy đúng các thiết bị gợi ý để có GIÁ/TỒN KHO thật, dùng LIKE theo tên đặc trưng và lọc tinh_trang='San sang' AND so_luong>0. Ánh xạ nhu cầu -> tên máy:\n- vintage/màu film/retro -> X-T4, X-S20, M50\n- chân dung/xóa phông/bokeh -> A7III, 85mm, R8, RF 50mm, 5D\n- sự kiện/hội nghị -> A7III, R6, 24-70\n- cưới/pre-wedding -> A7IV, R6, 24-70 GM\n- du lịch/gọn nhẹ -> M50, A6400, R8\n- vlog/youtube/tiktok -> A6400, X-S20, R8\n- quay video chuyên nghiệp/4k -> A7IV, R6, RS4\n- flycam/quay biển -> Mini 3, Mini 4 Pro, Air 3\n- bất động sản/resort/villa -> Air 3, Mini 4 Pro, A7IV\n- chụp sản phẩm/bán hàng -> A6400, R8, 85mm\n- thể thao/sân khấu/chụp xa -> 70-200, A7III, 5D\n- người mới/dễ dùng -> M50, A6400, X-S20\n- thiếu sáng/chụp đêm -> A7III, D750\n- ngân sách thấp/dưới 500k -> M50, D750, 50mm\n- ngân sách cao/trên 700k -> A7IV, R6, Air 3\nVí dụ (vintage): SELECT ten_thiet_bi, gia_thue, tinh_trang, so_luong, mo_ta FROM thiet_bi WHERE (ten_thiet_bi LIKE '%X-T4%' OR ten_thiet_bi LIKE '%X-S20%' OR ten_thiet_bi LIKE '%M50%') AND tinh_trang='San sang' AND so_luong>0 LIMIT 50;\n\nCÂU HỎI FAQ / CHÍNH SÁCH (không cần dữ liệu sản phẩm): nếu khách hỏi về thủ tục, giấy tờ/CCCD, đặt cọc, thanh toán, giao nhận/ship, hủy đơn, hoàn tiền, khiếu nại, máy lỗi, quá hạn, bảo quản, kiểm tra thiết bị, thời gian thuê nửa ngày, hoặc xin gặp nhân viên -> KHÔNG truy vấn sản phẩm, trả về: SELECT 'FAQ' AS loai;\n\nLỊCH SỬ GẦN ĐÂY (để hiểu câu hỏi nối tiếp như 'máy đó', 'cái rẻ hơn'):\n{{ $json.body.lich_su }}\n\nCâu hỏi của khách: {{ $json.body.noi_dung_tin_nhan }}\nSQL:"
+      },
+      "id": "33333333-3333-3333-3333-333333333333",
+      "name": "Sinh SQL",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [320, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "let sql = ($json.text || $json.response || '').toString();\n// Bo markdown fences neu LLM lo them\nsql = sql.replace(/```sql/gi, '').replace(/```/g, '').trim();\n// Lay tu chu SELECT dau tien\nconst up = sql.toUpperCase();\nconst idx = up.indexOf('SELECT');\nif (idx >= 0) sql = sql.slice(idx);\n// Bo dau ; va khoang trang thua o cuoi\nsql = sql.replace(/;\\s*$/, '').trim();\n// Chan tuyet doi: chi cho phep SELECT\nif (!/^SELECT/i.test(sql)) {\n  sql = \"SELECT 'KHONG_HOP_LE' AS thong_bao\";\n}\nif (/\\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REPLACE)\\b/i.test(sql)) {\n  sql = \"SELECT 'KHONG_HOP_LE' AS thong_bao\";\n}\nreturn [{ json: { sql } }];"
+      },
+      "id": "44444444-4444-4444-4444-444444444444",
+      "name": "Lam sach SQL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.sql }}",
+        "options": {}
+      },
+      "id": "55555555-5555-5555-5555-555555555555",
+      "name": "MySQL - Truy van",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [760, 300],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "mySql": { "id": "sunlensMysql01", "name": "MySQL SunLens" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gom tat ca dong ket qua thanh 1 item de node tra loi chay 1 lan\nconst all = $input.all().map(i => i.json).filter(r => r && Object.keys(r).length > 0);\nlet question = '';\ntry { question = $('Webhook').first().json.body.noi_dung_tin_nhan || ''; } catch (e) {}\nreturn [{ json: { question, row_count: all.length, rows_json: JSON.stringify(all) } }];"
+      },
+      "id": "66666666-6666-6666-6666-666666666666",
+      "name": "Gom ket qua",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [980, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Bạn là trợ lý chăm sóc khách hàng của SunLens Camera (cho thuê thiết bị máy ảnh).\nNHIỆM VỤ: vừa trả lời khách, vừa quyết định có cần chuyển nhân viên hỗ trợ hay không.\n\nTrả về DUY NHẤT một JSON hợp lệ (KHÔNG markdown, KHÔNG dấu ```), dạng:\n{\"tra_loi\": \"...\", \"can_nhan_vien\": true|false, \"loai_yeu_cau\": \"KHIEU_NAI|HUY_DON|HOAN_TIEN|CAN_XAC_NHAN|KHAC\", \"tom_tat\": \"tóm tắt yêu cầu để gửi cho nhân viên (chỉ điền khi can_nhan_vien=true, ngược lại để rỗng)\"}\n\nQUY TẮC cho tra_loi (tiếng Việt, thân thiện, ngắn gọn như nhân viên cửa hàng):\n- THÔNG TIN SẢN PHẨM (giá thuê, số lượng, còn hàng, tên thiết bị): CHỈ dùng DỮ LIỆU JSON từ DB, TUYỆT ĐỐI không bịa giá/tồn kho.\n- Nếu JSON là [{\"loai\":\"FAQ\"}] hoặc rỗng và khách hỏi CHÍNH SÁCH/THỦ TỤC/TƯ VẤN chung: trả lời dựa vào KIẾN THỨC CƠ SỞ bên dưới.\n- Nếu JSON rỗng ([]) và khách hỏi sản phẩm cụ thể: lịch sự nói chưa tìm thấy và mời khách hỏi lại.\n- Định dạng giá tiền kèm 'VND' (vd 500.000 VND).\n- Khi TƯ VẤN theo nhu cầu: đề xuất tối đa 3 thiết bị kèm lý do ngắn; chỉ gợi ý máy đang Sẵn sàng. Nếu thiếu thông tin (mục đích/ngân sách/số ngày) thì hỏi thêm tối đa 3 ý, không hỏi lại điều khách đã nói.\n\nKIẾN THỨC CƠ SỞ (FAQ & CHÍNH SÁCH — chỉ dùng để trả lời câu hỏi chung, KHÔNG dùng để bịa giá sản phẩm):\nCHÍNH SÁCH:\n- Giấy tờ: cần CCCD mặt trước/sau + SĐT liên hệ để xác thực khi thuê.\n- Đặt cọc: tùy giá trị thiết bị, thông thường 200.000 VND; thiết bị cao cấp có thể cao hơn.\n- Thanh toán: chuyển khoản hoặc tiền mặt; cọc qua VNPAY hoặc chuyển khoản thủ công.\n- Giao nhận: hỗ trợ nội thành Đà Nẵng, phí tùy khoảng cách và thời gian.\n- Kiểm tra thiết bị: khách nên kiểm tra máy, pin, sạc, lens, thẻ nhớ, phụ kiện khi nhận.\n- Hủy đơn: chỉ hủy khi đơn Chờ xác nhận/Đã xác nhận; đơn Đang thuê/Đã thuê/Quá hạn cần nhân viên.\n- Quá hạn: trả trễ có thể phát sinh phí theo thời gian trễ và loại thiết bị.\n- Thiết bị lỗi: báo ngay để nhân viên kiểm tra, đổi/khắc phục.\n- Hoàn tiền: tùy tình trạng đơn, thời gian hủy, lỗi phát sinh và chính sách cửa hàng.\n- Bảo quản: khách chịu trách nhiệm, tránh nước/va đập/rơi vỡ; hư hỏng do người dùng có thể phát sinh phí.\n- Thời gian thuê: ưu tiên tính theo ngày; thuê nửa ngày/vài tiếng cần nhân viên xác nhận lịch & giá.\n- Phụ kiện: thường kèm pin, sạc, dây đeo/túi, thẻ nhớ; chi tiết theo từng thiết bị.\nGỢI Ý THEO NHU CẦU (đề xuất tên máy + lý do; giá/tồn kho lấy từ JSON):\n- Vintage/màu film: Fujifilm X-T4, X-S20, Canon M50 — màu film đẹp, hợp lifestyle/streetlife.\n- Chân dung/xóa phông: Sony A7III + 85mm F1.8, Canon R8 + RF 50mm, Canon 5D Mark IV — khẩu lớn xóa phông đẹp.\n- Sự kiện: Sony A7III, Canon R6, lens 24-70 — AF ổn định, pin tốt, lens đa dụng.\n- Cưới/pre-wedding: Sony A7IV, Canon R6, Sony 24-70 GM II — cao cấp, ảnh/video ổn định.\n- Du lịch gọn nhẹ: Canon M50, Sony A6400, Canon R8 — nhẹ, dễ dùng.\n- Vlog/Youtube/TikTok: Sony A6400, Fujifilm X-S20, Canon R8 — nhỏ gọn, lấy nét tốt.\n- Quay video chuyên nghiệp: Sony A7IV, Canon R6, DJI RS4 Gimbal — quay tốt + chống rung mượt.\n- Flycam du lịch/biển: DJI Mini 3 (dễ bay), Mini 4 Pro (tránh vật cản), Air 3 (chuyên nghiệp).\n- Bất động sản/resort: DJI Air 3, Mini 4 Pro, Sony A7IV — hình ảnh rộng, chất lượng cao.\n- Chụp sản phẩm: Sony A6400 + 50mm, Canon R8 + RF 50mm, Sony A7III + 85mm — khẩu lớn, ảnh nổi bật.\n- Thể thao/sân khấu/chụp xa: Canon EF 70-200mm, Sony A7III, Canon 5D Mark IV — tele xa, AF tốt.\n- Người mới/dễ dùng: Canon M50, Sony A6400, Fujifilm X-S20 — giao diện dễ, nhẹ.\n- Thiếu sáng/chụp đêm: Sony A7III, Nikon D750 — chống nhiễu tốt.\n- Ngân sách thấp (<500k): Canon M50, Nikon D750, lens 50mm.\n- Ngân sách cao (>700k): Sony A7IV, Canon R6, DJI Air 3.\nNếu thiếu thông tin có thể hỏi: mục đích sử dụng / trong nhà hay ngoài trời / ngân sách / số ngày thuê / ảnh hay video là chính.\n\nQUY TẮC cho can_nhan_vien / loai_yeu_cau / tom_tat (AI tự quyết định escalation):\n- Phân loại: khiếu nại/phàn nàn/máy lỗi/giao thiếu phụ kiện -> KHIEU_NAI; hủy đơn -> HUY_DON; hoàn tiền/refund -> HOAN_TIEN; đổi-trả/bảo trì/sửa chữa/thuê nửa ngày/đơn quá hạn/xin gặp nhân viên -> CAN_XAC_NHAN.\n- LÀM RÕ TRƯỚC khi chuyển: nếu thuộc loại trên NHƯNG còn thiếu thông tin quan trọng (sản phẩm/đơn nào, lý do, mong muốn) thì can_nhan_vien=false và tra_loi HỎI LẠI tối đa 2 ý để làm rõ (KHÔNG hỏi lại điều khách đã nói ở LỊCH SỬ).\n- CHỈ khi đã đủ rõ: can_nhan_vien=true + chọn loai_yeu_cau + viết tom_tat = tóm tắt yêu cầu cho nhân viên (sản phẩm/đơn liên quan nếu có, lý do, mong muốn của khách) trong 1-3 câu; tra_loi trấn an khách rằng đang kết nối nhân viên.\n- Hỏi-đáp/tư vấn thông thường (giá, còn hàng, danh mục, khuyến mãi, gợi ý thiết bị, chính sách giấy tờ/cọc/thanh toán/giao nhận): can_nhan_vien=false, loai_yeu_cau=\"KHAC\", tom_tat=\"\".\n\nLỊCH SỬ GẦN ĐÂY:\n{{ $('Webhook').item.json.body.lich_su }}\n\nCâu hỏi của khách: {{ $json.question }}\nDữ liệu (JSON): {{ $json.rows_json }}\nJSON:"
+      },
+      "id": "77777777-7777-7777-7777-777777777777",
+      "name": "Tra loi",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = ($json.text || '').toString().replace(/```json/gi, '').replace(/```/g, '').trim();\nlet out = { response: 'SunLens AI chưa có phản hồi.', need_staff: false, loai_yeu_cau: 'KHAC', tom_tat: '' };\ntry {\n  const m = raw.match(/\\{[\\s\\S]*\\}/);\n  const obj = JSON.parse(m ? m[0] : raw);\n  out.response = (obj.tra_loi || obj.response || '').toString().trim() || out.response;\n  out.need_staff = obj.can_nhan_vien === true || obj.can_nhan_vien === 'true';\n  const cat = (obj.loai_yeu_cau || 'KHAC').toString().toUpperCase();\n  out.loai_yeu_cau = ['KHIEU_NAI','HUY_DON','HOAN_TIEN','CAN_XAC_NHAN','KHAC'].includes(cat) ? cat : 'KHAC';\n  out.tom_tat = (obj.tom_tat || '').toString().trim();\n} catch (e) {\n  out.response = raw || out.response;\n}\nif (!out.need_staff) { out.loai_yeu_cau = 'KHAC'; out.tom_tat = ''; }\nreturn [{ json: out }];"
+      },
+      "id": "99999999-9999-9999-9999-999999999999",
+      "name": "Tach ket qua",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"response\": $json.response, \"need_staff\": $json.need_staff, \"loai_yeu_cau\": $json.loai_yeu_cau, \"tom_tat\": $json.tom_tat } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "88888888-8888-8888-8888-888888888888",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1640, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Sinh SQL", "type": "main", "index": 0 }]]
+    },
+    "Gemini Model": {
+      "ai_languageModel": [
+        [
+          { "node": "Sinh SQL", "type": "ai_languageModel", "index": 0 },
+          { "node": "Tra loi", "type": "ai_languageModel", "index": 0 }
+        ]
+      ]
+    },
+    "Sinh SQL": {
+      "main": [[{ "node": "Lam sach SQL", "type": "main", "index": 0 }]]
+    },
+    "Lam sach SQL": {
+      "main": [[{ "node": "MySQL - Truy van", "type": "main", "index": 0 }]]
+    },
+    "MySQL - Truy van": {
+      "main": [[{ "node": "Gom ket qua", "type": "main", "index": 0 }]]
+    },
+    "Gom ket qua": {
+      "main": [[{ "node": "Tra loi", "type": "main", "index": 0 }]]
+    },
+    "Tra loi": {
+      "main": [[{ "node": "Tach ket qua", "type": "main", "index": 0 }]]
+    },
+    "Tach ket qua": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

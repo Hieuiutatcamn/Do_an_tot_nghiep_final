@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat hỗ trợ - Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./asset/css/templatemo-glass-admin-style.css">
+    <style>
+        .admin-chat-shell {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            gap: 20px;
+            min-height: calc(100vh - 140px);
+        }
+
+        .admin-chat-panel {
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.74);
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            color: #111827;
+        }
+
+        .admin-chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            min-height: 680px;
+        }
+
+        .admin-chat-toolbar,
+        .admin-chat-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+        }
+
+        .admin-chat-title {
+            display: grid;
+            gap: 4px;
+        }
+
+        .admin-chat-title strong {
+            font-size: 18px;
+        }
+
+        .admin-chat-title span {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .admin-chat-waiting {
+            min-width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-chat-online {
+            border: 1px solid rgba(5, 150, 105, 0.3);
+            border-radius: 999px;
+            background: rgba(5, 150, 105, 0.1);
+            color: #047857;
+            cursor: pointer;
+            font-weight: 700;
+            padding: 9px 14px;
+            white-space: nowrap;
+        }
+
+        .admin-chat-online.is-offline {
+            border-color: rgba(220, 38, 38, 0.25);
+            background: rgba(220, 38, 38, 0.08);
+            color: #b91c1c;
+        }
+
+        .admin-chat-list {
+            overflow-y: auto;
+            max-height: calc(100vh - 230px);
+        }
+
+        .admin-chat-conversation {
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            background: transparent;
+            color: #111827;
+            cursor: pointer;
+            display: grid;
+            gap: 8px;
+            padding: 16px 18px;
+            text-align: left;
+        }
+
+        .admin-chat-conversation:hover,
+        .admin-chat-conversation.is-active {
+            background: rgba(5, 150, 105, 0.08);
+        }
+
+        .admin-chat-conversation-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .admin-chat-customer {
+            font-weight: 700;
+        }
+
+        .admin-chat-meta {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .chat-status {
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .chat-status.ai { background: rgba(14, 165, 233, 0.14); color: #0369a1; }
+        .chat-status.waiting { background: rgba(245, 158, 11, 0.18); color: #b45309; }
+        .chat-status.staff { background: rgba(5, 150, 105, 0.15); color: #047857; }
+        .chat-status.closed { background: rgba(100, 116, 139, 0.16); color: #475569; }
+
+        .admin-chat-detail {
+            display: flex;
+            min-height: 680px;
+            flex-direction: column;
+        }
+
+        .admin-chat-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .admin-chat-btn {
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: 10px;
+            background: #fff;
+            color: #111827;
+            cursor: pointer;
+            font-weight: 700;
+            min-height: 40px;
+            padding: 9px 14px;
+        }
+
+        .admin-chat-btn.primary {
+            background: #9b5f3c;
+            border-color: #9b5f3c;
+            color: #fff;
+        }
+
+        .admin-chat-btn.danger {
+            border-color: rgba(220, 38, 38, 0.35);
+            color: #dc2626;
+        }
+
+        .admin-chat-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .admin-chat-messages {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding: 18px;
+            background: rgba(248, 250, 252, 0.72);
+            max-height: calc(100vh - 310px);
+        }
+
+        .admin-chat-empty {
+            color: #64748b;
+            display: grid;
+            gap: 10px;
+            min-height: 280px;
+            place-items: center;
+            text-align: center;
+        }
+
+        .admin-chat-message {
+            max-width: min(620px, 82%);
+            border-radius: 16px;
+            padding: 12px 14px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .admin-chat-message.customer {
+            align-self: flex-start;
+            background: #fff;
+        }
+
+        .admin-chat-message.ai {
+            align-self: flex-start;
+            background: #eef6ff;
+        }
+
+        .admin-chat-message.staff {
+            align-self: flex-end;
+            background: #9b5f3c;
+            color: #fff;
+        }
+
+        .admin-chat-message-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+            opacity: 0.75;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .admin-chat-message-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .admin-chat-form {
+            display: flex;
+            gap: 12px;
+            padding: 16px 18px;
+            border-top: 1px solid rgba(15, 23, 42, 0.1);
+            background: rgba(255, 255, 255, 0.84);
+        }
+
+        .admin-chat-form textarea {
+            flex: 1;
+            min-height: 48px;
+            max-height: 130px;
+            resize: vertical;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: 12px;
+            color: #111827;
+            font: inherit;
+            padding: 12px 14px;
+        }
+
+        .admin-chat-notice {
+            color: #64748b;
+            font-size: 13px;
+            padding: 0 18px 12px;
+        }
+
+        .chat-waiting-badge {
+            margin-left: auto;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .chat-waiting-badge:not(:empty) {
+            display: inline-flex;
+        }
+
+        @media (max-width: 1100px) {
+            .admin-chat-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-chat-sidebar,
+            .admin-chat-detail {
+                min-height: auto;
+            }
+
+            .admin-chat-list,
+            .admin-chat-messages {
+                max-height: 480px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .admin-chat-toolbar,
+            .admin-chat-detail-header,
+            .admin-chat-form {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .admin-chat-message {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                    <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="tong_quan.html">
+                        <img src="../../user/Sunlens_Camera/assets/images/logo.png" class="logo main-logo" alt="SunLens Camera">
+                    </a>
+                </div>
+                <span class="logo-text">Sunlens Camera</span>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-section">
+                    <span class="nav-section-title">Menu chính</span>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="tong_quan.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                                </svg>
+                                Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="tai_khoan.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                Tài khoản
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="thiet_bi.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2l1.5 4h9L18 2"/>
+                                    <path d="M3 6h18l-2 13H5L3 6z"/>
+                                </svg>
+                                Sản phẩm
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="don_thue.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 22V12h6v10"/>
+                                    <path d="M2 10l10-8 10 8"/>
+                                </svg>
+                                Đơn thuê
+                            </a>
+                        </li>
+                        <li class="nav-item" data-admin-discounts-nav>
+                            <a href="ma_giam_gia.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.59 13.41 12 22l-9-9V4h9l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                                    <path d="m9 15 6-6"/>
+                                    <path d="M9.5 9.5h.01"/>
+                                    <path d="M14.5 14.5h.01"/>
+                                </svg>
+                                Mã giảm giá
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="khieu_nai.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <circle cx="12" cy="16" r="1"/>
+                                </svg>
+                                Khiếu nại
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="chat_ho_tro_admin.html" class="nav-link active">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                                </svg>
+                                Chat hỗ trợ
+                                <span class="chat-waiting-badge" data-admin-chat-waiting-badge hidden style="display:none;"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="cai_dat.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9 a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9 a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                </svg>
+                                Cài đặt
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-section">
+                    <span class="nav-section-title">Tài khoản</span>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="../../user/Sunlens_Camera/index.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-info">
+                        <div class="user-name">Admin</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <nav class="navbar">
+                <h1 class="page-title">Chat hỗ trợ</h1>
+                <div class="navbar-right">
+                    <button class="admin-chat-online is-offline" id="staffOnlineBtn" type="button">Offline</button>
+                    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                            <path d="M2 12h2"/><path d="M20 12h2"/>
+                            <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+            <section class="admin-chat-shell">
+                <aside class="admin-chat-panel admin-chat-sidebar">
+                    <div class="admin-chat-toolbar">
+                        <div class="admin-chat-title">
+                            <strong>Cuộc trò chuyện</strong>
+                            <span>Ưu tiên các cuộc chờ nhân viên</span>
+                        </div>
+                        <span class="admin-chat-waiting" id="waitingCount" hidden style="display:none;"></span>
+                    </div>
+                    <div class="admin-chat-list" id="chatConversationList">
+                        <div class="admin-chat-empty">Đang tải cuộc trò chuyện...</div>
+                    </div>
+                </aside>
+
+                <section class="admin-chat-panel admin-chat-detail">
+                    <div class="admin-chat-detail-header">
+                        <div class="admin-chat-title">
+                            <strong id="chatDetailTitle">Chọn cuộc trò chuyện</strong>
+                            <span id="chatDetailSubtitle">Xem tin nhắn và trả lời khách hàng</span>
+                        </div>
+                        <div class="admin-chat-actions">
+                            <button class="admin-chat-btn" id="assignConversationBtn" type="button" disabled>Nhận xử lý</button>
+                            <button class="admin-chat-btn danger" id="closeConversationBtn" type="button" disabled>Đóng</button>
+                        </div>
+                    </div>
+                    <div class="admin-chat-messages" id="chatMessageList">
+                        <div class="admin-chat-empty">Chưa chọn cuộc trò chuyện.</div>
+                    </div>
+                    <div class="admin-chat-notice" id="chatNotice"></div>
+                    <form class="admin-chat-form" id="adminChatForm">
+                        <textarea id="adminChatInput" placeholder="Nhập phản hồi cho khách hàng..." disabled></textarea>
+                        <button class="admin-chat-btn primary" id="adminChatSendBtn" type="submit" disabled>Gửi</button>
+                    </form>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="./asset/js/templatemo-glass-admin-script.js"></script>
+    <script src="./asset/js/api_admin.js"></script>
+    <script src="./asset/js/huy_hieu_chat_admin.js"></script>
+    <script src="./asset/js/chat_ho_tro_admin.js"></script>
+</body>
+</html>

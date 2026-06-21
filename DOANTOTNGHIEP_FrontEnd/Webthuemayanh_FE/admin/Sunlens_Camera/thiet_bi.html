@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunlens Camera - Sản phẩm</title>
+    <meta name="description" content="3D Glassmorphism Dashboard Template by TemplateMo">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./asset/css/templatemo-glass-admin-style.css">
+    <style>
+        .content-grid {
+            display: grid;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .table-card {
+            padding-bottom: 0;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .data-table th,
+        .data-table td {
+            white-space: nowrap;
+        }
+        .table-row-action {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .table-row-action .card-btn {
+            padding: 6px 12px;
+        }
+        .form-popup {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .form-popup.active {
+            display: flex;
+        }
+        .popup-card {
+            width: min(100%, 780px);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .popup-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #111827;
+        }
+        .popup-close {
+            background: rgba(15, 23, 42, 0.06);
+            border: none;
+            color: #111827;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .popup-form {
+            display: grid;
+            gap: 18px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .popup-form .form-group {
+            margin: 0;
+        }
+        .popup-form .form-group label {
+            margin-bottom: 6px;
+            display: block;
+            font-size: 13px;
+            color: rgba(17, 24, 39, 0.8);
+        }
+        .popup-form input,
+        .popup-form select,
+        .popup-form textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+        }
+        .popup-form textarea {
+            grid-column: span 2;
+            resize: vertical;
+            min-height: 110px;
+        }
+        .popup-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            grid-column: span 2;
+            margin-top: 8px;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), var(--coral));
+            color: white;
+        }
+        .popup-note {
+            grid-column: span 2;
+            color: rgba(17, 24, 39, 0.7);
+            font-size: 13px;
+        }
+        .image-upload-group {
+            grid-column: span 2;
+        }
+        .product-image-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .image-upload-button {
+            padding: 10px 16px;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #065f46;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .image-upload-button:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+        .product-image-input {
+            display: none;
+        }
+        .product-image-summary {
+            color: rgba(17, 24, 39, 0.65);
+            font-size: 13px;
+        }
+        .product-image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .product-preview-item,
+        .product-image-empty {
+            min-height: 132px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .product-preview-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+        .product-preview-media {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 9px;
+            background: #eef2f7;
+        }
+        .product-preview-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .product-preview-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(220, 38, 38, 0.94);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(127, 29, 29, 0.22);
+        }
+        .product-preview-remove:hover {
+            background: #b91c1c;
+        }
+        .product-preview-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-width: 0;
+        }
+        .product-preview-name {
+            font-size: 11px;
+            color: rgba(17, 24, 39, 0.74);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+        .product-preview-badge {
+            flex: 0 0 auto;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #065f46;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .product-image-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-style: dashed;
+            color: rgba(17, 24, 39, 0.55);
+            font-size: 13px;
+        }
+        .device-thumb-stack {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .device-thumb {
+            width: 58px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: #f8fafc;
+        }
+        .device-thumb-more {
+            min-width: 30px;
+            padding: 4px 6px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #065f46;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .status-badge.status-ready,
+        .status-badge.status-rented,
+        .status-badge.status-unknown {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            display: inline-block;
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+        .status-badge.status-ready::before,
+        .status-badge.status-rented::before,
+        .status-badge.status-unknown::before {
+            display: none;
+        }
+        .status-badge.status-ready {
+            background: #22c55e;
+        }
+        .status-badge.status-rented {
+            background: #ef4444;
+        }
+        .status-badge.status-unknown {
+            background: #6c757d;
+        }
+        .text-muted {
+            color: rgba(17, 24, 39, 0.55);
+        }
+        @media (max-width: 720px) {
+            .popup-form {
+                grid-template-columns: 1fr;
+            }
+            .popup-form textarea,
+            .popup-note,
+            .popup-actions,
+            .image-upload-group {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+      <!-- Animated Background -->
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+              <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                                        <!-- Logo -->
+                                        <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="tong_quan.html">
+                                            <img src="../../user/Sunlens_Camera/assets/images/logo.png" class="logo main-logo" alt="eCommerce HTML Template">
+                                        </a>
+                                        <!-- Logo -->
+                                        </div>
+                <span class="logo-text">Sunlens Camera</span>
+            </div>
+
+            <ul class="nav-menu">
+              <li class="nav-section">
+    <span class="nav-section-title">Menu chính</span>
+
+    <ul>
+
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a href="tong_quan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                Dashboard        
+            </a>
+        </li>
+        <!-- Tài khoản -->
+        <li class="nav-item">
+            <a href="tai_khoan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Tài khoản
+            </a>
+        </li>
+
+        <!-- Sản phẩm -->
+        <li class="nav-item">
+            <a href="thiet_bi.html" class="nav-link active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2l1.5 4h9L18 2"/>
+                    <path d="M3 6h18l-2 13H5L3 6z"/>
+                </svg>
+                Sản phẩm
+            </a>
+        </li>
+
+        <!-- Đơn thuê -->
+        <li class="nav-item">
+            <a href="don_thue.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 22V12h6v10"/>
+                    <path d="M2 10l10-8 10 8"/>
+                </svg>
+                Đơn thuê
+            </a>
+        </li>
+
+        <!-- Khiếu nại -->
+        <li class="nav-item">
+            <a href="khieu_nai.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <circle cx="12" cy="16" r="1"/>
+                </svg>
+                Khiếu nại
+            </a>
+        </li>
+        <!-- Chat hỗ trợ -->
+        <li class="nav-item">
+            <a href="chat_ho_tro_admin.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                </svg>
+                Chat hỗ trợ
+                <span class="chat-waiting-badge" data-admin-chat-waiting-badge hidden style="display:none;"></span>
+            </a>
+        </li>
+        <!-- Settings -->
+        <li class="nav-item">
+            <a href="cai_dat.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 
+                    2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 
+                    1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 
+                    2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 
+                    1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 
+                    2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 
+                    1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 
+                    2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 
+                    1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 
+                    2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9 
+                    a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 
+                    2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 
+                    1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 
+                    2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9 
+                    a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 
+                    2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Cài đặt
+            </a>
+        </li>
+
+    </ul>
+</li>
+
+                <li class="nav-section">
+                    <span class="nav-section-title">Account</span>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="../../user/Sunlens_Camera/index.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">Sunlens Camera</div>
+                    <div class="user-info">
+                        <div class="user-name">Tên</div>
+                        <div class="user-role">Vai trò</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                	<div class="page-header">
+					<h1 class="page-title">Sản Phẩm</h1>
+					<div class="page-breadcrumb">
+						<a href="tong_quan.html">Dashboard</a>
+						<span>/</span>
+						<span>Sản Phẩm</span>
+					</div>
+                    
+				</div>
+                <div class="navbar-right">
+                    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                            <path d="M2 12h2"/><path d="M20 12h2"/>
+                            <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+
+            <section class="content-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-card table-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Danh Mục Thiết Bị</h2>
+                            <p class="card-subtitle">Quản lý bảng DANH_MUC</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn" id="addCategoryBtn" onclick="openCategoryForm()">Thêm Danh Mục</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="categoryTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên Danh Mục</th>
+                                    <th>Mô Tả</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-card table-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Danh Sách Thiết Bị</h2>
+                            <p class="card-subtitle">Quản lý bảng THIET_BI</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn" id="addEquipmentBtn" onclick="openEquipmentForm()">Thêm Thiết Bị</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="equipmentTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ảnh</th>
+                                    <th>Tên Thiết Bị</th>
+                                    <th>Danh Mục</th>
+                                    <th>Giá Thuê</th>
+                                    <th>Tình Trạng</th>
+                                    <th>Mô Tả</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="form-popup" id="formPopup">
+        <div class="popup-card">
+            <div class="popup-header">
+                <h3 id="popupTitle">Thêm mới</h3>
+                <button class="popup-close" onclick="closeFormPopup()">Đóng</button>
+            </div>
+            <form id="popupForm">
+                <div class="popup-form">
+                    <input type="hidden" id="formType" value="">
+                    <input type="hidden" id="formId" value="">
+                    <div class="form-group">
+                        <label for="itemName">Tên</label>
+                        <input type="text" id="itemName" placeholder="Nhập tên" required>
+                    </div>
+                    <div class="form-group" id="categorySelectGroup">
+                        <label for="itemCategory">Danh Mục</label>
+                        <select id="itemCategory"></select>
+                    </div>
+                    <div class="form-group" id="rentPriceGroup">
+                        <label for="itemPrice">Giá Thuê</label>
+                        <input type="number" id="itemPrice" placeholder="Nhập giá thuê" min="0" step="0.01">
+                    </div>
+                    <div class="form-group" id="statusGroup">
+                        <label for="itemStatus">Tình Trạng</label>
+                        <select id="itemStatus">
+                            <option value="San sang">Sẵn sàng</option>
+                            <option value="Dang thue">Đang thuê</option>
+                            <option value="Bao tri">Bảo trì</option>
+                            <option value="Hong">Hỏng</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="descriptionGroup">
+                        <label for="itemDescription">Mô Tả</label>
+                        <textarea id="itemDescription" placeholder="Nhập mô tả"></textarea>
+                    </div>
+                    <div class="popup-note" id="formNote">Điền đủ thông tin để thêm hoặc sửa.</div>
+                    <div class="popup-actions">
+                        <button type="button" class="card-btn btn-secondary" onclick="closeFormPopup()">Hủy</button>
+                        <button type="submit" class="card-btn" id="popupSaveBtn">Lưu</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+
+    <script src="./asset/js/templatemo-glass-admin-script.js"></script>
+    <script>
+        const categoryData = [
+            { id_danh_muc: 1, ten_danh_muc: 'Máy Ảnh', mo_ta: 'Máy ảnh chụp phim và kỹ thuật số' },
+            { id_danh_muc: 2, ten_danh_muc: 'Ống Kính', mo_ta: 'Ống kính zoom, macro, prime' },
+            { id_danh_muc: 3, ten_danh_muc: 'Phụ Kiện', mo_ta: 'Đèn, tripod, pin, bộ lọc' }
+        ];
+
+        const equipmentData = [
+            { id_thiet_bi: 1, ten_thiet_bi: 'Canon EOS R6', danh_muc_id: 1, gia_thue: 450000, tinh_trang: 'San sang', mo_ta: 'Máy ảnh mirrorless full-frame' },
+            { id_thiet_bi: 2, ten_thiet_bi: 'Nikon Z7 II', danh_muc_id: 1, gia_thue: 500000, tinh_trang: 'Dang thue', mo_ta: 'Máy ảnh mirrorless chuyên nghiệp' },
+            { id_thiet_bi: 3, ten_thiet_bi: 'Sony FE 24-70mm', danh_muc_id: 2, gia_thue: 220000, tinh_trang: 'Sẵn sàng', mo_ta: 'Ống kính zoom tiêu chuẩn' },
+            { id_thiet_bi: 4, ten_thiet_bi: 'Tripod Manfrotto', danh_muc_id: 3, gia_thue: 80000, tinh_trang: 'Đang thuê', mo_ta: 'Chân máy chắc chắn' }
+        ];
+
+        function normalizeStatusText(status) {
+            return String(status || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/Đ/g, 'D')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        function statusKey(status) {
+            const normalized = normalizeStatusText(status);
+            if (normalized === 'san sang' || normalized.includes('san sang') || normalized.includes('available') || normalized.includes('ready')) {
+                return 'ready';
+            }
+            if (normalized === 'dang thue' || normalized.includes('dang thue') || normalized.includes('dang duoc thue') || normalized.includes('rented')) {
+                return 'rented';
+            }
+            return '';
+        }
+
+        function statusText(status) {
+            const key = statusKey(status);
+            if (key === 'ready') return 'Sẵn sàng';
+            if (key === 'rented') return 'Đang thuê';
+            return String(status || 'Chưa cập nhật').trim();
+        }
+
+        function statusClass(status) {
+            const key = statusKey(status);
+            if (key === 'ready') return 'status-ready';
+            if (key === 'rented') return 'status-rented';
+            return 'status-unknown';
+        }
+
+        function statusBadge(status) {
+            return `<span class="status-badge ${statusClass(status)}">${statusText(status)}</span>`;
+        }
+
+        function statusApiValue(status) {
+            const key = statusKey(status);
+            if (key === 'ready') return 'San sang';
+            if (key === 'rented') return 'Dang thue';
+            return status || 'San sang';
+        }
+
+        function renderCategoryTable() {
+            const tbody = document.querySelector('#categoryTable tbody');
+            tbody.innerHTML = categoryData.map(item => `
+                <tr>
+                    <td>${item.id_danh_muc}</td>
+                    <td>${item.ten_danh_muc}</td>
+                    <td>${item.mo_ta}</td>
+                    <td>
+                        <div class="table-row-action">
+                            <button class="card-btn" onclick="openCategoryForm(${item.id_danh_muc})">Sửa</button>
+                            <button class="card-btn btn-danger" onclick="deleteCategory(${item.id_danh_muc})">Xóa</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderEquipmentTable() {
+            const tbody = document.querySelector('#equipmentTable tbody');
+            tbody.innerHTML = equipmentData.map(item => {
+                const category = categoryData.find(cat => cat.id_danh_muc === item.danh_muc_id);
+                return `
+                    <tr>
+                        <td>${item.id_thiet_bi}</td>
+                        <td>${item.ten_thiet_bi}</td>
+                        <td>${category ? category.ten_danh_muc : 'Chưa xác định'}</td>
+                        <td>${item.gia_thue.toLocaleString('vi-VN')} đ</td>
+                        <td>${statusBadge(item.tinh_trang)}</td>
+                        <td>${item.mo_ta}</td>
+                        <td>
+                            <div class="table-row-action">
+                                <button class="card-btn" onclick="openEquipmentForm(${item.id_thiet_bi})">Sửa</button>
+                                <button class="card-btn btn-danger" onclick="deleteEquipment(${item.id_thiet_bi})">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function buildCategoryOptions(selectedId) {
+            const select = document.getElementById('itemCategory');
+            select.innerHTML = categoryData.map(cat => `
+                <option value="${cat.id_danh_muc}" ${selectedId === cat.id_danh_muc ? 'selected' : ''}>${cat.ten_danh_muc}</option>
+            `).join('');
+        }
+
+        function openCategoryForm(categoryId = null) {
+            document.getElementById('formType').value = 'category';
+            document.getElementById('categorySelectGroup').style.display = 'none';
+            document.getElementById('rentPriceGroup').style.display = 'none';
+            document.getElementById('statusGroup').style.display = 'none';
+            document.getElementById('descriptionGroup').style.display = 'block';
+            document.getElementById('itemName').placeholder = 'Nhập tên danh mục';
+            document.getElementById('popupTitle').textContent = categoryId ? 'Sửa danh mục' : 'Thêm danh mục';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('formId').value = categoryId || '';
+            document.getElementById('formNote').textContent = 'Điền tên và mô tả danh mục.';
+            showPopup();
+
+            if (categoryId) {
+                const category = categoryData.find(item => item.id_danh_muc === categoryId);
+                if (category) {
+                    document.getElementById('itemName').value = category.ten_danh_muc;
+                    document.getElementById('itemDescription').value = category.mo_ta;
+                }
+            }
+        }
+
+        function openEquipmentForm(equipmentId = null) {
+            document.getElementById('formType').value = 'equipment';
+            document.getElementById('categorySelectGroup').style.display = 'block';
+            document.getElementById('rentPriceGroup').style.display = 'block';
+            document.getElementById('statusGroup').style.display = 'block';
+            document.getElementById('descriptionGroup').style.display = 'block';
+            document.getElementById('itemName').placeholder = 'Nhập tên thiết bị';
+            document.getElementById('popupTitle').textContent = equipmentId ? 'Sửa thiết bị' : 'Thêm thiết bị';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('itemStatus').value = 'San sang';
+            document.getElementById('formId').value = equipmentId || '';
+            document.getElementById('formNote').textContent = 'Điền đầy đủ thông tin thiết bị, chọn danh mục phù hợp.';
+            buildCategoryOptions();
+            showPopup();
+
+            if (equipmentId) {
+                const equipment = equipmentData.find(item => item.id_thiet_bi === equipmentId);
+                if (equipment) {
+                    document.getElementById('itemName').value = equipment.ten_thiet_bi;
+                    document.getElementById('itemCategory').value = equipment.danh_muc_id;
+                    document.getElementById('itemPrice').value = equipment.gia_thue;
+                    document.getElementById('itemStatus').value = statusApiValue(equipment.tinh_trang);
+                    document.getElementById('itemDescription').value = equipment.mo_ta;
+                }
+            }
+        }
+
+        function showPopup() {
+            document.getElementById('formPopup').classList.add('active');
+        }
+
+        function closeFormPopup() {
+            document.getElementById('formPopup').classList.remove('active');
+        }
+
+        function saveForm(event) {
+            event.preventDefault();
+            const type = document.getElementById('formType').value;
+            const formId = Number(document.getElementById('formId').value || 0);
+            const name = document.getElementById('itemName').value.trim();
+            const description = document.getElementById('itemDescription').value.trim();
+
+            if (!name) {
+                alert('Tên không được để trống.');
+                return;
+            }
+
+            if (type === 'category') {
+                if (formId) {
+                    const category = categoryData.find(item => item.id_danh_muc === formId);
+                    if (category) {
+                        category.ten_danh_muc = name;
+                        category.mo_ta = description;
+                    }
+                } else {
+                    categoryData.push({
+                        id_danh_muc: categoryData.length ? Math.max(...categoryData.map(item => item.id_danh_muc)) + 1 : 1,
+                        ten_danh_muc: name,
+                        mo_ta: description
+                    });
+                }
+                renderCategoryTable();
+                renderEquipmentTable();
+            }
+
+            if (type === 'equipment') {
+                const categoryId = Number(document.getElementById('itemCategory').value);
+                const price = Number(document.getElementById('itemPrice').value) || 0;
+                const status = document.getElementById('itemStatus').value;
+
+                if (!categoryId) {
+                    alert('Vui lòng chọn danh mục.');
+                    return;
+                }
+
+                if (formId) {
+                    const equipment = equipmentData.find(item => item.id_thiet_bi === formId);
+                    if (equipment) {
+                        equipment.ten_thiet_bi = name;
+                        equipment.danh_muc_id = categoryId;
+                        equipment.gia_thue = price;
+                        equipment.tinh_trang = status;
+                        equipment.mo_ta = description;
+                    }
+                } else {
+                    equipmentData.push({
+                        id_thiet_bi: equipmentData.length ? Math.max(...equipmentData.map(item => item.id_thiet_bi)) + 1 : 1,
+                        ten_thiet_bi: name,
+                        danh_muc_id: categoryId,
+                        gia_thue: price,
+                        tinh_trang: status,
+                        mo_ta: description
+                    });
+                }
+                renderEquipmentTable();
+            }
+
+            closeFormPopup();
+        }
+
+        function deleteCategory(categoryId) {
+            const used = equipmentData.some(item => item.danh_muc_id === categoryId);
+            if (used) {
+                alert('Không thể xóa danh mục này vì còn thiết bị đang sử dụng.');
+                return;
+            }
+            if (!confirm('Bạn có chắc muốn xóa danh mục này không?')) return;
+            const index = categoryData.findIndex(item => item.id_danh_muc === categoryId);
+            if (index !== -1) {
+                categoryData.splice(index, 1);
+                renderCategoryTable();
+                buildCategoryOptions();
+            }
+        }
+
+        function deleteEquipment(equipmentId) {
+            if (!confirm('Bạn có chắc muốn xóa thiết bị này không?')) return;
+            const index = equipmentData.findIndex(item => item.id_thiet_bi === equipmentId);
+            if (index !== -1) {
+                equipmentData.splice(index, 1);
+                renderEquipmentTable();
+            }
+        }
+
+        document.getElementById('popupForm').addEventListener('submit', saveForm);
+
+        // API script below renders real category and equipment data.
+    </script>
+    <script src="./asset/js/api_admin.js"></script>
+    <script src="./asset/js/huy_hieu_chat_admin.js"></script>
+    <script src="./asset/js/thiet_bi_admin.js"></script>
+</body>
+</html>

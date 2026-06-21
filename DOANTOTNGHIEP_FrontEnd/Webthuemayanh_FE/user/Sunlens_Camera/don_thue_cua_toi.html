@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng đã đặt - Sunlens Camera</title>
+    <meta name="description" content="">
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/font/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nice-select/nice-select.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="./assets/plugin/slick/slick.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <link rel="stylesheet" href="./assets/css/chat-widget.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <style>
+        .user-account-menu {
+            position: relative;
+        }
+
+        .user-account-trigger {
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .user-account-trigger:hover,
+        .user-account-menu:hover .user-account-trigger {
+            color: var(--bs-primary) !important;
+        }
+
+        .user-account-icon {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(25, 135, 84, 0.12);
+            color: #198754;
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 220px;
+            padding: 8px;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            pointer-events: none;
+            z-index: 1060;
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        }
+
+        .user-account-menu:hover .user-dropdown-menu,
+        .user-account-menu.open .user-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .user-dropdown-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.2;
+            text-align: left;
+            text-decoration: none;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .user-dropdown-item:hover,
+        .user-dropdown-item.active {
+            background: #f1f5f9;
+            color: #198754;
+        }
+
+        .user-dropdown-item.user-logout-item {
+            color: #dc3545;
+        }
+
+        .user-dropdown-item.user-logout-item:hover {
+            background: #fff1f2;
+            color: #b02a37;
+        }
+
+        .orders-hero {
+            background: #fef6f0;
+            padding: 54px 0;
+        }
+
+        .orders-hero h1 {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .orders-section {
+            padding: 56px 0;
+            background: #fff;
+        }
+
+        .orders-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .orders-toolbar h2 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .order-card {
+            height: 100%;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+            padding: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.1);
+        }
+
+        .order-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .order-code {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .order-device {
+            margin: 4px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .order-meta {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .order-meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .order-meta-row span:first-child {
+            color: #64748b;
+        }
+
+        .order-meta-row strong {
+            color: #111827;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .status-badge-user {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 108px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        .status-confirmed {
+            color: #075985;
+            background: #e0f2fe;
+        }
+
+        .status-renting {
+            color: #065f46;
+            background: #d1fae5;
+        }
+
+        .status-completed {
+            color: #334155;
+            background: #e2e8f0;
+        }
+
+        .status-overdue {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .status-cancelled {
+            color: #7f1d1d;
+            background: #fecaca;
+        }
+
+        .orders-state {
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #d9e2ec;
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .orders-state-icon {
+            width: 64px;
+            height: 64px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff;
+            color: #198754;
+            font-size: 30px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .order-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .detail-box {
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 14px;
+            background: #f8fafc;
+        }
+
+        .detail-box label {
+            display: block;
+            margin-bottom: 4px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .detail-box span {
+            color: #111827;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .rental-edit-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .rental-edit-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .rental-edit-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .rental-edit-field label {
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .rental-edit-field .form-control:disabled {
+            color: #64748b;
+            background: #f8fafc;
+        }
+
+        .rental-update-message {
+            min-height: 22px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .rental-item {
+            display: grid;
+            grid-template-columns: 96px 1fr;
+            gap: 16px;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .rental-thumb {
+            width: 96px;
+            height: 96px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .rental-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .rental-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 24px;
+        }
+
+        .rental-item h6 {
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .rental-item-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px 18px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .rental-item-meta strong {
+            color: #111827;
+        }
+
+        .payment-image-panel {
+            display: grid;
+            grid-template-columns: minmax(220px, 360px) 1fr;
+            gap: 18px;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .payment-image-panel.payment-image-readonly {
+            grid-template-columns: minmax(220px, 360px);
+        }
+
+        .payment-image-frame {
+            min-height: 220px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+
+        .payment-image-preview {
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+            display: block;
+            object-fit: contain;
+            background: #fff;
+        }
+
+        .payment-image-placeholder {
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #64748b;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .payment-image-placeholder i {
+            font-size: 34px;
+            color: #94a3b8;
+        }
+
+        .payment-image-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 991.98px) {
+            .user-dropdown-menu {
+                right: auto;
+                left: 50%;
+                transform: translate(-50%, 8px);
+            }
+
+            .user-account-menu:hover .user-dropdown-menu,
+            .user-account-menu.open .user-dropdown-menu {
+                transform: translate(-50%, 0);
+            }
+
+            .order-detail-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .payment-image-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .orders-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .order-card-header,
+            .order-meta-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .order-meta-row strong {
+                text-align: left;
+            }
+
+            .order-detail-grid,
+            .rental-edit-grid,
+            .rental-item,
+            .rental-item-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .rental-thumb {
+                width: 100%;
+                height: 180px;
+            }
+
+            .payment-image-frame,
+            .payment-image-preview,
+            .payment-image-placeholder {
+                min-height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container py-lg-2 mt-0 mt-lg-2">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-2 mb-2 mb-lg-3 pt-3 pt-lg-2">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                            <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="index.html">
+                                <img src="./assets/images/logo.png" class="logo main-logo" alt="Sunlens Camera">
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <div class="list-inline d-lg-none d-flex justify-content-between">
+                                <div class="list-inline-item d-inline-block d-lg-none">
+                                    <button class="navbar-toggler border-0 collapsed" type="button" data-bs-toggle="offcanvas"
+                                            data-bs-target="#navbar-default" aria-controls="navbar-default"
+                                            aria-label="Toggle navigation">
+                                        <i class="bi bi-text-indent-left"></i>
+                                    </button>
+                                </div>
+                                <div>
+                                    <div class="list-inline-item me-4 user-account-menu" data-user-menu>
+                                        <a href="#" class="text-muted d-flex flex-column justity-content-center align-items-center user-account-trigger" data-user-trigger aria-haspopup="true" aria-expanded="false">
+                                            <span class="user-account-icon"><i class="bi bi-person-circle"></i></span>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block user-account-label">User</span>
+                                        </a>
+                                        <div class="user-dropdown-menu" data-user-dropdown>
+                                            <a href="don_thue_cua_toi.html" class="user-dropdown-item active">
+                                                <i class="bi bi-bag-check"></i>
+                                                <span>Đơn hàng đã đặt</span>
+                                            </a>
+                                            <a href="lien_he.html#contact-form" class="user-dropdown-item">
+                                                <i class="bi bi-chat-left-text"></i>
+                                                <span>Khiếu nại</span>
+                                            </a>
+                                            <a href="index.html" class="user-dropdown-item">
+                                                <i class="bi bi-gear"></i>
+                                                <span>Cài đặt</span>
+                                            </a>
+                                            <button type="button" class="user-dropdown-item user-logout-item" data-user-logout>
+                                                <i class="bi bi-box-arrow-right"></i>
+                                                <span>Đăng xuất</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="thiet_bi.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-heart"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block">Yêu thích</span>
+                                        </a>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="gio_hang.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <div class="position-relative">
+                                                <i class="bi bi-cart"></i>
+                                            </div>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block">Giỏ hàng</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-7">
+                    <nav class="navbar navbar-expand-lg navbar-light navbar-default py-0 pb-lg-2" aria-label="Offcanvas navbar large">
+                        <div class="container">
+                            <div class="offcanvas offcanvas-start pt-2" tabindex="-1" id="navbar-default"
+                                 aria-labelledby="navbar-defaultLabel">
+                                <div class="offcanvas-header pb-1">
+                                    <a href="index.html">
+                                        <img src="./assets/images/logo.png" alt="Sunlens Camera">
+                                    </a>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <div class="d-block d-lg-none mb-4">
+                                        <form action="#">
+                                            <div class="input-group">
+                                                <input class="form-control" type="search" placeholder="Search for products">
+                                                <span class="input-group-append">
+                                                    <button class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end" type="button">
+                                                        <span class="bi bi-search"></span>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="mx-auto">
+                                        <ul class="navbar-nav align-items-center ms-lg-5">
+                                            <li class="nav-item dropdown w-100 w-lg-auto">
+                                                <a class="nav-link" href="index.html">Trang chủ</a>
+                                            </li>
+                                            <li class="nav-item dropdown w-100 w-lg-auto">
+                                                <a class="nav-link" href="gioi_thieu.html">Giới thiệu</a>
+                                            </li>
+                                            <li class="nav-item dropdown w-100 w-lg-auto">
+                                                <a class="nav-link" href="thiet_bi.html" role="button">Sản phẩm</a>
+                                            </li>
+                                            <li class="nav-item dropdown w-100 w-lg-auto">
+                                                <a class="nav-link" href="tin_tuc.html" role="button">Tin tức</a>
+                                            </li>
+                                            <li class="nav-item dropdown w-100 w-lg-auto">
+                                                <a class="nav-link" href="lien_he.html" role="button">Liên hệ</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-none d-lg-block">
+                    <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+                        <div class="offcanvas-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div class="mt-50">
+                                <form action="#">
+                                    <div class="input-group">
+                                        <input class="form-control py-3" type="search" placeholder="Search for products">
+                                        <span class="input-group-append">
+                                            <button class="btn bg-white border border-start-0 ms-n10 py-3 rounded-0 rounded-end" type="button">
+                                                <span class="bi bi-search"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-inline d-flex pt-2">
+                        <div class="list-inline-item me-4">
+                            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                <i class="bi bi-search"></i>
+                                <span class="d-none d-sm-none d-md-none d-lg-block">Tìm kiếm</span>
+                            </a>
+                        </div>
+                        <div class="list-inline-item me-4 user-account-menu" data-user-menu>
+                            <a href="#" class="text-muted d-flex flex-column justity-content-center align-items-center user-account-trigger" data-user-trigger aria-haspopup="true" aria-expanded="false">
+                                <span class="user-account-icon"><i class="bi bi-person-circle"></i></span>
+                                <span class="d-none d-sm-none d-md-none d-lg-block user-account-label">User</span>
+                            </a>
+                            <div class="user-dropdown-menu" data-user-dropdown>
+                                <a href="don_thue_cua_toi.html" class="user-dropdown-item active">
+                                    <i class="bi bi-bag-check"></i>
+                                    <span>Đơn hàng đã đặt</span>
+                                </a>
+                                <a href="lien_he.html#contact-form" class="user-dropdown-item">
+                                    <i class="bi bi-chat-left-text"></i>
+                                    <span>Khiếu nại</span>
+                                </a>
+                                <a href="index.html" class="user-dropdown-item">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Cài đặt</span>
+                                </a>
+                                <button type="button" class="user-dropdown-item user-logout-item" data-user-logout>
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="list-inline-item me-4">
+                            <a href="gio_hang.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                <i class="bi bi-cart"></i>
+                                <span class="d-none d-sm-none d-md-none d-lg-block">Giỏ hàng</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="orders-hero">
+            <div class="container text-center">
+                <h1>Đơn hàng đã đặt</h1>
+                <p class="mb-0 text-muted">Theo dõi trạng thái và chi tiết các đơn thuê thiết bị của bạn.</p>
+            </div>
+        </section>
+
+        <section class="orders-section">
+            <div class="container">
+                <div class="orders-toolbar">
+                    <div>
+                        <h2>Lịch sử thuê thiết bị</h2>
+                        <p class="mb-0 text-muted">Danh sách chỉ hiển thị đơn hàng của tài khoản đang đăng nhập.</p>
+                    </div>
+                    <a href="thiet_bi.html" class="btn btn-outline-primary">
+                        <i class="bi bi-camera me-1"></i>
+                        Thuê thêm thiết bị
+                    </a>
+                </div>
+
+                <div id="ordersLoading" class="orders-state">
+                    <div>
+                        <div class="spinner-border text-success mb-3" role="status"></div>
+                        <h5 class="mb-1">Đang tải đơn hàng...</h5>
+                        <p class="text-muted mb-0">Vui lòng chờ trong giây lát.</p>
+                    </div>
+                </div>
+
+                <div id="ordersError" class="orders-state d-none">
+                    <div>
+                        <div class="orders-state-icon">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <h5 class="mb-2">Không tải được đơn hàng</h5>
+                        <p class="text-muted mb-3" id="ordersErrorMessage">Đã có lỗi xảy ra.</p>
+                        <button type="button" class="btn btn-primary" id="retryOrdersBtn">Thử lại</button>
+                    </div>
+                </div>
+
+                <div id="ordersEmpty" class="orders-state d-none">
+                    <div>
+                        <div class="orders-state-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <h5 class="mb-2">📦 Bạn chưa có đơn thuê nào</h5>
+                        <p class="text-muted mb-3">Khám phá các thiết bị đang có sẵn và đặt thuê ngay hôm nay.</p>
+                        <a href="index.html" class="btn btn-primary">Thuê thiết bị ngay</a>
+                    </div>
+                </div>
+
+                <div id="ordersList" class="row g-4 d-none"></div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="orderDetailModalLabel">Chi tiết đơn thuê</h5>
+                        <p class="text-muted mb-0 small" id="orderDetailSubtitle"></p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="orderDetailBody">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-success mb-3" role="status"></div>
+                        <p class="text-muted mb-0">Đang tải chi tiết đơn...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary d-none" id="complaintBtn">
+                        Khiếu nại
+                    </button>
+                    <button type="button" class="btn btn-outline-danger d-none" id="cancelOrderDetailBtn">
+                        Hủy đơn hàng
+                    </button>
+                    <button type="button" class="btn btn-outline-primary d-none" id="updateOrderInfoBtn">
+                        Cập nhật thông tin
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary d-none" id="cancelOrderEditBtn">
+                        Hủy cập nhật
+                    </button>
+                    <button type="button" class="btn btn-primary d-none" id="saveOrderUpdateBtn">
+                        Lưu cập nhật
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="closeOrderDetailBtn" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-0 footer-section">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer_logo mb-3">
+                        <img loading="lazy" src="./assets/images/logo.png" class="logo" alt="Sunlens Camera">
+                    </div>
+
+                    <div class="footer-contact">
+                        <h5 class="fw-bold mb-3">Sunlens Camera</h5>
+                        <p class="mb-2">
+                            <strong>Địa chỉ:</strong><br>
+                            382 Hùng Vương, Thanh Khê, Đà Nẵng
+                        </p>
+                        <p class="mb-2">
+                            <strong>Hotline:</strong><br>
+                            <a href="tel:0906586982">0906 586 982</a>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Email:</strong><br>
+                            <a href="mailto:conghieu2k4@gmail.com">conghieu2k4@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="footer_menu">
+                                <h4 class="footer_title">Liên hệ hỗ trợ</h4>
+                                <ul class="m-0 p-0 list-unstyled">
+                                    <li><a href="https://www.facebook.com/tran.cong.hieu.78479/" target="_blank">Facebook</a></li>
+                                    <li><a href="https://www.instagram.com/_.hiuuss.ig?igsh=MWpvaTg4ZDY2YTdxZQ%3D%3D&utm_source=qr" target="_blank">Instagram</a></li>
+                                    <li><a href="tel:0906586982">Hotline</a></li>
+                                    <li><a href="https://www.tiktok.com/@trh2k4" target="_blank">TikTok</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="footer_menu">
+                                <h4 class="footer_title">Thông tin</h4>
+                                <ul class="m-0 p-0 list-unstyled">
+                                    <li><a href="gioi_thieu.html#gioithieu">Về chúng tôi</a></li>
+                                    <li><a href="gioi_thieu.html#quytrinh">Quy trình thuê máy</a></li>
+                                    <li><a href="gioi_thieu.html#camket">Cam kết của chúng tôi</a></li>
+                                    <li><a href="lien_he.html">Liên hệ</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="footer_map">
+                        <h4 class="footer_title mb-3">Vị trí cửa hàng</h4>
+                        <div class="map-frame rounded overflow-hidden">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.9709561168374!2d108.20923530925882!3d16.066996884547994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142184af001a607%3A0xbe0595a463b5ff95!2zMzY4NitRUFcsIDM4MiBIw7luZyBWxrDGoW5nLCBUaGFuaCBLaMOqLCDEkMOgIE7hurVuZyA1NTAwMDAsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1778154533540!5m2!1svi!2s"
+                                width="100%"
+                                height="250"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center py-3 mt-4 text-white px-3 copyright">
+            <span>Bản quyền © 2026 Sunlens Camera. Tất cả quyền được bảo lưu.</span>
+        </div>
+    </footer>
+
+    <script src="./assets/js/jquery-3.6.0.min.js"></script>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/plugin/nice-select/jquery.nice-select.min.js"></script>
+    <script src="./assets/plugin/OwlCarousel2-2.3.4/dist/owl.carousel.min.js"></script>
+    <script src="./assets/plugin/nouislider/nouislider.min.js"></script>
+    <script src="./assets/plugin/slick/slick.min.js"></script>
+    <script src="./assets/js/trang_chinh.js"></script>
+    <script src="./assets/js/don_thue_nguoi_dung.js?v=20260620-rentals-restored"></script>
+    <script src="./assets/js/menu_tai_khoan.js"></script>
+<script src="./assets/js/hop_thoai_ho_tro.js?v=20260613-2"></script>
+
+</body>
+</html>

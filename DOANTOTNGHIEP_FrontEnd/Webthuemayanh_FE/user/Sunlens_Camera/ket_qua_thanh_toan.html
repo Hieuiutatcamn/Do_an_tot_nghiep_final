@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả thanh toán VNPAY | SunLens Camera</title>
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/font/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <style>
+        body {
+            background: #f6f8fb;
+        }
+        .payment-result-shell {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 48px 0;
+        }
+        .payment-result-card {
+            max-width: 720px;
+            margin: 0 auto;
+            border: 0;
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, .1);
+        }
+        .payment-result-icon {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+        }
+        .payment-result-icon.success {
+            color: #198754;
+            background: #dff5e8;
+        }
+        .payment-result-icon.error {
+            color: #dc3545;
+            background: #fde7ea;
+        }
+        .payment-result-icon.loading {
+            color: #0d6efd;
+            background: #e4efff;
+        }
+        .payment-result-details {
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+    <main class="payment-result-shell">
+        <div class="container">
+            <div class="card payment-result-card">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <a href="index.html" class="d-inline-block mb-4">
+                        <img src="./assets/images/Logo.png" alt="SunLens Camera" style="max-height: 56px;">
+                    </a>
+
+                    <div id="payment-result-icon" class="payment-result-icon loading">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <h1 id="payment-result-title" class="h3 mb-3">Đang kiểm tra giao dịch</h1>
+                    <p id="payment-result-message" class="text-muted mb-4">
+                        Vui lòng chờ trong giây lát để hệ thống xác thực kết quả từ VNPAY.
+                    </p>
+
+                    <div id="payment-result-details" class="payment-result-details text-start p-3 p-md-4 mb-4 d-none">
+                        <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                            <span class="text-muted">Mã đơn thuê</span>
+                            <strong id="payment-order-id">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                            <span class="text-muted">Số tiền</span>
+                            <strong id="payment-amount">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                            <span class="text-muted">Mã giao dịch VNPAY</span>
+                            <strong id="payment-transaction-id" class="text-break text-end">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                            <span class="text-muted">Ngày thanh toán</span>
+                            <strong id="payment-date" class="text-end">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between gap-3 py-2">
+                            <span class="text-muted">Trạng thái hệ thống</span>
+                            <strong id="payment-system-status">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                        <a href="don_thue_cua_toi.html" class="btn btn-primary px-4">
+                            <i class="bi bi-receipt me-2"></i>Đơn thuê của tôi
+                        </a>
+                        <a href="index.html" class="btn btn-outline-secondary px-4">Về trang chủ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="./assets/js/ket_qua_thanh_toan.js?v=20260619-vnpay"></script>
+</body>
+</html>

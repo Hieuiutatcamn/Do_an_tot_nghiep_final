@@ -1,0 +1,34 @@
+# Khong dua vao image
+.venv/
+venv/
+env/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Bi mat: KHONG bake .env vao image (chua secrets that). Truyen qua compose luc chay.
+.env
+*.env
+!.env.example
+
+# Log / runtime
+*.log
+uvicorn.*.log
+debug.log
+
+# Uploads se duoc mount volume luc chay
+uploads/*
+!uploads/.gitkeep
+
+# IDE / VCS
+.git/
+.gitignore
+.idea/
+.vscode/
+*.iml
+
+# Docker
+Dockerfile
+.dockerignore

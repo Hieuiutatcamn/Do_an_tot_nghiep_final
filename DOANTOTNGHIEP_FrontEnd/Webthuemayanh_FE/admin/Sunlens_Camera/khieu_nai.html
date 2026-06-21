@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sunlens Camera - Khiếu nại</title>
+	<link rel="stylesheet" href="./asset/css/templatemo-glass-admin-style.css">
+
+    <style>
+        /* Page-specific fixes: make content grid single-column on this page */
+        .content-grid { grid-template-columns: 1fr !important; }
+        .glass-card .card-body { overflow-x: auto; }
+        .table { min-width: 1120px; width: 100%; border-collapse: collapse; }
+        .table th, .table td { word-break: break-word; white-space: normal; vertical-align: top; }
+        @media (max-width: 900px) {
+            .search-input { width: 180px; }
+        }
+    </style>
+</head>
+<body>
+	 <!-- Animated Background -->
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+              <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                                        <!-- Logo -->
+                                        <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="tong_quan.html">
+                                            <img src="../../user/Sunlens_Camera/assets/images/logo.png" class="logo main-logo" alt="eCommerce HTML Template">
+                                        </a>
+                                        <!-- Logo -->
+                                        </div>
+                <span class="logo-text">Sunlens Camera</span>
+            </div>
+
+            <ul class="nav-menu">
+              <li class="nav-section">
+    <span class="nav-section-title">Menu chính</span>
+
+    <ul>
+
+        <!-- Trang chủ -->
+        <li class="nav-item">
+            <a href="tong_quan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                Trang chủ
+            </a>
+        </li>
+        <!-- Tài khoản -->
+        <li class="nav-item">
+            <a href="tai_khoan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Tài khoản
+            </a>
+        </li>
+
+        <!-- Sản phẩm -->
+        <li class="nav-item">
+            <a href="thiet_bi.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2l1.5 4h9L18 2"/>
+                    <path d="M3 6h18l-2 13H5L3 6z"/>
+                </svg>
+                Sản phẩm
+            </a>
+        </li>
+
+        <!-- Đơn thuê -->
+        <li class="nav-item">
+            <a href="don_thue.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 22V12h6v10"/>
+                    <path d="M2 10l10-8 10 8"/>
+                </svg>
+                Đơn thuê
+            </a>
+        </li>
+
+        <!-- Khiếu nại -->
+        <li class="nav-item">
+            <a href="khieu_nai.html" class="nav-link active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <circle cx="12" cy="16" r="1"/>
+                </svg>
+                Khiếu nại
+            </a>
+        </li>
+        <!-- Chat hỗ trợ -->
+        <li class="nav-item">
+            <a href="chat_ho_tro_admin.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                </svg>
+                Chat hỗ trợ
+                <span class="chat-waiting-badge" data-admin-chat-waiting-badge hidden style="display:none;"></span>
+            </a>
+        </li>
+        <!-- Settings -->
+        <li class="nav-item">
+            <a href="cai_dat.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 
+                    2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 
+                    1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 
+                    2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 
+                    1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 
+                    2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 
+                    1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 
+                    2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 
+                    1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 
+                    2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9 
+                    a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 
+                    2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 
+                    1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 
+                    2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9 
+                    a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 
+                    2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Cài đặt
+            </a>
+        </li>
+
+    </ul>
+</li>
+
+                <li class="nav-section">
+                    <span class="nav-section-title">Account</span>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="../../user/Sunlens_Camera/index.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">Sunlens Camera</div>
+                    <div class="user-info">
+                        <div class="user-name">Tên</div>
+                        <div class="user-role">Vai trò</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+               	<div class="page-header">
+					<h1 class="page-title">Quản lý khiếu nại</h1>
+					<div class="page-breadcrumb">
+						<a href="tong_quan.html">Trang chủ</a>
+						<span>/</span>
+						<span>Khiếu nại</span>
+					</div>
+                    
+				</div>
+                <div class="navbar-right">
+                    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                            <path d="M2 12h2"/><path d="M20 12h2"/>
+                            <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+
+        <div class="main-inner">
+			<section class="content-grid">
+				<div class="glass-card">
+					<div class="card-header">
+						<h2 class="card-title">Danh sách khiếu nại</h2>
+						<p class="card-subtitle">Hiển thị dữ liệu từ KHIEU_NAI + tên khách hàng</p>
+					</div>
+					<div class="card-body">
+						<table class="table" id="complaints-table" style="width:100%;border-collapse:collapse;">
+							<thead>
+                                <tr>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Khách hàng</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">SĐT</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Đơn thuê</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Sản phẩm khiếu nại</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Tiêu đề khiếu nại</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Nội dung khiếu nại</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Trạng thái</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Ngày khiếu nại</th>
+                                    <th style="text-align:left;padding:8px;border-bottom:1px solid #e6e6e6;">Hành động</th>
+                                </tr>
+							</thead>
+							<tbody id="complaints-tbody"></tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+        </div>
+	</div>
+
+	<button class="mobile-menu-toggle">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+		</svg>
+	</button>
+
+	<footer class="site-footer">
+		<p>Copyright © 2026 Your Company.</p>
+	</footer>
+
+    <!-- Complaint Detail Modal -->
+    <div id="complaint-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:1200;">
+        <div style="background:#fff;width:90%;max-width:720px;border-radius:8px;padding:18px;box-shadow:0 10px 30px rgba(2,6,23,0.2);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h3 id="modal-title" style="margin:0;font-size:18px;">Chi tiết khiếu nại</h3>
+                <button id="modal-close" style="border:none;background:transparent;font-size:18px;cursor:pointer;">✕</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                    <strong>Khách hàng</strong>
+                    <div id="modal-customer" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div>
+                    <strong>Số điện thoại</strong>
+                    <div id="modal-phone" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div>
+                    <strong>Mã đơn</strong>
+                    <div id="modal-order" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div style="grid-column:1 / -1;">
+                    <strong>Sản phẩm khiếu nại</strong>
+                    <div id="modal-products" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div style="grid-column:1 / -1;">
+                    <strong>Tiêu đề</strong>
+                    <div id="modal-subject" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div style="grid-column:1 / -1;">
+                    <strong>Nội dung</strong>
+                    <div id="modal-content" style="margin-top:6px;color:#374151;white-space:pre-wrap;"></div>
+                </div>
+                <div>
+                    <strong>Trạng thái</strong>
+                    <div id="modal-status" style="margin-top:6px;color:#111"></div>
+                </div>
+                <div>
+                    <strong>Ngày khiếu nại</strong>
+                    <div id="modal-created" style="margin-top:6px;color:#111"></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;text-align:right;">
+                <a id="modal-call" href="#" style="display:inline-block;margin-right:8px;padding:8px 12px;background:#059669;color:#fff;border-radius:6px;text-decoration:none;">Gọi</a>
+                <button id="modal-mark-resolved" style="padding:8px 12px;background:#ef4444;color:#fff;border-radius:6px;border:none;cursor:pointer;">Đánh dấu đã xử lí</button>
+            </div>
+        </div>
+    </div>
+
+	<script src="./asset/js/templatemo-glass-admin-script.js"></script>
+	<script src="./asset/js/api_admin.js"></script>
+	<script src="./asset/js/huy_hieu_chat_admin.js"></script>
+	<script src="./asset/js/khieu_nai_admin.js"></script>
+</body>
+</html>
+

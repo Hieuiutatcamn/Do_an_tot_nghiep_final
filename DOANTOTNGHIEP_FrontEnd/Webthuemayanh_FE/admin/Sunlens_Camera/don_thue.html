@@ -1,0 +1,607 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunlens Camera - Đặt hàng</title>
+    <meta name="description" content="Admin orders page for rental management">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./asset/css/templatemo-glass-admin-style.css">
+    <style>
+        .orders-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .order-card {
+            padding-bottom: 0;
+        }
+        .data-table th,
+        .data-table td {
+            white-space: nowrap;
+        }
+        .table-row-action {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .table-row-action .card-btn {
+            padding: 6px 12px;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending { background: rgba(245, 158, 11, 0.16); color: #d97706; }
+        .status-confirmed { background: rgba(14, 165, 233, 0.16); color: #0ea5e9; }
+        .status-renting { background: rgba(16, 185, 129, 0.16); color: #10b981; }
+        .status-completed { background: rgba(251, 113, 133, 0.16); color: #fb7185; }
+        .detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .detail-row div {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .detail-row label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: rgba(17, 24, 39, 0.75);
+        }
+        .detail-row span {
+            display: block;
+            font-size: 14px;
+            color: #111827;
+            font-weight: 600;
+        }
+        .detail-card-title {
+            font-size: 18px;
+            margin-bottom: 14px;
+            color: #111827;
+        }
+        .no-order {
+            color: rgba(17, 24, 39, 0.7);
+            padding: 24px;
+            text-align: center;
+        }
+        .small-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+        .small-table th,
+        .small-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+            font-size: 14px;
+            color: #111827;
+        }
+        .small-table th {
+            color: rgba(17, 24, 39, 0.65);
+            text-align: left;
+        }
+        .form-popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.35);
+            padding: 20px;
+            z-index: 50;
+        }
+        .form-popup.active {
+            display: flex;
+        }
+        .popup-card {
+            width: min(940px, 100%);
+            max-height: min(calc(100vh - 80px), 900px);
+            overflow: hidden;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18);
+            backdrop-filter: blur(20px);
+            animation: fadeIn 0.18s ease-out;
+            display: flex;
+            flex-direction: column;
+            color: #111827;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+        }
+        .popup-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #111827;
+        }
+        .popup-close {
+            border: none;
+            background: transparent;
+            color: #111827;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 10px 14px;
+        }
+        .popup-content {
+            overflow-y: auto;
+            padding: 20px 24px 24px;
+            display: grid;
+            gap: 20px;
+        }
+        .popup-section {
+            display: grid;
+            gap: 16px;
+        }
+        .popup-section .detail-row {
+            grid-template-columns: 1fr 1fr;
+        }
+        .popup-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 0 24px 20px;
+        }
+        .popup-actions .card-btn {
+            min-width: 120px;
+        }
+        @media (max-width: 820px) {
+            .popup-section .detail-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 1100px) {
+            .orders-grid {
+                grid-template-columns: 1fr;
+            }
+            .popup-card {
+                max-height: calc(100vh - 40px);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 20px;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        .image-modal.active {
+            display: flex;
+        }
+        .image-modal-content {
+            position: relative;
+            max-width: 80vw;
+            max-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .image-modal-content img {
+            max-width: calc(80vw - 40px);
+            max-height: calc(80vh - 40px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.4);
+        }
+        .image-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .image-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .detail-row img {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .detail-row img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        }
+        .order-search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px 18px;
+            flex-wrap: wrap;
+        }
+        .order-search-input {
+            flex: 1 1 360px;
+            min-width: 240px;
+            min-height: 44px;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.86);
+            color: #111827;
+            font: inherit;
+            outline: none;
+            padding: 10px 14px;
+        }
+        .order-search-input:focus {
+            border-color: #9b5f3c;
+            box-shadow: 0 0 0 3px rgba(155, 95, 60, 0.12);
+        }
+        .order-search-clear {
+            min-height: 44px;
+            white-space: nowrap;
+        }
+        .order-status-filter {
+            display: flex;
+            flex: 0 1 230px;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .order-status-filter label {
+            color: rgba(17, 24, 39, 0.72);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .order-status-select {
+            min-height: 44px;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.86);
+            color: #111827;
+            font: inherit;
+            outline: none;
+            padding: 10px 14px;
+        }
+        .order-status-select:focus {
+            border-color: #9b5f3c;
+            box-shadow: 0 0 0 3px rgba(155, 95, 60, 0.12);
+        }
+        .status-overdue { background: rgba(239, 68, 68, 0.16); color: #dc2626; }
+        .status-cancelled { background: rgba(100, 116, 139, 0.16); color: #475569; }
+        @media (max-width: 640px) {
+            .order-search-bar {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            .order-search-input,
+            .order-search-clear,
+            .order-status-filter {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+     <!-- Animated Background -->
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+              <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                                        <!-- Logo -->
+                                        <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="tong_quan.html">
+                                            <img src="../../user/Sunlens_Camera/assets/images/logo.png" class="logo main-logo" alt="eCommerce HTML Template">
+                                        </a>
+                                        <!-- Logo -->
+                                        </div>
+                <span class="logo-text">Sunlens Camera</span>
+            </div>
+
+            <ul class="nav-menu">
+              <li class="nav-section">
+    <span class="nav-section-title">Menu chính</span>
+
+    <ul>
+
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a href="tong_quan.html" class="nav-link4" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            
+            </a>
+        </li>
+
+         <li class="nav-item">
+            <a href="tong_quan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                Trang chủ
+            </a>
+        </li>
+        <!-- Tài khoản -->
+        <li class="nav-item">
+            <a href="tai_khoan.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Tài khoản
+            </a>
+        </li>
+
+        <!-- Sản phẩm -->
+        <li class="nav-item">
+            <a href="thiet_bi.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2l1.5 4h9L18 2"/>
+                    <path d="M3 6h18l-2 13H5L3 6z"/>
+                </svg>
+                Sản phẩm
+            </a>
+        </li>
+
+        <!-- Đơn thuê -->
+        <li class="nav-item">
+            <a href="don_thue.html" class="nav-link active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 22V12h6v10"/>
+                    <path d="M2 10l10-8 10 8"/>
+                </svg>
+                Đơn thuê
+            </a>
+        </li>
+
+        <!-- Khiếu nại -->
+        <li class="nav-item">
+            <a href="khieu_nai.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <circle cx="12" cy="16" r="1"/>
+                </svg>
+                Khiếu nại
+            </a>
+        </li>
+        <!-- Chat hỗ trợ -->
+        <li class="nav-item">
+            <a href="chat_ho_tro_admin.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                </svg>
+                Chat hỗ trợ
+                <span class="chat-waiting-badge" data-admin-chat-waiting-badge hidden style="display:none;"></span>
+            </a>
+        </li>
+        <!-- Settings -->
+        <li class="nav-item">
+            <a href="cai_dat.html" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 
+                    2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 
+                    1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 
+                    2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 
+                    1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 
+                    2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 
+                    1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 
+                    2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 
+                    1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 
+                    2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9 
+                    a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 
+                    2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 
+                    1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 
+                    2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9 
+                    a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 
+                    2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Cài đặt
+            </a>
+        </li>
+
+    </ul>
+</li>
+
+                <li class="nav-section">
+                    <span class="nav-section-title">Account</span>
+                    <ul>
+                        <li class="nav-item">
+                            <a href="../../user/Sunlens_Camera/index.html" class="nav-link">
+                                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">Sunlens Camera</div>
+                    <div class="user-info">
+                        <div class="user-name">Tên</div>
+                        <div class="user-role">Vai trò</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <nav class="navbar">
+                	<div class="page-header">
+					<h1 class="page-title">Đơn Thuê</h1>
+					<div class="page-breadcrumb">
+						<a href="tong_quan.html">Trang chủ</a>
+						<span>/</span>
+						<span>Đơn Thuê</span>
+					</div>
+                    
+				</div>
+                <div class="navbar-right">
+                    <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                            <path d="M2 12h2"/><path d="M20 12h2"/>
+                            <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+
+            <section class="orders-grid">
+                <div class="glass-card order-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Đơn Thuê</h2>
+                            <p class="card-subtitle">Danh sách đơn thuê từ bảng DON_THUE</p>
+                        </div>
+                    </div>
+                    <div class="order-search-bar">
+                        <input
+                            type="search"
+                            class="order-search-input"
+                            id="orderSearchInput"
+                            placeholder="Tìm theo mã đơn, tên khách hàng, số điện thoại, trạng thái..."
+                            autocomplete="off"
+                        >
+                        <div class="order-status-filter">
+                            <label for="orderStatusFilter">Trạng thái Đơn thuê</label>
+                            <select class="order-status-select" id="orderStatusFilter">
+                                <option value="all">Tất cả</option>
+                                <option value="payment-pending">Chờ thanh toán</option>
+                                <option value="pending">Đã đặt</option>
+                                <option value="confirmed">Đã xác nhận</option>
+                                <option value="renting">Đang thuê</option>
+                                <option value="completed">Đã thuê</option>
+                                <option value="overdue">Quá hạn</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                        </div>
+                        <button class="card-btn btn-secondary order-search-clear" type="button" id="clearOrderSearchBtn">
+                            Xóa tìm kiếm
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="orderTable">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Khách hàng</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Ngày nhận</th>
+                                    <th>Ngày trả</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <div class="image-modal" id="imageModal" onclick="dongHopThoaiAnh(event)">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <button class="image-modal-close" onclick="dongHopThoaiAnh()">✕</button>
+            <img id="modalImage" src="" alt="Hình ảnh phóng to">
+        </div>
+    </div>
+
+    <div class="form-popup" id="orderDetailPopup" onclick="dongPopupChiTietDonThue(event)">
+        <div class="popup-card" onclick="event.stopPropagation()">
+            <div class="popup-header">
+                <h3 id="orderPopupTitle">Chi Tiết Đơn Thuê</h3>
+                <button class="popup-close" type="button" onclick="dongPopupChiTietDonThue()">Đóng</button>
+            </div>
+            <div class="popup-content">
+                <div class="popup-section" id="orderPopupInfo"></div>
+                <div class="popup-section">
+                    <div class="detail-card-title">Chi Tiết Đơn Thuê</div>
+                    <table class="small-table">
+                        <thead>
+                            <tr>
+                                <th>ID Chi Tiết</th>
+                                <th>Thiết Bị</th>
+                                <th>Ngày Nhận</th>
+                                <th>Ngày Trả</th>
+                                <th>Số Lượng</th>
+                                <th>Giá Thuê</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderPopupDetailRows"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="popup-actions">
+                <button class="card-btn btn-secondary" type="button" onclick="dongPopupChiTietDonThue()">Đóng</button>
+                <button class="card-btn" type="button" id="orderPopupActionButton"></button>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <script src="./asset/js/templatemo-glass-admin-script.js"></script>
+    <script src="./asset/js/api_admin.js?v=20260619-vnpay-status-2"></script>
+    <script src="./asset/js/huy_hieu_chat_admin.js"></script>
+    <script src="./asset/js/don_thue_admin.js?v=20260620-rentals-restored"></script>
+</body>
+</html>

@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán đơn thuê | SunLens Camera</title>
+    <meta name="description" content="">
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/font/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css">
+    <!-- font-awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nice-select/nice-select.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="./assets/plugin/OwlCarousel2-2.3.4/dist/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="./assets/plugin/nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="./assets/plugin/slick/slick.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <link rel="stylesheet" href="./assets/css/chat-widget.css">
+      <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"  rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header Section Start -->
+   <header>
+        <!-- Navbar -->
+            <div class="container py-lg-2 mt-0 mt-lg-2">
+                <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-2  mb-2 mb-lg-3 pt-3 pt-lg-2">
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center mb-3 mb-lg-0">
+                                        <!-- Logo -->
+                                        <a class="navbar-brand flex-shrink-0 py-0 py-lg-0" href="index.html">
+                                            <img src="./assets/images/logo.png" class="logo main-logo" alt="eCommerce HTML Template">
+                                        </a>
+                                        <!-- Logo -->
+                                        </div>
+                                    
+                                        <div class="col-12">
+                                        <div class="list-inline  d-lg-none d-flex justify-content-between">
+
+                                            <div class="list-inline-item d-inline-block d-lg-none">
+                                                <button class="navbar-toggler border-0 collapsed" type="button" data-bs-toggle="offcanvas"
+                                                    data-bs-target="#navbar-default" aria-controls="navbar-default"
+                                                    aria-label="Toggle navigation">
+                                                    <i class="bi bi-text-indent-left"></i>
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="dang_nhap.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                                        <i class="bi bi-person"></i>
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Tài khoản</span>
+                                                    </a>
+                                                </div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="thiet_bi.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                                        <i class="bi bi-heart"></i>
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Yêu thích</span>
+                                                    </a>
+                                                </div>
+                                                <div class="list-inline-item me-4">
+                                                    <a href="gio_hang.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                                        <div class="position-relative">
+                                                            <i class="bi bi-cart"></i>
+                                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                                                5
+                                                            </span>
+                                                        </div> 
+                                                        <span class="d-none d-sm-none d-md-none d-lg-block" >Giỏ hàng</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-7">
+                            <nav class="navbar navbar-expand-lg navbar-light navbar-default py-0 pb-lg-2" aria-label="Offcanvas navbar large">
+                            <div class="container">
+                                <div class="offcanvas offcanvas-start pt-2" tabindex="-1" id="navbar-default"
+                                    aria-labelledby="navbar-defaultLabel">
+                                    <div class="offcanvas-header pb-1">
+                                        <a href="index.html"><img src="./assets/images/logo.png"
+                                                alt="eCommerce HTML Template"></a>
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div class="d-block d-lg-none mb-4">
+                                            <form action="#">
+                                                <div class="input-group">
+                                                    <input class="form-control" type="search" placeholder="Search for products">
+                                                    <span class="input-group-append">
+                                                        <button
+                                                            class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end"
+                                                            type="button">
+                                                            <span class="bi bi-search"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="mx-auto">
+                                            <ul class="navbar-nav align-items-center ms-lg-5">
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link" href="index.html">Trang chủ</a>
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                  <a class="nav-link" href="gioi_thieu.html">Giới thiệu</a>
+                                                  
+                                                </li>
+                                               <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="thiet_bi.html" role="button">Sản phẩm</a>
+                                                   
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="tin_tuc.html" role="button">Tin tức</a>
+                                                   
+                                                </li>
+                                                <li class="nav-item dropdown w-100 w-lg-auto">
+                                                    <a class="nav-link " href="lien_he.html" role="button">Liên hệ</a>
+                                                    
+                                                </li>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </nav>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-none d-lg-block">
+                                <!-- Navbar Actions -->
+                                <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+                                    <div class="offcanvas-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div class="mt-50">
+                                            <form action="#">
+                                                <div class="input-group">
+                                                    <input class="form-control py-3" type="search" placeholder="Search for products">
+                                                    <span class="input-group-append">
+                                                        <button
+                                                            class="btn bg-white border border-start-0 ms-n10 py-3 rounded-0 rounded-end"
+                                                            type="button">
+                                                            <span class="bi bi-search"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                <div class="list-inline  d-flex pt-2">
+                                    <div class="list-inline-item me-4">
+                                        <a href="dang_nhap.html"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-search"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Tìm kiếm</span>
+                                        </a>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="dang_nhap.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-person"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Tài khoản</span>
+                                        </a>
+                                    </div>
+                                    <div class="list-inline-item me-4">
+                                        <a href="gio_hang.html" class="text-muted  d-flex flex-column justity-content-center align-items-center">
+                                            <i class="bi bi-cart"></i>
+                                            <span class="d-none d-sm-none d-md-none d-lg-block" >Giỏ hàng</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Navbar Actions -->
+                        </div>
+                </div>
+            </div>
+        <!-- Navbar -->
+    </header>
+    <!-- Header Section End -->
+<main>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-main">
+        <div class="container">
+            <div class="breadcrumb-container">
+                <h2 class="page-title">Thanh toán thuê máy</h2>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="index.html">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#">Thanh toán</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout -->
+    <div class="product-checkout">
+        <div class="mt-4">
+            <div class="container">
+
+                <!-- LOGIN -->
+                <div class="row mt-5">
+                    
+
+                    <!-- COUPON -->
+                    <div class="col-lg-12 mt-4">
+                        <h5>
+                            Bạn có mã giảm giá?
+                            <a data-bs-toggle="collapse"
+                               class="text-primary"
+                               href="#collapseCoupon"
+                               role="button">
+                                Nhấn vào đây để nhập mã
+                            </a>
+                        </h5>
+
+                        <div class="collapse" id="collapseCoupon">
+                            <div class="mt-3">
+                                <p>Nhập mã ưu đãi để được giảm giá đơn thuê.</p>
+
+                                <form action="#" id="discount-form">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="input-item gs_input_area">
+                                                <input type="text"
+                                                       id="discount-code-input"
+                                                       placeholder="Nhập mã giảm giá">
+                                            </div>
+                                            <div class="small mt-2" id="discount-message"></div>
+                                            <div class="small mt-2 text-success fw-semibold d-none" id="discount-applied">
+                                                Mã đã áp dụng:
+                                                <span id="discount-applied-code"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <button class="btn btn-primary text-uppercase" id="apply-discount-btn">
+                                            Áp dụng mã
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM -->
+                <form action="#" id="checkout-form">
+                    <div class="row mt-50">
+
+                        <!-- LEFT -->
+                        <div class="col-lg-8">
+
+                            <div class="row">
+
+                                <!-- CUSTOMER INFO -->
+                                <div class="col-lg-12">
+                                    <h4 class="title-2 mb-4">
+                                        Thông tin khách thuê
+                                    </h4>
+
+                                    <div class="checkout-info">
+
+                                        <h6>Thông tin cá nhân</h6>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 mb-4">
+                                                <div class="input-item gs_input_area">
+                                                    <input type="text"
+                                                           id="full-name"
+                                                           placeholder="Họ và tên">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4">
+                                                <div class="input-item gs_input_area">
+                                                    <input type="text"
+                                                           placeholder="Số điện thoại"
+                                                           id="phone">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4">
+                                                <div class="input-item gs_input_area">
+                                                    <input type="email"
+                                                           id="email"
+                                                           placeholder="Email">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-4">
+                                                <div class="input-item gs_input_area">
+                                                    <input type="text"
+                                                           id="cccd"
+                                                           placeholder="CCCD / CMND">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 mb-4">
+                                                <div class="input-item gs_input_area">
+                                                    <input type="text"
+                                                           id="address"
+                                                           placeholder="Địa chỉ hiện tại">
+                                                    <input type="hidden" id="gender">
+                                                    <input type="hidden" id="birth-date">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <h6>Ảnh CCCD</h6>
+                                        <div id="cccd-message" class="small mb-3 text-danger fw-semibold"></div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4">
+                                                <label for="cccd-front">Mặt trước</label>
+                                                <input type="file" accept="image/*" id="cccd-front" class="form-control">
+                                                <div class="small mt-2 text-muted" id="cccd-front-status">Chưa cập nhật CCCD</div>
+                                                <img id="cccd-front-preview"
+                                                     class="img-fluid mt-2 border rounded d-none"
+                                                     alt="Ảnh CCCD mặt trước"
+                                                     style="width: 100%; max-height: 180px; object-fit: cover;">
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+                                                <label for="cccd-back">Mặt sau</label>
+                                                <input type="file" accept="image/*" id="cccd-back" class="form-control">
+                                                <div class="small mt-2 text-muted" id="cccd-back-status">Chưa cập nhật CCCD</div>
+                                                <img id="cccd-back-preview"
+                                                     class="img-fluid mt-2 border rounded d-none"
+                                                     alt="Ảnh CCCD mặt sau"
+                                                     style="width: 100%; max-height: 180px; object-fit: cover;">
+                                            </div>
+                                        </div>
+
+                                     <!-- BỎ TOÀN BỘ PHẦN RENTAL TIME RIÊNG -->
+
+<!-- NOTE -->
+<h6>Ghi chú thêm</h6>
+
+<div class="input-item input-item-textarea gs_input_area">
+    <textarea rows="4"
+        placeholder="Ví dụ: cần pin dự phòng, tripod, giao máy trước 8h sáng..."></textarea>
+</div>
+
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-body">
+                                        <h4 class="mb-4">💳 PHƯƠNG THỨC THANH TOÁN</h4>
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-6">
+                                                <label class="border rounded p-3 d-flex gap-3 h-100 w-100" for="payment-method-vnpay">
+                                                    <input class="form-check-input mt-1"
+                                                           type="radio"
+                                                           name="payment-method"
+                                                           id="payment-method-vnpay"
+                                                           value="VNPAY"
+                                                           checked>
+                                                    <span>
+                                                        <strong>Thanh toán qua VNPAY</strong>
+                                                        <small class="d-block text-muted mt-1">Thanh toán tự động, xác nhận đơn ngay sau khi giao dịch thành công.</small>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="border rounded p-3 d-flex gap-3 h-100 w-100" for="payment-method-manual">
+                                                    <input class="form-check-input mt-1"
+                                                           type="radio"
+                                                           name="payment-method"
+                                                           id="payment-method-manual"
+                                                           value="Chuyen khoan thu cong">
+                                                    <span>
+                                                        <strong>Chuyển khoản thủ công</strong>
+                                                        <small class="d-block text-muted mt-1">Chuyển khoản ngân hàng và tải ảnh giao dịch để nhân viên kiểm tra.</small>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div id="vnpay-payment-panel">
+                                            <div class="alert alert-primary mb-0" role="alert">
+                                                <h5 class="alert-heading"><i class="bi bi-shield-check me-2"></i>Thanh toán an toàn qua VNPAY</h5>
+                                                <p class="mb-1">Bạn sẽ được chuyển đến cổng VNPAY Sandbox để thanh toán <strong>200.000đ tiền cọc</strong>.</p>
+                                                <small>Không cần tải ảnh chuyển khoản khi sử dụng phương thức này.</small>
+                                            </div>
+                                        </div>
+
+                                        <div id="manual-payment-panel" class="d-none">
+                                            <div class="row gy-4">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="p-3 border rounded bg-light text-center">
+                                                        <h5 class="mb-3" style="font-weight:700;">📱 Chuyển khoản qua QR Code</h5>
+                                                        <div id="qr-code" class="mx-auto mb-3" style="width:200px; height:200px; border:2px solid #e9ecef; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#fff;"></div>
+                                                        <p class="mt-2 mb-0 text-muted">Quét mã QR để chuyển khoản</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <div class="p-3 border rounded mb-4">
+                                                        <h5 class="mb-3" style="font-weight:700;">🏦 Thông tin chuyển khoản</h5>
+                                                        <div class="mb-3 d-flex justify-content-between">
+                                                            <span class="text-muted">Ngân hàng:</span>
+                                                            <span>MB Bank</span>
+                                                        </div>
+                                                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                            <span class="text-muted">Số tài khoản:</span>
+                                                            <span>
+                                                                <strong class="text-primary">0906586982</strong>
+                                                                <button type="button" class="btn btn-outline-primary btn-sm ms-2" onclick="copyToClipboard('0906586982')" title="Sao chép số tài khoản">
+                                                                    <i class="bi bi-clipboard"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mb-3 d-flex justify-content-between">
+                                                            <span class="text-muted">Chủ tài khoản:</span>
+                                                            <span>TRAN CONG HIEU</span>
+                                                        </div>
+                                                        <div class="mb-3 d-flex justify-content-between">
+                                                            <span class="text-muted">Tiền cọc:</span>
+                                                            <span><strong class="text-danger" id="deposit-amount">200000</strong>đ</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <span class="text-muted">Nội dung chuyển khoản:</span>
+                                                            <span class="text-end">
+                                                                <strong class="text-success" id="transfer-content">Thuê máy ảnh [SĐT]</strong>
+                                                                <button type="button" class="btn btn-outline-success btn-sm ms-2" onclick="copyTransferContent()" title="Sao chép nội dung">
+                                                                    <i class="bi bi-clipboard"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-3 border rounded">
+                                                        <h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Hướng dẫn thanh toán</h6>
+                                                        <ol class="ps-3 mb-3">
+                                                            <li>Chuyển khoản <strong>tiền cọc</strong> theo thông tin trên.</li>
+                                                            <li>Ghi đúng nội dung chuyển khoản có <strong>số điện thoại</strong>.</li>
+                                                            <li>Chụp ảnh màn hình giao dịch thành công.</li>
+                                                            <li>Tải ảnh chuyển khoản lên bên dưới.</li>
+                                                        </ol>
+                                                        <div class="alert alert-warning py-3 mb-0" role="alert">
+                                                            <strong>Lưu ý:</strong> Ảnh chuyển khoản sẽ chờ nhân viên xác nhận, chưa được tự động ghi nhận là đã thanh toán.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <h6>Ảnh chuyển khoản</h6>
+                                                <input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" id="transfer-proof" class="form-control">
+                                                <div id="transfer-proof-preview-wrap" class="mt-3 d-none">
+                                                    <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
+                                                        <span id="transfer-proof-file-name" class="small text-muted"></span>
+                                                        <button type="button" id="transfer-proof-remove" class="btn btn-sm btn-outline-danger">Xóa ảnh</button>
+                                                    </div>
+                                                    <img id="transfer-proof-preview"
+                                                         class="img-fluid border rounded d-none"
+                                                         alt="Ảnh chuyển khoản"
+                                                         style="width: 100%; max-height: 220px; object-fit: contain;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               id="terms"
+                                               required>
+                                        <label class="form-check-label">
+                                            Tôi đồng ý với điều khoản thuê thiết bị và chính sách đặt cọc.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="checkout-payment">
+                                    <div class="text-end">
+                                        <button type="submit"
+                                                id="confirm-rental-btn"
+                                                class="btn btn-primary px-4">
+                                            Thanh toán qua VNPAY
+                                        </button>
+                                    </div>
+                                </div>
+
+</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="col-lg-4 mt-5">
+
+    <!-- ORDER -->
+    <div id="checkout-confirm">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <td class="text-start">
+                            Thiết bị thuê
+                        </td>
+
+                        <td class="text-start">
+                            Thời gian thuê
+                        </td>
+
+                        <td class="text-end">
+                            Thành tiền
+                        </td>
+                    </tr>
+                </thead>
+
+                <tbody id="checkoutCartItems">
+                </tbody>
+
+                <tfoot>
+
+                    <tr>
+                        <td colspan="2" class="text-end">
+                            <strong>Tạm tính</strong>
+                        </td>
+
+                        <td class="text-end" id="checkout-subtotal">
+                            0đ
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="text-end">
+                            <strong>Tiền cọc</strong>
+                        </td>
+
+                        <td class="text-end" id="checkout-deposit">
+                            0đ
+                        </td>
+                    </tr>
+
+                    <tr class="d-none" id="checkout-discount-code-row">
+                        <td colspan="2" class="text-end">
+                            <strong>Mã giảm giá</strong>
+                        </td>
+
+                        <td class="text-end" id="checkout-discount-code">
+                            -
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="text-end">
+                            <strong>Giảm giá</strong>
+                        </td>
+
+                        <td class="text-end" id="checkout-discount">
+                            0đ
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="text-end">
+                            <strong>Tổng thanh toán</strong>
+                        </td>
+
+                        <td class="text-end text-danger fw-bold" id="checkout-grand-total">
+                            0đ
+                        </td>
+                    </tr>
+
+                </tfoot>
+
+            </table>
+        </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+   <!-- footer Section -->
+<footer class="mt-0 footer-section">
+    <div class="container">
+        <div class="row gy-4">
+
+            <!-- Thông tin -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer_logo mb-3">
+                    <img loading="lazy"
+                        src="./assets/images/logo.png"
+                        class="logo"
+                        alt="Sunlens Camera">
+                </div>
+
+                <div class="footer-contact">
+                    <h5 class="fw-bold mb-3">Sunlens Camera</h5>
+
+                    <p class="mb-2">
+                        <strong>Địa chỉ:</strong><br>
+                        382 Hùng Vương, Thanh Khê, Đà Nẵng
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Hotline:</strong><br>
+                        <a href="tel:0906586982">0906 586 982</a>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:conghieu2k4@gmail.com">
+                            conghieu2k4@gmail.com
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <div class="col-lg-4 col-md-6">
+                <div class="row">
+
+                    <div class="col-6">
+                        <div class="footer_menu">
+                            <h4 class="footer_title">Liên hệ hỗ trợ</h4>
+
+                            <ul class="m-0 p-0 list-unstyled">
+                                <li>
+                                    <a href="https://www.facebook.com/tran.cong.hieu.78479/" target="_blank">
+                                        Facebook
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="https://www.instagram.com/_.hiuuss.ig?igsh=MWpvaTg4ZDY2YTdxZQ%3D%3D&utm_source=qr"
+                                        target="_blank">
+                                        Instagram
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="tel:0906586982">
+                                        Hotline
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="https://www.tiktok.com/@trh2k4"
+                                        target="_blank">
+                                        TikTok
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="footer_menu">
+                            <h4 class="footer_title">Thông tin</h4>
+
+                            <ul class="m-0 p-0 list-unstyled">
+                                <li>
+                                    <a href="gioi_thieu.html#gioithieu">
+                                        Về chúng tôi
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="gioi_thieu.html#quytrinh">
+                                        Quy trình thuê máy
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="gioi_thieu.html#camket">
+                                         Cam kết của chúng tôi
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="lien_he.html">
+                                        Liên hệ
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Google Map -->
+            <div class="col-lg-4">
+                <div class="footer_map">
+                    <h4 class="footer_title mb-3">Vị trí cửa hàng</h4>
+
+                    <div class="map-frame rounded overflow-hidden">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.9709561168374!2d108.20923530925882!3d16.066996884547994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142184af001a607%3A0xbe0595a463b5ff95!2zMzY4NitRUFcsIDM4MiBIw7luZyBWxrDGoW5nLCBUaGFuaCBLaMOqLCDEkMOgIE7hurVuZyA1NTAwMDAsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1778154533540!5m2!1svi!2s"
+                            width="100%"
+                            height="250"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center py-3 mt-4 text-white px-3 copyright">
+        <span>
+            Bản quyền © 2026 Sunlens Camera.
+            Tất cả quyền được bảo lưu.
+        </span>
+    </div>
+</footer>
+   <!-- footer Section -->
+
+<script src="./assets/js/jquery-3.6.0.min.js"></script>
+<script src="./assets/js/bootstrap.bundle.min.js"></script>
+<script src="./assets/plugin/nice-select/jquery.nice-select.min.js"></script>
+<script src="./assets/plugin/OwlCarousel2-2.3.4/dist/owl.carousel.min.js"></script>
+<script src="./assets/plugin/nouislider/nouislider.min.js"></script>
+<script src="./assets/plugin/slick/slick.min.js"></script>
+<script>
+function copyToClipboard(text) {
+    if (!navigator.clipboard) {
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Đã copy: ' + text);
+    }, function(err) {
+        console.error('Copy failed: ', err);
+    });
+}
+
+function copyTransferContent() {
+    var transferContentEl = document.getElementById('transfer-content');
+    if (transferContentEl) {
+        copyToClipboard(transferContentEl.innerText);
+    }
+}
+
+function updateTransferFields() {
+    var phoneInput = document.getElementById('phone');
+    var phone = phoneInput ? phoneInput.value.trim() : '';
+    var content = phone ? 'Thuê máy ảnh ' + phone : 'Thuê máy ảnh [SĐT]';
+    var transferContent = document.getElementById('transfer-content');
+    if (transferContent) {
+        transferContent.innerText = content;
+    }
+
+    var depositEl = document.getElementById('deposit-amount');
+    var amount = '200000';
+    if (depositEl) {
+        amount = depositEl.innerText.replace(/[^0-9]/g, '') || amount;
+    }
+
+    var qrCodeDiv = document.getElementById('qr-code');
+    if (!qrCodeDiv) {
+        return;
+    }
+    qrCodeDiv.innerHTML = '';
+
+    // Sử dụng VietQR API để tạo mã QR chuyển khoản thực tế
+    // BIN MB Bank: 970441, Số tài khoản: 0906586982
+    var qrImageUrl = 'https://img.vietqr.io/image/970422-0906586982-compact2.jpg?amount=' + amount + '&addInfo=' + encodeURIComponent(content);
+    var img = document.createElement('img');
+    img.src = qrImageUrl;
+    img.alt = 'QR Code Chuyển Khoản MB Bank';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'contain';
+    qrCodeDiv.appendChild(img);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', updateTransferFields);
+    }
+    updateTransferFields();
+});
+</script>
+<script>
+var CHECKOUT_API_ORIGIN = (window.SUNLENS_API_ORIGIN || 'http://127.0.0.1:8000').replace(/\/+$/, '');
+var CHECKOUT_API_BASES = [
+    window.SUNLENS_USER_API_BASE,
+    window.SUNLENS_API_BASE_URL,
+    CHECKOUT_API_ORIGIN + '/api/v1',
+    CHECKOUT_API_ORIGIN + '/api'
+].filter(Boolean).map(function (value) {
+    return String(value).replace(/\/+$/, '');
+}).filter(function (value, index, list) {
+    return list.indexOf(value) === index;
+});
+
+var checkoutProfileState = {
+    profile: {},
+    selectedFiles: {
+        front: null,
+        back: null
+    },
+    cccdPaths: {
+        front: '',
+        back: ''
+    }
+};
+
+function truongNguoiDungHienTai(nguoiDung, keys) {
+    for (var i = 0; i < keys.length; i += 1) {
+        var value = nguoiDung[keys[i]];
+        if (value !== undefined && value !== null && String(value).trim() !== '') {
+            return String(value).trim();
+        }
+    }
+
+    return '';
+}
+
+function getCheckoutToken() {
+    return localStorage.getItem('access_token') || sessionStorage.getItem('access_token') || '';
+}
+
+function isPlainObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function normalizeCheckoutProfile(data) {
+    if (!isPlainObject(data)) {
+        return {};
+    }
+
+    var profile = data.customer || data.khach_hang || data.profile || data.user || data;
+    var account = data.account || data.tai_khoan || {};
+
+    return {
+        ...account,
+        ...profile,
+        id_tai_khoan: profile.id_tai_khoan || account.id_tai_khoan,
+        dang_nhap: profile.dang_nhap || profile.username || account.dang_nhap || account.username
+    };
+}
+
+function checkoutImageSource(path) {
+    if (!path) {
+        return '';
+    }
+    if (/^(https?:|data:|blob:)/i.test(path)) {
+        return path;
+    }
+    if (path.charAt(0) === '/') {
+        return CHECKOUT_API_ORIGIN + path;
+    }
+    return path;
+}
+
+function readCheckoutApiResponse(response) {
+    if (response.status === 204) {
+        return Promise.resolve(null);
+    }
+
+    var contentType = response.headers.get('content-type') || '';
+    if (contentType.indexOf('application/json') !== -1) {
+        return response.json();
+    }
+
+    return response.text();
+}
+
+function checkoutApiError(data, statusCode) {
+    if (isPlainObject(data)) {
+        var detail = data.detail || data.message || data.error;
+        if (Array.isArray(detail)) {
+            return detail.map(function (item) {
+                if (item && typeof item === 'object') {
+                    var field = Array.isArray(item.loc)
+                        ? item.loc.filter(function (part) { return part !== 'body'; }).join('.')
+                        : '';
+                    var message = item.msg || item.message || 'Dữ liệu không hợp lệ';
+                    if (item.type === 'missing' || /field required/i.test(message)) {
+                        return field ? 'Thiếu trường: ' + field : 'Thiếu trường bắt buộc';
+                    }
+                    return field ? field + ': ' + message : message;
+                }
+                return String(item);
+            }).join('\n');
+        }
+        if (detail) {
+            return detail;
+        }
+    }
+
+    if (typeof data === 'string' && data.trim()) {
+        return data.trim();
+    }
+
+    return 'API lỗi ' + statusCode;
+}
+
+async function checkoutApiFetch(path, options) {
+    var token = getCheckoutToken();
+    if (!token) {
+        var loginError = new Error('Bạn cần đăng nhập để tiếp tục.');
+        loginError.status = 401;
+        throw loginError;
+    }
+
+    var lastError = null;
+    var requestOptions = options || {};
+
+    for (var i = 0; i < CHECKOUT_API_BASES.length; i += 1) {
+        var baseUrl = CHECKOUT_API_BASES[i];
+        try {
+            var headers = new Headers(requestOptions.headers || {});
+            var body = requestOptions.body;
+
+            headers.set('Authorization', 'Bearer ' + token);
+
+            if (body && !(body instanceof FormData) && typeof body !== 'string') {
+                headers.set('Content-Type', 'application/json');
+                body = JSON.stringify(body);
+            }
+
+            var requestUrl = baseUrl + path;
+            var response;
+            try {
+                response = await fetch(requestUrl, {
+                    ...requestOptions,
+                    headers: headers,
+                    body: body
+                });
+            } catch (networkError) {
+                console.error('Checkout API Network Error:', networkError);
+                var causeMessage = networkError && networkError.message
+                    ? ' Chi tiết trình duyệt: ' + networkError.message + '.'
+                    : '';
+                var apiError = new Error('Không kết nối được API ' + requestUrl + '.' + causeMessage + ' Vui lòng kiểm tra backend FastAPI và cấu hình CORS.');
+                apiError.status = 0;
+                apiError.cause = networkError;
+                apiError.url = requestUrl;
+                throw apiError;
+            }
+            var data = await readCheckoutApiResponse(response);
+
+            if (response.ok) {
+                return data;
+            }
+
+            var error = new Error('HTTP ' + response.status + ': ' + checkoutApiError(data, response.status));
+            error.status = response.status;
+            error.url = requestUrl;
+            error.response = data;
+            console.error('Checkout API Error:', {
+                url: requestUrl,
+                status: response.status,
+                response: data
+            });
+            lastError = error;
+
+            if (response.status !== 404) {
+                throw error;
+            }
+        } catch (error) {
+            lastError = error;
+            if (error.status === 0 || (error.status && error.status !== 404)) {
+                throw error;
+            }
+        }
+    }
+
+    throw lastError || new Error('Không gọi được API người dùng.');
+}
+
+function isNotFoundError(error) {
+    var message = String((error && error.message) || '').toLowerCase();
+    return (error && error.status === 404)
+        || message.indexOf('not found') !== -1
+        || message.indexOf('404') !== -1
+        || message.indexOf('không tìm thấy') !== -1;
+}
+
+function fetchCheckoutProfile() {
+    return checkoutApiFetch('/nguoi-dung/me').catch(function (error) {
+        if (!isNotFoundError(error)) {
+            throw error;
+        }
+        return checkoutApiFetch('/users/me');
+    }).catch(function (error) {
+        if (!isNotFoundError(error)) {
+            throw error;
+        }
+        return checkoutApiFetch('/xac-thuc/me');
+    }).catch(function (error) {
+        if (!isNotFoundError(error)) {
+            throw error;
+        }
+        return checkoutApiFetch('/auth/me');
+    });
+}
+
+function formInputValue(id) {
+    var input = document.getElementById(id);
+    return input ? input.value.trim() : '';
+}
+
+function setInputValue(id, value, overwrite) {
+    var input = document.getElementById(id);
+    if (!input || !value) {
+        return false;
+    }
+
+    if (input.dataset.userEdited === 'true') {
+        return false;
+    }
+
+    if (input.value.trim() && !overwrite) {
+        return false;
+    }
+
+    input.value = value;
+    input.dataset.autofilled = 'true';
+    return true;
+}
+
+function setInputValueIfEmpty(id, value) {
+    return setInputValue(id, value, false);
+}
+
+function bindCustomerEditTracking() {
+    [
+        'full-name',
+        'phone',
+        'email',
+        'cccd',
+        'address',
+        'gender',
+        'birth-date'
+    ].forEach(function (id) {
+        var input = document.getElementById(id);
+        if (!input || input.dataset.checkoutTracked === 'true') {
+            return;
+        }
+        input.dataset.checkoutTracked = 'true';
+        input.addEventListener('input', function () {
+            input.dataset.userEdited = 'true';
+        });
+    });
+}
+
+function parseCustomerStorage(key) {
+    try {
+        var rawValue = localStorage.getItem(key);
+        if (!rawValue) {
+            return null;
+        }
+
+        var customer = JSON.parse(rawValue);
+        return customer && typeof customer === 'object' && !Array.isArray(customer)
+            ? customer
+            : null;
+    } catch (error) {
+        if (key === 'currentUser') {
+            console.error("Lỗi đọc currentUser:", error);
+        } else {
+            console.error("Lỗi đọc " + key + ":", error);
+        }
+        return null;
+    }
+}
+
+function docNguoiDungHienTaiTuLocalStorage() {
+    var storageKeys = [
+        'user_account',
+        'user_customer',
+        'user',
+        'sunlens_user',
+        'current_user',
+        'currentUser'
+    ];
+    var nguoiDungHienTai = {};
+    var hasUserData = false;
+
+    storageKeys.forEach(function (key) {
+        var customer = parseCustomerStorage(key);
+        if (!customer) {
+            return;
+        }
+
+        nguoiDungHienTai = {
+            ...nguoiDungHienTai,
+            ...customer
+        };
+        hasUserData = true;
+    });
+
+    return hasUserData ? nguoiDungHienTai : null;
+}
+
+function saveCheckoutProfileToStorage(profile) {
+    if (!profile || !Object.keys(profile).length) {
+        return;
+    }
+
+    var payload = JSON.stringify(profile);
+    localStorage.setItem('currentUser', payload);
+    localStorage.setItem('user_customer', payload);
+
+    if (localStorage.getItem('user')) {
+        localStorage.setItem('user', payload);
+    }
+    if (localStorage.getItem('current_user')) {
+        localStorage.setItem('current_user', payload);
+    }
+    if (localStorage.getItem('sunlens_user')) {
+        localStorage.setItem('sunlens_user', payload);
+    }
+}
+
+function selectedCheckoutImagePath(side) {
+    return side === 'front'
+        ? truongNguoiDungHienTai(checkoutProfileState.profile, [
+            'anh_cccd_mat_truoc',
+            'Anh_cccd_mat_truoc',
+            'Anh_CCCD_mat_truoc',
+            'cccdFrontPath'
+        ])
+        : truongNguoiDungHienTai(checkoutProfileState.profile, [
+            'anh_cccd_mat_sau',
+            'Anh_cccd_mat_sau',
+            'Anh_CCCD_mat_sau',
+            'cccdBackPath'
+        ]);
+}
+
+function setCccdMessage(message, type) {
+    var messageElement = document.getElementById('cccd-message');
+    if (!messageElement) {
+        return;
+    }
+
+    messageElement.textContent = message || '';
+    messageElement.className = 'small mb-3 fw-semibold ' + (type === 'success' ? 'text-success' : 'text-danger');
+}
+
+function setCccdPreview(side, path, statusText, statusType) {
+    var image = document.getElementById(side === 'front' ? 'cccd-front-preview' : 'cccd-back-preview');
+    var status = document.getElementById(side === 'front' ? 'cccd-front-status' : 'cccd-back-status');
+    var source = checkoutImageSource(path);
+
+    if (image) {
+        if (source) {
+            image.src = source;
+            image.classList.remove('d-none');
+        } else {
+            image.removeAttribute('src');
+            image.classList.add('d-none');
+        }
+    }
+
+    if (status) {
+        status.textContent = statusText || (source ? 'Đã có ảnh CCCD trong hồ sơ' : 'Chưa cập nhật CCCD');
+        status.className = 'small mt-2 ' + (statusType === 'success' ? 'text-success fw-semibold' : 'text-muted');
+    }
+}
+
+function refreshCccdPreviewFromProfile() {
+    checkoutProfileState.cccdPaths.front = selectedCheckoutImagePath('front');
+    checkoutProfileState.cccdPaths.back = selectedCheckoutImagePath('back');
+
+    setCccdPreview(
+        'front',
+        checkoutProfileState.cccdPaths.front,
+        checkoutProfileState.cccdPaths.front ? 'Đã có ảnh CCCD trong hồ sơ' : 'Chưa cập nhật CCCD',
+        checkoutProfileState.cccdPaths.front ? 'success' : 'muted'
+    );
+    setCccdPreview(
+        'back',
+        checkoutProfileState.cccdPaths.back,
+        checkoutProfileState.cccdPaths.back ? 'Đã có ảnh CCCD trong hồ sơ' : 'Chưa cập nhật CCCD',
+        checkoutProfileState.cccdPaths.back ? 'success' : 'muted'
+    );
+}
+
+function checkoutProfileHasSide(side) {
+    return Boolean(checkoutProfileState.cccdPaths[side] || checkoutProfileState.selectedFiles[side]);
+}
+
+function checkoutHasRequiredCccd() {
+    return checkoutProfileHasSide('front') && checkoutProfileHasSide('back');
+}
+
+function dienThongTinKhachHangTuHoSo(nguoiDungHienTai, overwrite) {
+    if (!nguoiDungHienTai) {
+        return;
+    }
+
+    var phoneWasFilled = false;
+
+    setInputValue('full-name', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'ho_ten',
+        'ten_khach_hang',
+        'full_name',
+        'name'
+    ]), overwrite);
+    phoneWasFilled = setInputValue('phone', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'so_dien_thoai',
+        'phone',
+        'sdt'
+    ]), overwrite);
+    setInputValue('email', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'email'
+    ]), overwrite);
+    setInputValue('cccd', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'cccd',
+        'cmnd',
+        'so_cccd',
+        'So_CCCD'
+    ]), overwrite);
+    setInputValue('address', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'dia_chi',
+        'address',
+        'dia_chi_hien_tai'
+    ]), overwrite);
+    setInputValue('gender', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'gioi_tinh',
+        'gender'
+    ]), overwrite);
+    setInputValue('birth-date', truongNguoiDungHienTai(nguoiDungHienTai, [
+        'ngay_sinh',
+        'birthDate',
+        'date_of_birth'
+    ]), overwrite);
+
+    if (phoneWasFilled && typeof updateTransferFields === 'function') {
+        updateTransferFields();
+    }
+}
+
+function loadCustomerInfo() {
+    var nguoiDungHienTai = docNguoiDungHienTaiTuLocalStorage();
+    if (nguoiDungHienTai) {
+        checkoutProfileState.profile = {
+            ...checkoutProfileState.profile,
+            ...nguoiDungHienTai
+        };
+        dienThongTinKhachHangTuHoSo(checkoutProfileState.profile, false);
+        refreshCccdPreviewFromProfile();
+    } else {
+        refreshCccdPreviewFromProfile();
+    }
+
+    if (!getCheckoutToken()) {
+        return;
+    }
+
+    fetchCheckoutProfile()
+        .then(function (data) {
+            var profile = normalizeCheckoutProfile(data);
+            if (!Object.keys(profile).length) {
+                return;
+            }
+
+            checkoutProfileState.profile = {
+                ...checkoutProfileState.profile,
+                ...profile
+            };
+            saveCheckoutProfileToStorage(checkoutProfileState.profile);
+            dienThongTinKhachHangTuHoSo(checkoutProfileState.profile, true);
+            refreshCccdPreviewFromProfile();
+            setCccdMessage('', 'success');
+        })
+        .catch(function (error) {
+            console.warn(error.message || error);
+        });
+}
+
+function saveCustomerInfoToLocalStorage() {
+    var nguoiDungHienTai = docNguoiDungHienTaiTuLocalStorage();
+    nguoiDungHienTai = nguoiDungHienTai || {};
+
+    var updatedUser = {
+        ...checkoutProfileState.profile,
+        ...nguoiDungHienTai,
+        ho_ten: formInputValue('full-name'),
+        so_dien_thoai: formInputValue('phone'),
+        sdt: formInputValue('phone'),
+        email: checkoutProfileState.profile.email || '',
+        cccd: formInputValue('cccd'),
+        so_cccd: formInputValue('cccd'),
+        dia_chi: formInputValue('address'),
+        gioi_tinh: formInputValue('gender'),
+        ngay_sinh: formInputValue('birth-date'),
+        anh_cccd_mat_truoc: checkoutProfileState.cccdPaths.front,
+        anh_cccd_mat_sau: checkoutProfileState.cccdPaths.back
+    };
+
+    checkoutProfileState.profile = updatedUser;
+    saveCheckoutProfileToStorage(updatedUser);
+}
+
+function uploadPathFromResponse(data, side) {
+    if (!data || typeof data !== 'object') {
+        return '';
+    }
+
+    if (side === 'front') {
+        return data.anh_cccd_mat_truoc || data.Anh_cccd_mat_truoc || data.Anh_CCCD_mat_truoc || data.path || data.url || '';
+    }
+
+    return data.anh_cccd_mat_sau || data.Anh_cccd_mat_sau || data.Anh_CCCD_mat_sau || data.path || data.url || '';
+}
+
+function uploadCheckoutCccdImage(side, file) {
+    var formData = new FormData();
+    formData.append('side', side);
+    formData.append('file', file);
+    formData.append('user_id', String(checkoutProfileState.profile.id_khach_hang || checkoutProfileState.profile.id_tai_khoan || 'me'));
+
+    return checkoutApiFetch('/users/me/cccd-image', {
+        method: 'POST',
+        body: formData
+    }).catch(function (error) {
+        if (!isNotFoundError(error)) {
+            throw error;
+        }
+        return checkoutApiFetch('/users/upload-cccd', {
+            method: 'POST',
+            body: formData
+        });
+    }).then(function (data) {
+        var uploadedPath = uploadPathFromResponse(data, side);
+        if (!uploadedPath) {
+            throw new Error('API upload chưa trả về đường dẫn ảnh CCCD.');
+        }
+
+        checkoutProfileState.cccdPaths[side] = uploadedPath;
+        checkoutProfileState.profile = {
+            ...checkoutProfileState.profile,
+            ...normalizeCheckoutProfile(data)
+        };
+        if (side === 'front') {
+            checkoutProfileState.profile.anh_cccd_mat_truoc = uploadedPath;
+        } else {
+            checkoutProfileState.profile.anh_cccd_mat_sau = uploadedPath;
+        }
+        return uploadedPath;
+    });
+}
+
+function uploadSelectedCheckoutCccdImages() {
+    var uploads = [];
+
+    ['front', 'back'].forEach(function (side) {
+        var file = checkoutProfileState.selectedFiles[side];
+        if (!file) {
+            return;
+        }
+
+        uploads.push(uploadCheckoutCccdImage(side, file).then(function (path) {
+            setCccdPreview(side, path, 'Đã có ảnh CCCD trong hồ sơ', 'success');
+            checkoutProfileState.selectedFiles[side] = null;
+            var input = document.getElementById(side === 'front' ? 'cccd-front' : 'cccd-back');
+            if (input) {
+                input.value = '';
+            }
+        }));
+    });
+
+    return Promise.all(uploads).then(function () {
+        saveCustomerInfoToLocalStorage();
+        refreshCccdPreviewFromProfile();
+    });
+}
+
+function handleCccdFileChange(side) {
+    var input = document.getElementById(side === 'front' ? 'cccd-front' : 'cccd-back');
+    var file = input && input.files && input.files[0];
+
+    checkoutProfileState.selectedFiles[side] = null;
+
+    if (!file) {
+        setCccdPreview(
+            side,
+            checkoutProfileState.cccdPaths[side],
+            checkoutProfileState.cccdPaths[side] ? 'Đã có ảnh CCCD trong hồ sơ' : 'Chưa cập nhật CCCD',
+            checkoutProfileState.cccdPaths[side] ? 'success' : 'muted'
+        );
+        return;
+    }
+
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+        input.value = '';
+        alert('Vui lòng chọn đúng file ảnh CCCD.');
+        return;
+    }
+
+    checkoutProfileState.selectedFiles[side] = file;
+    setCccdPreview(side, URL.createObjectURL(file), 'Ảnh CCCD mới đã chọn', 'success');
+    setCccdMessage('', 'success');
+}
+
+function bindCccdPreviewInputs() {
+    var frontInput = document.getElementById('cccd-front');
+    var backInput = document.getElementById('cccd-back');
+
+    if (frontInput && frontInput.dataset.checkoutPreviewBound !== 'true') {
+        frontInput.dataset.checkoutPreviewBound = 'true';
+        frontInput.addEventListener('change', function () {
+            handleCccdFileChange('front');
+        });
+    }
+
+    if (backInput && backInput.dataset.checkoutPreviewBound !== 'true') {
+        backInput.dataset.checkoutPreviewBound = 'true';
+        backInput.addEventListener('change', function () {
+            handleCccdFileChange('back');
+        });
+    }
+}
+
+window.SunlensCheckoutProfile = {
+    hasRequiredCccd: checkoutHasRequiredCccd,
+    uploadSelectedCccdImages: uploadSelectedCheckoutCccdImages,
+    saveCustomerInfo: saveCustomerInfoToLocalStorage,
+    setCccdMessage: setCccdMessage,
+    cccdPaths: function () {
+        return {
+            front: checkoutProfileState.cccdPaths.front,
+            back: checkoutProfileState.cccdPaths.back
+        };
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    bindCustomerEditTracking();
+    bindCccdPreviewInputs();
+    loadCustomerInfo();
+
+    var checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', saveCustomerInfoToLocalStorage);
+    }
+});
+</script>
+<script src="./assets/js/tien_ich_gio_hang.js?v=20260620-rentals-restored"></script>
+<script src="./assets/js/thanh_toan_gio_hang.js?v=20260620-rentals-restored"></script>
+<script src="./assets/js/trang_chinh.js"></script>
+<script src="./assets/js/menu_tai_khoan.js"></script>
+<script src="./assets/js/hop_thoai_ho_tro.js?v=20260613-2"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,3 @@
+# Scripts chay trong container Linux: BAT BUOC dung LF du clone tren Windows
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf

@@ -1,0 +1,62 @@
+# ===================== Python / Backend =====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtualenvs (built fresh in Docker, never committed)
+.venv/
+venv/
+env/
+ENV/
+
+# Test / tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ===================== Secrets & runtime =====================
+# Real env files contain secrets — never commit. Keep .env.example tracked.
+.env
+*.env
+!*.env.example
+!.env.example
+
+# Runtime logs / uploads written by the app
+*.log
+DoAnTotNghiep_BackEnd/Backend/uvicorn.*.log
+DoAnTotNghiep_BackEnd/debug.log
+DoAnTotNghiep_BackEnd/Backend/uploads/*
+!DoAnTotNghiep_BackEnd/Backend/uploads/.gitkeep
+
+# ===================== Node (frontend tooling, if any) =====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===================== IDE / Editor / OS =====================
+.idea/
+*.iml
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===================== Dev scratch / leftovers =====================
+DOANTOTNGHIEP_FrontEnd/tmp_*.txt
+**/temp_check_html.py
+**/upload_api.py
+
+# ===================== Docker =====================
+# Local override files (compose reads these automatically if present)
+docker-compose.override.yml
+
+# Office temp/lock files
+~$*
