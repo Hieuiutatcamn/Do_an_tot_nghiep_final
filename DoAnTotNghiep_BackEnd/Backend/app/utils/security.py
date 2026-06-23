@@ -28,7 +28,12 @@ def password_needs_rehash(stored_password: str) -> bool:
         return True
 
 
-def create_token(subject: str, expires_delta: timedelta, token_type: str) -> str:
+def create_token(
+    subject: str,
+    expires_delta: timedelta,
+    token_type: str,
+    extra_claims: dict[str, Any] | None = None,
+) -> str:
     settings = get_settings()
     secret_key = (
         settings.jwt_refresh_secret_key
@@ -42,6 +47,8 @@ def create_token(subject: str, expires_delta: timedelta, token_type: str) -> str
         "exp": expires_at,
         "iat": datetime.now(UTC),
     }
+    if extra_claims:
+        payload.update(extra_claims)
     return jwt.encode(payload, secret_key, algorithm=settings.jwt_algorithm)
 
 

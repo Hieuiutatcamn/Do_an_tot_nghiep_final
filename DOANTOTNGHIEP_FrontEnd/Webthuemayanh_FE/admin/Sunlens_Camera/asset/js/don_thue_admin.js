@@ -10,6 +10,15 @@
     let orderSearchTimer = null;
     let initialOrderOpened = false;
     const initialOrderIdFromUrl = new URLSearchParams(window.location.search).get('id');
+    const CAC_TRANG_THAI_KE_TIEP_CHI_TIET_DON_THUE = {
+        'Cho thanh toan': ['Da huy'],
+        'Da dat': ['Da xac nhan', 'Da huy'],
+        'Da xac nhan': ['Dang thue', 'Da huy'],
+        'Dang thue': ['Da thue', 'Da qua han'],
+        'Da qua han': ['Da thue'],
+        'Da thue': [],
+        'Da huy': [],
+    };
 
     async function taiDanhSachKhachHang() {
         const customers = await AdminApi.optional(() => AdminApi.getAll('/customers'), []);
@@ -98,6 +107,15 @@
             overdue: 'Quá hạn',
             cancelled: 'Đã hủy',
         }[ui] || AdminApi.rentalStatusText(status);
+    }
+
+    function taoLuaChonTrangThaiChiTiet(trangThaiHienTai) {
+        const cacLuaChon = [trangThaiHienTai, ...(CAC_TRANG_THAI_KE_TIEP_CHI_TIET_DON_THUE[trangThaiHienTai] || [])]
+            .filter(Boolean)
+            .filter((giaTri, index, danhSach) => danhSach.indexOf(giaTri) === index);
+        return cacLuaChon.map((giaTri) => (
+            `<option value="${AdminApi.escapeHtml(giaTri)}" ${giaTri === trangThaiHienTai ? 'selected' : ''}>${AdminApi.escapeHtml(AdminApi.rentalStatusText(giaTri))}</option>`
+        )).join('');
     }
 
     function locDonThue() {
@@ -341,7 +359,7 @@
 
         if (!order) {
             if (infoContainer) infoContainer.innerHTML = '<div class="no-order">Không tìm thấy đơn thuê.</div>';
-            if (rowsContainer) rowsContainer.innerHTML = '<tr><td colspan="6">Không có chi tiết đơn thuê.</td></tr>';
+            if (rowsContainer) rowsContainer.innerHTML = '<tr><td colspan="7">Không có chi tiết đơn thuê.</td></tr>';
             if (actionButtonEl) actionButtonEl.disabled = true;
             return;
         }
@@ -406,12 +424,20 @@
             <tr>
                 <td>${item.id_chi_tiet_don_thue}</td>
                 <td>${AdminApi.escapeHtml((item.thiet_bi || item.device) ? (item.thiet_bi || item.device).ten_thiet_bi : `Thiết bị #${item.id_thiet_bi}`)}</td>
+                <td>
+                    <select
+                        onchange="capNhatTrangThaiChiTietDonThue(${item.id_chi_tiet_don_thue}, this.value)"
+                        style="padding:6px 12px;border-radius:8px;border:1px solid rgba(15,23,42,.2);font-size:14px;color:#111827;min-width:160px;"
+                    >
+                        ${taoLuaChonTrangThaiChiTiet(item.trang_thai || order.trang_thai)}
+                    </select>
+                </td>
                 <td>${AdminApi.formatDateTime(item.ngay_nhan)}</td>
                 <td>${AdminApi.formatDateTime(item.ngay_tra)}</td>
                 <td>${item.so_luong || 0}</td>
                 <td>${AdminApi.formatCurrency(item.gia_thue)}</td>
             </tr>
-        `).join('') || '<tr><td colspan="6">Không có chi tiết đơn thuê.</td></tr>';
+        `).join('') || '<tr><td colspan="7">Không có chi tiết đơn thuê.</td></tr>';
 
         if (actionButtonEl) {
             if (order.trang_thai_ui === 'payment-pending') {
@@ -426,6 +452,25 @@
                 actionButtonEl.textContent = 'Không có thao tác';
                 actionButtonEl.onclick = null;
                 actionButtonEl.disabled = true;
+            }
+        }
+    }
+
+    async function capNhatTrangThaiChiTietDonThue(idChiTietDonThue, trangThaiMoi) {
+        try {
+            await AdminApi.apiFetch(`/chi-tiet-don-hang/${idChiTietDonThue}/trang-thai`, {
+                method: 'PATCH',
+                body: { trang_thai: trangThaiMoi },
+            });
+            await taiDanhSachDonThue(currentSearch, { forceReload: true });
+            if (selectedOrderId) {
+                hienThiChiTietDonThue(selectedOrderId);
+            }
+        } catch (error) {
+            alert(error.message || 'Không cập nhật được trạng thái chi tiết đơn thuê.');
+            if (selectedOrderId) {
+                await taiDanhSachDonThue(currentSearch, { forceReload: true });
+                hienThiChiTietDonThue(selectedOrderId);
             }
         }
     }
@@ -450,6 +495,7 @@
         window.moHopThoaiAnh = moHopThoaiAnh;
         window.dongHopThoaiAnh = dongHopThoaiAnh;
         window.capNhatTrangThaiDonThue = capNhatTrangThaiDonThue;
+        window.capNhatTrangThaiChiTietDonThue = capNhatTrangThaiChiTietDonThue;
         window.hienThiChiTietDonThue = hienThiChiTietDonThue;
         window.getStatusText = AdminApi.rentalStatusText;
         window.chuanHoaDonThue = chuanHoaDonThue;
@@ -458,6 +504,7 @@
         window.layTrangThaiHieuLucDonThue = layTrangThaiHieuLucDonThue;
         window.coBoLocDonThueDangHoatDong = coBoLocDonThueDangHoatDong;
         window.layTenTrangThaiDonThue = layTenTrangThaiDonThue;
+        window.taoLuaChonTrangThaiChiTiet = taoLuaChonTrangThaiChiTiet;
         window.laDonQuaHan = laDonQuaHan;
         window.taoNutThaoTac = taoNutThaoTac;
         window.taoDongDonThue = taoDongDonThue;

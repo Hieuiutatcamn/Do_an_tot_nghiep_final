@@ -75,6 +75,10 @@ class TrangThaiDonThueCapNhat(BaseModel):
     trang_thai: TRANG_THAI_DON_THUE = Field(examples=[TRANG_THAI_DON_HANG[1]])
 
 
+class TrangThaiChiTietDonThueCapNhat(BaseModel):
+    trang_thai: TRANG_THAI_DON_THUE = Field(examples=[TRANG_THAI_DON_HANG[1]])
+
+
 class HuyDonThueYeuCau(BaseModel):
     ly_do_huy: str | None = Field(default=None, max_length=255)
 
@@ -89,6 +93,7 @@ class ChiTietDonThuePhanHoi(MoHinhTienTe):
     id_chi_tiet_don_thue: int
     id_don_thue: int | None = None
     id_thiet_bi: int | None = None
+    trang_thai: str | None = None
     ngay_nhan: datetime | None = None
     ngay_tra: datetime | None = None
     so_luong: int | None = None

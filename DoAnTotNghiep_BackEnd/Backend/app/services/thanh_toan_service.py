@@ -426,6 +426,11 @@ def xu_ly_giao_dich_vnpay(
             )
 
         db.add(rental)
+        don_thue_service.dong_bo_trang_thai_tu_don_thue_xuong_chi_tiet(
+            db,
+            rental,
+            rental.trang_thai,
+        )
         if chuyen_sang_da_xac_nhan and not da_ghi_nhan:
             thong_bao_service.them_thong_bao_trang_thai_don(db, rental)
         db.commit()

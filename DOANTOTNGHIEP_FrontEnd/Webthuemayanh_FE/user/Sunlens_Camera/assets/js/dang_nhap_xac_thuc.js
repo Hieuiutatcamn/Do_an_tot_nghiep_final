@@ -3,7 +3,7 @@
 
     const API_BASE = 'http://127.0.0.1:8000/api/v1';
     const GOOGLE_LOGIN_URL = `${API_BASE}/auth/google/login`;
-    const FACEBOOK_LOGIN_URL = 'http://localhost:8000/api/v1/auth/facebook/login';
+    const FACEBOOK_LOGIN_URL = `${API_BASE}/auth/facebook/login`;
     const ADMIN_ROLES = new Set(['Admin', 'Nhan vien']);
     const OAUTH_URL_KEYS = [
         'access_token',

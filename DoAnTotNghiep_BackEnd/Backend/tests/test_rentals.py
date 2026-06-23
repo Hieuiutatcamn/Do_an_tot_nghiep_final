@@ -20,6 +20,7 @@ def test_create_rental_calculates_total_and_blocks_insufficient_stock(client):
     assert data["trang_thai"] == "Da dat"
     assert float(data["tong_tien"]) == 1400000
     assert data["details"][0]["gia_thue"] == "700000.00" or float(data["details"][0]["gia_thue"]) == 700000
+    assert data["details"][0]["trang_thai"] == "Da dat"
     assert data["khach_hang"]["ho_ten"] == "Nguyen Van A"
     assert "anh_cccd_mat_truoc" in data
     assert "anh_cccd_mat_sau" in data
@@ -195,6 +196,10 @@ def test_staff_can_update_rental_status(client):
         )
         assert status_response.status_code == 200, status_response.text
         assert status_response.json()["trang_thai"] == rental_status
+        assert all(
+            chi_tiet["trang_thai"] == rental_status
+            for chi_tiet in status_response.json()["details"]
+        )
         if rental_status == "Da xac nhan":
             assert status_response.json()["phuong_thuc_thanh_toan"] == "Chuyen khoan thu cong"
             assert float(status_response.json()["so_tien_da_thanh_toan"]) == 200000
@@ -219,6 +224,143 @@ def test_staff_can_update_rental_status(client):
     )
     assert detail_response.status_code == 200, detail_response.text
     assert float(detail_response.json()["so_tien_da_thanh_toan"]) == 200000
+    assert all(
+        chi_tiet["trang_thai"] == "Da thue"
+        for chi_tiet in detail_response.json()["details"]
+    )
+
+
+def test_cap_nhat_trang_thai_chi_tiet_don_thue_dong_bo_nguoc_len_don_tong(client):
+    customer_headers = auth_headers(client)
+    create_response = client.post(
+        "/api/v1/rentals",
+        json={
+            "items": [
+                {
+                    "id_thiet_bi": 1,
+                    "ngay_nhan": "2026-07-20T08:00:00",
+                    "ngay_tra": "2026-07-21T08:00:00",
+                    "so_luong": 1,
+                },
+                {
+                    "id_thiet_bi": 1,
+                    "ngay_nhan": "2026-07-21T08:00:00",
+                    "ngay_tra": "2026-07-22T08:00:00",
+                    "so_luong": 1,
+                },
+            ]
+        },
+        headers=customer_headers,
+    )
+    assert create_response.status_code == 201, create_response.text
+    rental = create_response.json()
+    rental_id = rental["id_don_thue"]
+    detail_ids = [item["id_chi_tiet_don_thue"] for item in rental["details"]]
+
+    employee_headers = auth_headers(client, "nhanvien", "secret123")
+    first_update = client.patch(
+        f"/api/v1/chi-tiet-don-hang/{detail_ids[0]}/trang-thai",
+        json={"trang_thai": "Da xac nhan"},
+        headers=employee_headers,
+    )
+    assert first_update.status_code == 200, first_update.text
+    assert first_update.json()["trang_thai"] == "Da xac nhan"
+
+    rental_after_first_update = client.get(
+        f"/api/v1/rentals/{rental_id}",
+        headers=employee_headers,
+    )
+    assert rental_after_first_update.status_code == 200, rental_after_first_update.text
+    assert rental_after_first_update.json()["trang_thai"] == "Da dat"
+    assert [item["trang_thai"] for item in rental_after_first_update.json()["details"]] == [
+        "Da xac nhan",
+        "Da dat",
+    ]
+
+    second_update = client.patch(
+        f"/api/v1/chi-tiet-don-hang/{detail_ids[1]}/trang-thai",
+        json={"trang_thai": "Da xac nhan"},
+        headers=employee_headers,
+    )
+    assert second_update.status_code == 200, second_update.text
+    assert second_update.json()["trang_thai"] == "Da xac nhan"
+
+    rental_after_second_update = client.get(
+        f"/api/v1/rentals/{rental_id}",
+        headers=employee_headers,
+    )
+    assert rental_after_second_update.status_code == 200, rental_after_second_update.text
+    assert rental_after_second_update.json()["trang_thai"] == "Da xac nhan"
+    assert float(rental_after_second_update.json()["so_tien_da_thanh_toan"]) == 200000
+    assert all(
+        item["trang_thai"] == "Da xac nhan"
+        for item in rental_after_second_update.json()["details"]
+    )
+
+    third_update = client.patch(
+        f"/api/v1/chi-tiet-don-hang/{detail_ids[0]}/trang-thai",
+        json={"trang_thai": "Dang thue"},
+        headers=employee_headers,
+    )
+    assert third_update.status_code == 200, third_update.text
+    assert third_update.json()["trang_thai"] == "Dang thue"
+
+    rental_after_third_update = client.get(
+        f"/api/v1/rentals/{rental_id}",
+        headers=employee_headers,
+    )
+    assert rental_after_third_update.status_code == 200, rental_after_third_update.text
+    assert rental_after_third_update.json()["trang_thai"] == "Da xac nhan"
+    assert [item["trang_thai"] for item in rental_after_third_update.json()["details"]] == [
+        "Dang thue",
+        "Da xac nhan",
+    ]
+
+    customer_forbidden = client.patch(
+        f"/api/v1/chi-tiet-don-hang/{detail_ids[1]}/trang-thai",
+        json={"trang_thai": "Dang thue"},
+        headers=customer_headers,
+    )
+    assert customer_forbidden.status_code == 403, customer_forbidden.text
+
+    final_update = client.patch(
+        f"/api/v1/chi-tiet-don-hang/{detail_ids[1]}/trang-thai",
+        json={"trang_thai": "Dang thue"},
+        headers=employee_headers,
+    )
+    assert final_update.status_code == 200, final_update.text
+    assert final_update.json()["trang_thai"] == "Dang thue"
+
+    chi_tiet_don_hang_response = client.get(
+        f"/api/v1/chi-tiet-don-hang?order_id={rental_id}",
+        headers=employee_headers,
+    )
+    assert chi_tiet_don_hang_response.status_code == 200, chi_tiet_don_hang_response.text
+    assert all(
+        item["trang_thai"] == "Dang thue"
+        for item in chi_tiet_don_hang_response.json()
+    )
+
+    legacy_chi_tiet_response = client.get(
+        f"/api/v1/order-details?order_id={rental_id}",
+        headers=employee_headers,
+    )
+    assert legacy_chi_tiet_response.status_code == 200, legacy_chi_tiet_response.text
+    assert all(
+        item["trang_thai"] == "Dang thue"
+        for item in legacy_chi_tiet_response.json()
+    )
+
+    rental_after_final_update = client.get(
+        f"/api/v1/rentals/{rental_id}",
+        headers=employee_headers,
+    )
+    assert rental_after_final_update.status_code == 200, rental_after_final_update.text
+    assert rental_after_final_update.json()["trang_thai"] == "Dang thue"
+    assert all(
+        item["trang_thai"] == "Dang thue"
+        for item in rental_after_final_update.json()["details"]
+    )
 
 
 def test_manual_deposit_update_is_idempotent_and_does_not_change_vnpay():

@@ -25,12 +25,14 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 7
+    reset_password_token_expire_minutes: int = 30
 
     upload_dir: str = "uploads"
     max_upload_size_mb: int = 5
     backend_public_url: str = "http://127.0.0.1:8000"
     frontend_url: str = "http://127.0.0.1:5500"
     oauth_frontend_login_url: str | None = None
+    reset_password_frontend_url: str | None = None
     google_client_id: str | None = None
     google_client_secret: str | None = None
     google_redirect_uri: str | None = None
@@ -39,13 +41,13 @@ class Settings(BaseSettings):
     facebook_api_version: str = "v22.0"
     facebook_redirect_uri: str | None = None
     facebook_frontend_success_url: str = (
-        "http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/trang_chu.html"
+        "http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
     )
     vnpay_tmn_code: str = ""
     vnpay_hash_secret: str = ""
     vnpay_payment_url: str = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
     vnpay_return_url: str = (
-        "http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/ket_qua_thanh_toan.html"
+        "http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/ket_qua_thanh_toan.html"
     )
     vnpay_ipn_url: str = ""
     vnpay_deposit_amount: int = 200000
@@ -107,7 +109,7 @@ class Settings(BaseSettings):
             return self.oauth_frontend_login_url
         return (
             f"{self.frontend_url.rstrip('/')}"
-            "/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
+            "/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
         )
 
     def oauth_callback_url(self, nha_cung_cap: str) -> str:
@@ -116,6 +118,14 @@ class Settings(BaseSettings):
         if nha_cung_cap == "facebook":
             return self.facebook_redirect_uri or ""
         return f"{self.backend_public_url.rstrip('/')}/api/v1/auth/{nha_cung_cap}/callback"
+
+    def reset_password_frontend_url_value(self) -> str:
+        if self.reset_password_frontend_url:
+            return self.reset_password_frontend_url
+        return (
+            f"{self.frontend_url.rstrip('/')}"
+            "/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dat_lai_mat_khau.html"
+        )
 
 
 @lru_cache

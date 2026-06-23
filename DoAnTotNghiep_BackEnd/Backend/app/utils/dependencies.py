@@ -32,7 +32,7 @@ def get_current_account(
     if not account:
         raise credentials_exception
     if account.trang_thai and account.trang_thai != "Hoat dong":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="TaiKhoan is inactive")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Tài khoản không hoạt động")
     return account
 
 
@@ -42,14 +42,14 @@ def get_current_customer(
     if not account.customer:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="KhachHang profile is required",
+            detail="Bạn không có quyền thực hiện thao tác này.",
         )
     return account.customer
 
 
 def require_staff(account: Annotated[TaiKhoan, Depends(get_current_account)]) -> TaiKhoan:
     if account.vai_tro not in {VAI_TRO_ADMIN, VAI_TRO_NHAN_VIEN}:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Staff role is required")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Không có quyền truy cập vào chức năng này")
     return account
 
 

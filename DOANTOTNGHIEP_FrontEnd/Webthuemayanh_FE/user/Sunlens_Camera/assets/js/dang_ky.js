@@ -165,14 +165,14 @@ async function submitRegisterForm() {
     clearRegisterMessage();
 
     const formData = new FormData();
-    formData.append('ten_dang_nhap', document.getElementById('registerUsername').value.trim());
-    formData.append('mat_khau', document.getElementById('registerPassword').value);
+    formData.append('username', document.getElementById('registerUsername').value.trim());
+    formData.append('password', document.getElementById('registerPassword').value);
     formData.append('ho_ten', document.getElementById('registerFullName').value.trim());
     formData.append('sdt', document.getElementById('registerPhone').value.trim());
     formData.append('cccd', document.getElementById('registerCccd').value.trim());
-    formData.append('thu_dien_tu', document.getElementById('registerEmail').value.trim());
-    formData.append('anh_cccd_mat_truoc', document.getElementById('cccdTruoc').files[0]);
-    formData.append('anh_cccd_mat_sau', document.getElementById('cccdSau').files[0]);
+    formData.append('email', document.getElementById('registerEmail').value.trim());
+    formData.append('cccd_truoc', document.getElementById('cccdTruoc').files[0]);
+    formData.append('cccd_sau', document.getElementById('cccdSau').files[0]);
 
     if (submitButton) {
         submitButton.disabled = true;

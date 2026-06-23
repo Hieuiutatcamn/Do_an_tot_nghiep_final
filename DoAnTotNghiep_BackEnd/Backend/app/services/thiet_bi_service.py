@@ -245,7 +245,7 @@ def lay_thiet_bi_kha_dung(
     return available_devices
 
 
-def lay_thiet_bi_hoac_404(db: Session, id_thiet_bi: int) -> ThietBi:
+def tim_kiem_thiet_bi_theo_id(db: Session, id_thiet_bi: int) -> ThietBi:
     device = db.scalar(
         select(ThietBi)
         .options(selectinload(ThietBi.category))
@@ -263,11 +263,11 @@ def tao_thiet_bi(db: Session, payload: ThietBiTao) -> ThietBi:
     db.add(device)
     db.commit()
     db.refresh(device)
-    return lay_thiet_bi_hoac_404(db, device.id_thiet_bi)
+    return tim_kiem_thiet_bi_theo_id(db, device.id_thiet_bi)
 
 
 def cap_nhat_thiet_bi(db: Session, id_thiet_bi: int, payload: ThietBiCapNhat) -> ThietBi:
-    device = lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    device = tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     data = payload.model_dump(exclude_unset=True)
     for field, value in data.items():
         setattr(device, field, value)
@@ -276,11 +276,11 @@ def cap_nhat_thiet_bi(db: Session, id_thiet_bi: int, payload: ThietBiCapNhat) ->
     db.add(device)
     db.commit()
     db.refresh(device)
-    return lay_thiet_bi_hoac_404(db, device.id_thiet_bi)
+    return tim_kiem_thiet_bi_theo_id(db, device.id_thiet_bi)
 
 
 def cap_nhat_anh_thiet_bi(db: Session, id_thiet_bi: int, image_path: str) -> ThietBi:
-    device = lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    device = tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     device.hinh_anh = image_path
     db.add(device)
     db.commit()
@@ -289,6 +289,6 @@ def cap_nhat_anh_thiet_bi(db: Session, id_thiet_bi: int, image_path: str) -> Thi
 
 
 def xoa_thiet_bi(db: Session, id_thiet_bi: int) -> None:
-    device = lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    device = tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     db.delete(device)
     db.commit()

@@ -1,9 +1,13 @@
 import asyncio
+from datetime import timedelta
 from urllib.parse import parse_qs, urlparse
 
 from fastapi import HTTPException, status
 
 from app.services import dang_nhap_xa_hoi_service
+from app.services.xac_thuc_service import tao_token_dat_lai_mat_khau
+from app.utils.config import get_settings
+from app.utils.security import create_token, decode_token
 from app.services.dang_nhap_xa_hoi_service import OAuthProfile
 from app.utils.security import create_oauth_state
 from tests.conftest import auth_headers
@@ -74,6 +78,34 @@ def test_register_supports_multipart_with_cccd_images(client, monkeypatch):
     assert saved_files == [("front.jpg", "cccd"), ("back.webp", "cccd")]
 
 
+def test_register_supports_legacy_multipart_field_names_from_frontend(client, monkeypatch):
+    saved_files = []
+
+    async def fake_save_upload_file(upload_file, folder):
+        saved_files.append((upload_file.filename, folder))
+        return f"/uploads/{folder}/{upload_file.filename}"
+
+    monkeypatch.setattr("app.routers.xac_thuc.save_upload_file", fake_save_upload_file)
+    response = client.post(
+        "/api/v1/auth/register",
+        data={
+            "ten_dang_nhap": "kh031",
+            "mat_khau": "123456",
+            "ho_ten": "Le Van C Legacy",
+            "sdt": "0913333334",
+            "cccd": "001001000034",
+            "thu_dien_tu": "c-legacy@example.com",
+        },
+        files={
+            "anh_cccd_mat_truoc": ("front-legacy.jpg", b"front", "image/jpeg"),
+            "anh_cccd_mat_sau": ("back-legacy.webp", b"back", "image/webp"),
+        },
+    )
+
+    assert response.status_code == 201, response.text
+    assert saved_files == [("front-legacy.jpg", "cccd"), ("back-legacy.webp", "cccd")]
+
+
 def test_register_reports_all_duplicate_fields(client):
     response = client.post(
         "/api/v1/auth/register",
@@ -99,6 +131,8 @@ def test_seed_plaintext_password_login_is_supported(client):
     me_response = client.get("/api/v1/auth/me", headers=headers)
     assert me_response.status_code == 200, me_response.text
     assert me_response.json()["account"]["dang_nhap"] == "kh01"
+    assert me_response.json()["email"] == "a@example.com"
+    assert me_response.json()["customer"]["email"] == "a@example.com"
 
 
 def test_oauth2_token_form_login_is_supported_for_swagger(client):
@@ -137,7 +171,7 @@ def test_google_oauth_callback_creates_customer_and_returns_tokens(client, monke
     redirect_url = urlparse(response.headers["location"])
     assert redirect_url.scheme == "http"
     assert redirect_url.netloc == "127.0.0.1:5500"
-    assert redirect_url.path == "/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
+    assert redirect_url.path == "/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
     assert response.headers["cache-control"] == "no-store"
     fragment = parse_qs(redirect_url.fragment)
     token = fragment["access_token"][0]
@@ -166,8 +200,13 @@ def test_facebook_oauth_callback_links_existing_email(client, monkeypatch):
         follow_redirects=False,
     )
 
-    query = parse_qs(urlparse(response.headers["location"]).query)
-    token = query["access_token"][0]
+    assert response.status_code == 302, response.text
+    redirect_url = urlparse(response.headers["location"])
+    assert redirect_url.scheme == "http"
+    assert redirect_url.netloc == "127.0.0.1:5500"
+    assert redirect_url.path == "/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html"
+    fragment = parse_qs(redirect_url.fragment)
+    token = fragment["access_token"][0]
     me_response = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert me_response.status_code == 200, me_response.text
     me = me_response.json()
@@ -233,3 +272,129 @@ def test_oauth_login_without_credentials_returns_frontend_error(client, monkeypa
     fragment = parse_qs(urlparse(response.headers["location"]).fragment)
     assert fragment["nha_cung_cap"] == ["google"]
     assert fragment["oauth_error"] == ["Đăng nhập Google chưa được cấu hình."]
+
+
+def test_forgot_password_sends_reset_email_when_email_exists(client, monkeypatch):
+    email_da_gui: list[tuple[str, str, int]] = []
+
+    def fake_gui_email_dat_lai_mat_khau(khach_hang, token):
+        payload = decode_token(token, "reset_password")
+        email_da_gui.append((khach_hang.thu_dien_tu, payload["sub"], len(payload["pwd"])))
+        return True
+
+    monkeypatch.setattr(
+        "app.services.xac_thuc_service.gui_email_dat_lai_mat_khau",
+        fake_gui_email_dat_lai_mat_khau,
+    )
+
+    response = client.post(
+        "/api/v1/auth/forgot-password",
+        json={"email": "a@example.com"},
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["message"] == "Vui lòng kiểm tra email để đặt lại mật khẩu."
+    assert email_da_gui == [("a@example.com", "3", 64)]
+
+
+def test_forgot_password_returns_404_when_email_does_not_exist(client):
+    response = client.post(
+        "/api/v1/auth/forgot-password",
+        json={"email": "khong-ton-tai@example.com"},
+    )
+
+    assert response.status_code == 404, response.text
+    assert response.json()["detail"] == "Email không tồn tại trong hệ thống."
+
+
+def test_forgot_password_returns_500_when_email_cannot_be_sent(client, monkeypatch):
+    monkeypatch.setattr(
+        "app.services.xac_thuc_service.gui_email_dat_lai_mat_khau",
+        lambda khach_hang, token: False,
+    )
+
+    response = client.post(
+        "/api/v1/auth/forgot-password",
+        json={"email": "a@example.com"},
+    )
+
+    assert response.status_code == 500, response.text
+    assert response.json()["detail"] == "Không thể gửi yêu cầu đặt lại mật khẩu."
+
+
+def test_reset_password_success_allows_login_with_new_password(client):
+    token = tao_token_dat_lai_mat_khau(client.customer_account)
+
+    response = client.post(
+        "/api/v1/auth/reset-password",
+        json={"token": token, "mat_khau_moi": "654321"},
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["message"] == "Đặt lại mật khẩu thành công."
+
+    old_login = client.post(
+        "/api/v1/auth/login",
+        json={"username": "kh01", "password": "123456"},
+    )
+    assert old_login.status_code == 401, old_login.text
+
+    new_login = client.post(
+        "/api/v1/auth/login",
+        json={"username": "kh01", "password": "654321"},
+    )
+    assert new_login.status_code == 200, new_login.text
+
+
+def test_reset_password_old_token_becomes_invalid_after_password_changes(client):
+    token = tao_token_dat_lai_mat_khau(client.customer_account)
+
+    first_response = client.post(
+        "/api/v1/auth/reset-password",
+        json={"token": token, "mat_khau_moi": "654321"},
+    )
+    assert first_response.status_code == 200, first_response.text
+
+    second_response = client.post(
+        "/api/v1/auth/reset-password",
+        json={"token": token, "mat_khau_moi": "987654"},
+    )
+
+    assert second_response.status_code == 400, second_response.text
+    assert second_response.json()["detail"] == "Token đặt lại mật khẩu không còn hiệu lực."
+
+
+def test_reset_password_rejects_invalid_token_type(client):
+    token = create_token(
+        subject="3",
+        expires_delta=timedelta(minutes=5),
+        token_type="access",
+    )
+
+    response = client.post(
+        "/api/v1/auth/reset-password",
+        json={"token": token, "mat_khau_moi": "654321"},
+    )
+
+    assert response.status_code == 400, response.text
+    assert response.json()["detail"] == "Token đặt lại mật khẩu không hợp lệ hoặc đã hết hạn."
+
+
+def test_reset_password_rejects_expired_token(client):
+    settings = get_settings()
+    token = create_token(
+        subject="3",
+        expires_delta=timedelta(minutes=-1),
+        token_type="reset_password",
+        extra_claims={"pwd": "x" * 64},
+    )
+
+    assert settings.reset_password_token_expire_minutes == 30
+
+    response = client.post(
+        "/api/v1/auth/reset-password",
+        json={"token": token, "mat_khau_moi": "654321"},
+    )
+
+    assert response.status_code == 400, response.text
+    assert response.json()["detail"] == "Token đặt lại mật khẩu không hợp lệ hoặc đã hết hạn."

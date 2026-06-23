@@ -425,6 +425,32 @@ def tao_noi_dung_email_don_thue_da_xac_nhan_cho_khach_hang(
     return _khung_email(f"Đơn thuê {ma_don} đã được xác nhận", noi_dung)
 
 
+def tao_noi_dung_email_dat_lai_mat_khau(
+    khach_hang: Any,
+    link_dat_lai: str,
+    thoi_han_phut: int,
+) -> str:
+    noi_dung = f"""
+      <p>Xin chào <strong>{_chuoi_an_toan(getattr(khach_hang, "ho_ten", None), "Quý khách")}</strong>,</p>
+      <p>SunLens Camera đã nhận yêu cầu đặt lại mật khẩu cho tài khoản của bạn.</p>
+      <div style="margin:22px 0">
+        <a
+          href="{_chuoi_an_toan(link_dat_lai)}"
+          style="display:inline-block;padding:12px 20px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700"
+        >
+          Đặt lại mật khẩu
+        </a>
+      </div>
+      <p>Liên kết này có hiệu lực trong <strong>{_chuoi_an_toan(thoi_han_phut)}</strong> phút.</p>
+      <p>Nếu nút không hoạt động, vui lòng sao chép và mở liên kết sau:</p>
+      <p style="word-break:break-all;color:#2563eb">{_chuoi_an_toan(link_dat_lai)}</p>
+      <div style="margin-top:22px;padding:14px 16px;background:#fff7ed;border-left:4px solid #f97316">
+        Nếu bạn không gửi yêu cầu này, bạn có thể bỏ qua email và mật khẩu hiện tại sẽ không bị thay đổi.
+      </div>
+    """
+    return _khung_email("Yêu cầu đặt lại mật khẩu", noi_dung)
+
+
 def gui_email_thong_bao_dat_thue_cho_khach_hang(
     don_thue: Any,
     khach_hang: Any,

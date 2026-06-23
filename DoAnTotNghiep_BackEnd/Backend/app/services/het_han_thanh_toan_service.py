@@ -65,6 +65,13 @@ def huy_cac_don_vnpay_het_han(
         don_thue.trang_thai = TRANG_THAI_DA_HUY
         _them_ghi_chu_tu_dong_huy(don_thue)
         db.add(don_thue)
+        from app.services import don_thue_service
+
+        don_thue_service.dong_bo_trang_thai_tu_don_thue_xuong_chi_tiet(
+            db,
+            don_thue,
+            TRANG_THAI_DA_HUY,
+        )
         thong_bao_service.them_thong_bao_het_han_thanh_toan_vnpay(
             db,
             don_thue,

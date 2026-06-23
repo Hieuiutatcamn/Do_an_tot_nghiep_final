@@ -28,6 +28,23 @@ def test_customer_can_update_own_profile_without_admin(client):
     assert me_response.json()["customer"]["email"] == "updated@example.com"
 
 
+def test_customer_can_update_own_profile_with_thu_dien_tu_alias(client):
+    headers = auth_headers(client)
+
+    response = client.put(
+        "/api/v1/users/me",
+        json={
+            "thu_dien_tu": "alias-updated@example.com",
+        },
+        headers=headers,
+    )
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["email"] == "alias-updated@example.com"
+    assert data["customer"]["email"] == "alias-updated@example.com"
+
+
 def test_customer_can_upload_avatar_and_me_returns_new_avatar(client):
     headers = auth_headers(client)
 

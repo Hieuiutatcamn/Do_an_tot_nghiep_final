@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quên mật khẩu</title>
+    <title>Đặt lại mật khẩu</title>
     <meta name="description" content="">
     <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
@@ -108,32 +108,7 @@
                     </nav>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-3 d-none d-lg-block">
-                    <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
-                        <div class="offcanvas-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body">
-                            <div class="mt-50">
-                                <form action="#">
-                                    <div class="input-group">
-                                        <input class="form-control py-3" type="search" placeholder="Search for products">
-                                        <span class="input-group-append">
-                                            <button class="btn bg-white border border-start-0 ms-n10 py-3 rounded-0 rounded-end" type="button">
-                                                <span class="bi bi-search"></span>
-                                            </button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                     <div class="list-inline d-flex pt-2">
-                        <div class="list-inline-item me-4">
-                            <a href="dang_nhap.html" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" class="text-muted d-flex flex-column justity-content-center align-items-center">
-                                <i class="bi bi-search"></i>
-                                <span class="d-none d-sm-none d-md-none d-lg-block">Tìm kiếm</span>
-                            </a>
-                        </div>
                         <div class="list-inline-item me-4">
                             <a href="dang_nhap.html" class="text-muted d-flex flex-column justity-content-center align-items-center">
                                 <i class="bi bi-person"></i>
@@ -155,7 +130,7 @@
     <main>
         <div class="breadcrumb-main">
             <div class="container text-center">
-                <h2>Quên mật khẩu</h2>
+                <h2>Đặt lại mật khẩu</h2>
                 <p>Trang chủ / Tài khoản</p>
             </div>
         </div>
@@ -164,27 +139,39 @@
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="card p-4">
-                        <h3 class="fw-bold">Khôi phục mật khẩu</h3>
-                        <p>Nhập email bạn đã dùng để đăng ký tài khoản. Chúng tôi sẽ gửi link đặt lại mật khẩu qua email.</p>
+                        <h3 class="fw-bold">Tạo mật khẩu mới</h3>
+                        <p>Nhập mật khẩu mới để tiếp tục đăng nhập tài khoản SunLens Camera.</p>
 
-                        <form id="forgotPasswordForm" novalidate>
+                        <form id="resetPasswordForm" novalidate>
                             <div class="mb-3">
-                                <label for="quenMatKhauEmail" class="form-label">Email</label>
+                                <label for="matKhauMoi" class="form-label">Mật khẩu mới</label>
                                 <input
-                                    type="email"
+                                    type="password"
                                     class="form-control"
-                                    id="quenMatKhauEmail"
-                                    placeholder="Nhập email của bạn"
-                                    autocomplete="email"
+                                    id="matKhauMoi"
+                                    placeholder="Nhập mật khẩu mới"
+                                    autocomplete="new-password"
                                     required
                                 >
                             </div>
 
-                            <button id="forgotPasswordSubmitButton" type="submit" class="btn btn-primary w-100">
-                                Gửi yêu cầu đặt lại mật khẩu
+                            <div class="mb-3">
+                                <label for="xacNhanMatKhauMoi" class="form-label">Nhập lại mật khẩu</label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="xacNhanMatKhauMoi"
+                                    placeholder="Nhập lại mật khẩu mới"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+
+                            <button id="resetPasswordSubmitButton" type="submit" class="btn btn-primary w-100">
+                                Cập nhật mật khẩu
                             </button>
 
-                            <div id="forgotPasswordMessage" class="mt-3 d-none" role="alert" aria-live="polite"></div>
+                            <div id="resetPasswordMessage" class="mt-3 d-none" role="alert" aria-live="polite"></div>
 
                             <div class="mt-3 text-center">
                                 <a href="dang_nhap.html">Quay lại đăng nhập</a>
@@ -274,7 +261,7 @@
     <script src="./assets/plugin/OwlCarousel2-2.3.4/dist/owl.carousel.min.js"></script>
     <script src="./assets/plugin/nouislider/nouislider.min.js"></script>
     <script src="./assets/plugin/slick/slick.min.js"></script>
-    <script src="./assets/js/quen_mat_khau.js?v=20260623-reset-password"></script>
+    <script src="./assets/js/dat_lai_mat_khau.js?v=20260623-reset-password"></script>
     <script src="./assets/js/trang_chinh.js"></script>
     <script src="./assets/js/menu_tai_khoan.js"></script>
 </body>

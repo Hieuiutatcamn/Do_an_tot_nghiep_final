@@ -52,8 +52,8 @@ docker compose logs -f backend
 ## 4. Truy cập
 
 - Giao diện người dùng: <http://127.0.0.1:5500> (tự chuyển tới trang chủ)
-  - Đăng nhập: `http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html`
-  - Trang admin: `http://127.0.0.1:5500/Webthuemayanh_FE/admin/Sunlens_Camera/tong_quan.html`
+  - Đăng nhập: `http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html`
+  - Trang admin: `http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/admin/Sunlens_Camera/tong_quan.html`
 - API docs (Swagger): <http://127.0.0.1:8000/docs>
 - Health check: <http://127.0.0.1:8000/health>
 

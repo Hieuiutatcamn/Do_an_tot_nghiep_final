@@ -11,6 +11,7 @@ from app.schemas.don_thue import (
     HuyDonThuePhanHoi,
     ChiTietDonThuePhanHoi,
     DonThuePhanHoi,
+    TrangThaiChiTietDonThueCapNhat,
     TRANG_THAI_DON_THUE,
 )
 from app.services import don_thue_service
@@ -118,6 +119,24 @@ def lay_chi_tiet_don_hang(
 ):
     order = don_thue_service.tim_kiem_don_thue(db, order_id, account)
     return list(order.details)
+
+
+@chi_tiet_don_hang_router.patch(
+    "/{id_chi_tiet_don_thue}/trang-thai",
+    response_model=ChiTietDonThuePhanHoi,
+)
+def cap_nhat_trang_thai_chi_tiet_don_hang(
+    id_chi_tiet_don_thue: int,
+    payload: TrangThaiChiTietDonThueCapNhat,
+    db: Annotated[Session, Depends(get_db)],
+    account: Annotated[TaiKhoan, Depends(get_current_account)],
+):
+    return don_thue_service.cap_nhat_trang_thai_chi_tiet_don_thue(
+        db,
+        id_chi_tiet_don_thue,
+        payload,
+        account,
+    )
 
 
 legacy_router = tao_router_ke_thua(router, "/orders", tags=["Đơn hàng legacy"])

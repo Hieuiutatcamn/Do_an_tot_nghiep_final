@@ -13,6 +13,7 @@ from app.database.session import get_db
 from app.routers.router_ke_thua import tao_router_ke_thua
 from app.models.tai_khoan import TaiKhoan
 from app.schemas.xac_thuc import (
+    DatLaiMatKhauYeuCau,
     TaiKhoanPhanHoi,
     HoSoKhachHangPhanHoi,
     DangNhapYeuCau,
@@ -20,13 +21,16 @@ from app.schemas.xac_thuc import (
     DoiMatKhauYeuCau,
     ToiPhanHoi,
     LamMoiTokenYeuCau,
+    QuenMatKhauYeuCau,
     DangKyYeuCau,
     TokenPhanHoi,
 )
 from app.services.xac_thuc_service import (
     _lay_thong_bao_co_quyen_truy_cap,
+    dat_lai_mat_khau,
     doi_mat_khau,
     tao_phan_hoi_token,
+    xu_ly_quen_mat_khau,
     dang_ky_khach_hang,
     kiem_tra_dang_ky_khong_trung,
 )
@@ -40,16 +44,27 @@ router = APIRouter(prefix="/xac-thuc", tags=["Xác thực"])
 
 REGISTER_FIELDS = (
     "username",
+    "ten_dang_nhap",
     "password",
+    "mat_khau",
     "ho_ten",
     "sdt",
     "cccd",
     "email",
+    "thu_dien_tu",
     "so_cccd",
     "anh_cccd_mat_truoc",
     "anh_cccd_mat_sau",
     "anh_cccd",
 )
+
+
+def lay_gia_tri_form_dang_ky(form, *ten_truong: str):
+    for ten_truong_hien_tai in ten_truong:
+        gia_tri = form.get(ten_truong_hien_tai)
+        if gia_tri not in (None, ""):
+            return gia_tri
+    return None
 
 
 async def parse_register_request(request: Request) -> tuple[DangKyYeuCau, UploadFile | None, UploadFile | None]:
@@ -59,9 +74,14 @@ async def parse_register_request(request: Request) -> tuple[DangKyYeuCau, Upload
 
     if content_type.startswith("multipart/form-data"):
         form = await request.form()
-        data = {field: form.get(field) for field in REGISTER_FIELDS if form.get(field) not in (None, "")}
-        front_value = form.get("cccd_truoc")
-        back_value = form.get("cccd_sau")
+        data = {}
+        for field in REGISTER_FIELDS:
+            gia_tri = form.get(field)
+            if gia_tri in (None, "") or isinstance(gia_tri, UploadFile):
+                continue
+            data[field] = gia_tri
+        front_value = lay_gia_tri_form_dang_ky(form, "cccd_truoc", "anh_cccd_mat_truoc")
+        back_value = lay_gia_tri_form_dang_ky(form, "cccd_sau", "anh_cccd_mat_sau")
         front_file = front_value if isinstance(front_value, UploadFile) else None
         back_file = back_value if isinstance(back_value, UploadFile) else None
         if not front_file or not back_file:
@@ -100,19 +120,6 @@ def oauth_error_redirect(nha_cung_cap: str, message: str | None = None) -> Redir
     )
 
 
-def facebook_success_redirect(tokens: TokenPhanHoi) -> RedirectResponse:
-    query = urlencode(
-        {
-            "access_token": tokens.access_token,
-            "refresh_token": tokens.refresh_token,
-        }
-    )
-    return RedirectResponse(
-        f"{get_settings().facebook_frontend_success_url}?{query}",
-        status_code=status.HTTP_302_FOUND,
-    )
-
-
 def oauth_login_redirect(nha_cung_cap: str) -> RedirectResponse:
     try:
         return RedirectResponse(dang_nhap_xa_hoi_service.tao_url_uy_quyen(nha_cung_cap), status_code=status.HTTP_302_FOUND)
@@ -133,8 +140,6 @@ async def oauth_callback_redirect(
         dang_nhap_xa_hoi_service.kiem_tra_trang_thai_oauth(nha_cung_cap, state_token)
         profile = await dang_nhap_xa_hoi_service.doi_ma_lay_ho_so(nha_cung_cap, code)
         tokens = dang_nhap_xa_hoi_service.dang_nhap_hoac_tao_khach_hang_oauth(db, profile)
-        if nha_cung_cap == "facebook":
-            return facebook_success_redirect(tokens)
         return oauth_frontend_redirect(
             access_token=tokens.access_token,
             refresh_token=tokens.refresh_token,
@@ -236,15 +241,34 @@ def refresh_token(
     return tao_phan_hoi_token(account.id_tai_khoan)
 
 
+@router.post("/forgot-password", response_model=DoiMatKhauPhanHoi)
+def forgot_password(
+    payload: QuenMatKhauYeuCau,
+    db: Annotated[Session, Depends(get_db)],
+) -> DoiMatKhauPhanHoi:
+    xu_ly_quen_mat_khau(db, payload)
+    return DoiMatKhauPhanHoi(message="Vui lòng kiểm tra email để đặt lại mật khẩu.")
+
+
+@router.post("/reset-password", response_model=DoiMatKhauPhanHoi)
+def reset_password(
+    payload: DatLaiMatKhauYeuCau,
+    db: Annotated[Session, Depends(get_db)],
+) -> DoiMatKhauPhanHoi:
+    dat_lai_mat_khau(db, payload)
+    return DoiMatKhauPhanHoi(message="Đặt lại mật khẩu thành công.")
+
+
 @router.get("/me", response_model=ToiPhanHoi)
 def me(account: Annotated[TaiKhoan, Depends(get_current_account)]) -> ToiPhanHoi:
-    customer = HoSoKhachHangPhanHoi.model_validate(account.customer) if account.customer else None
+    khach_hang = account.customer
+    customer = HoSoKhachHangPhanHoi.model_validate(khach_hang) if khach_hang else None
     return ToiPhanHoi(
         account=TaiKhoanPhanHoi.model_validate(account),
         customer=customer,
         id=account.id_tai_khoan,
         ho_ten=customer.ho_ten if customer else None,
-        email=customer.email if customer else None,
+        email=khach_hang.thu_dien_tu if khach_hang else None,
         anh_dai_dien=account.anh_dai_dien,
         nha_cung_cap=account.nha_cung_cap or "local",
     )

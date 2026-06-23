@@ -10,11 +10,16 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.tai_khoan import TaiKhoan
-from app.models.hang_so import VAI_TRO_ADMIN, VAI_TRO_NHAN_VIEN
+from app.models.hang_so import TRANG_THAI_DON_HANG, VAI_TRO_ADMIN, VAI_TRO_NHAN_VIEN
 from app.models.khach_hang import KhachHang
 from app.models.thiet_bi import ThietBi
 from app.models.don_thue import DonThue, ChiTietDonThue
-from app.schemas.don_thue import DonThueTao, TrangThaiDonThueCapNhat
+from app.schemas.don_thue import (
+    ChiTietDonThuePhanHoi,
+    DonThueTao,
+    TrangThaiChiTietDonThueCapNhat,
+    TrangThaiDonThueCapNhat,
+)
 from app.services import (
     gio_hang_service,
     gui_email_service,
@@ -49,6 +54,7 @@ CHUYEN_TRANG_THAI_HOP_LE = {
     "Da thue": set(),
     "Da huy": set(),
 }
+CAC_GIA_TRI_TRANG_THAI_CHI_TIET = TRANG_THAI_DON_HANG
 
 
 def cap_nhat_so_tien_da_thanh_toan_thu_cong(rental: DonThue) -> None:
@@ -68,6 +74,141 @@ def _ngay_thue(start: datetime, end: datetime) -> int:
 
 def _xem_toan_bo(account: TaiKhoan) -> bool:
     return account.vai_tro in {VAI_TRO_ADMIN, VAI_TRO_NHAN_VIEN}
+
+
+def _lay_cac_trang_thai_co_the_chuyen(trang_thai_hien_tai: str | None) -> set[str]:
+    return CHUYEN_TRANG_THAI_HOP_LE.get(trang_thai_hien_tai or "", set())
+
+
+def _bao_loi_chuyen_trang_thai_khong_hop_le(
+    trang_thai_hien_tai: str | None,
+    trang_thai_moi: str,
+    doi_tuong: str,
+) -> None:
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=(
+            f"Không thể chuyển trạng thái {doi_tuong} từ "
+            f"'{trang_thai_hien_tai}' sang '{trang_thai_moi}'."
+        ),
+    )
+
+
+def lay_chi_tiet_don_thue_hoac_404(
+    db: Session,
+    id_chi_tiet_don_thue: int,
+    *,
+    khoa_du_lieu: bool = False,
+) -> ChiTietDonThue:
+    truy_van = (
+        select(ChiTietDonThue)
+        .options(selectinload(ChiTietDonThue.device))
+        .where(ChiTietDonThue.id_chi_tiet_don_thue == id_chi_tiet_don_thue)
+    )
+    if khoa_du_lieu:
+        truy_van = truy_van.with_for_update()
+    chi_tiet = db.scalar(truy_van)
+    if not chi_tiet:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy chi tiết đơn thuê",
+        )
+    return chi_tiet
+
+
+def lay_danh_sach_chi_tiet_don_thue(
+    db: Session,
+    id_don_thue: int,
+    *,
+    khoa_du_lieu: bool = False,
+) -> list[ChiTietDonThue]:
+    truy_van = (
+        select(ChiTietDonThue)
+        .options(selectinload(ChiTietDonThue.device))
+        .where(ChiTietDonThue.id_don_thue == id_don_thue)
+        .order_by(ChiTietDonThue.id_chi_tiet_don_thue.asc())
+    )
+    if khoa_du_lieu:
+        truy_van = truy_van.with_for_update()
+    return list(db.scalars(truy_van).all())
+
+
+def dong_bo_trang_thai_tu_don_thue_xuong_chi_tiet(
+    db: Session,
+    don_thue: DonThue,
+    trang_thai_moi: str | None = None,
+) -> list[ChiTietDonThue]:
+    trang_thai_can_dong_bo = trang_thai_moi or don_thue.trang_thai
+    danh_sach_chi_tiet = lay_danh_sach_chi_tiet_don_thue(
+        db,
+        don_thue.id_don_thue,
+        khoa_du_lieu=True,
+    )
+    for chi_tiet in danh_sach_chi_tiet:
+        chi_tiet.trang_thai = trang_thai_can_dong_bo
+        db.add(chi_tiet)
+    return danh_sach_chi_tiet
+
+
+def kiem_tra_tat_ca_chi_tiet_cung_trang_thai(
+    danh_sach_chi_tiet: list[ChiTietDonThue],
+) -> str | None:
+    if not danh_sach_chi_tiet:
+        return None
+    trang_thai_dau_tien = danh_sach_chi_tiet[0].trang_thai
+    if all(chi_tiet.trang_thai == trang_thai_dau_tien for chi_tiet in danh_sach_chi_tiet):
+        return trang_thai_dau_tien
+    return None
+
+
+def cap_nhat_trang_thai_don_thue_noi_bo(
+    db: Session,
+    don_thue: DonThue,
+    trang_thai_moi: str,
+    *,
+    tao_thong_bao_trang_thai: bool = False,
+    bo_ghi_chu_tu_dong_huy_vnpay: bool = False,
+) -> str:
+    trang_thai_hien_tai = don_thue.trang_thai
+    if trang_thai_moi == trang_thai_hien_tai:
+        return str(trang_thai_hien_tai or "")
+
+    cac_trang_thai_hop_le = _lay_cac_trang_thai_co_the_chuyen(trang_thai_hien_tai)
+    if trang_thai_moi not in cac_trang_thai_hop_le:
+        _bao_loi_chuyen_trang_thai_khong_hop_le(
+            trang_thai_hien_tai,
+            trang_thai_moi,
+            "đơn thuê",
+        )
+
+    if (
+        trang_thai_hien_tai == TRANG_THAI_DA_DAT
+        and trang_thai_moi == TRANG_THAI_DA_XAC_NHAN
+    ):
+        cap_nhat_so_tien_da_thanh_toan_thu_cong(don_thue)
+
+    don_thue.trang_thai = trang_thai_moi
+    if bo_ghi_chu_tu_dong_huy_vnpay:
+        het_han_thanh_toan_service.bo_ghi_chu_tu_dong_huy_vnpay(don_thue)
+    db.add(don_thue)
+    dong_bo_trang_thai_tu_don_thue_xuong_chi_tiet(db, don_thue, trang_thai_moi)
+    if tao_thong_bao_trang_thai:
+        thong_bao_service.them_thong_bao_trang_thai_don(db, don_thue)
+    return str(trang_thai_hien_tai or "")
+
+
+def _gui_email_xac_nhan_don_thue(don_thue_da_cap_nhat: DonThue) -> None:
+    try:
+        gui_email_service.gui_email_thong_bao_don_thue_da_xac_nhan_cho_khach_hang(
+            don_thue=don_thue_da_cap_nhat,
+            khach_hang=don_thue_da_cap_nhat.customer,
+            danh_sach_chi_tiet=don_thue_da_cap_nhat.details,
+        )
+    except Exception:
+        logger.exception(
+            "Không thể chuẩn bị email xác nhận đơn thuê #%s.",
+            don_thue_da_cap_nhat.id_don_thue,
+        )
 
 
 def _so_luong_thue_trung_lich(
@@ -164,6 +305,7 @@ def tao_don_thue(
                 ngay_tra=item.ngay_tra,
                 so_luong=item.so_luong,
                 gia_thue=unit_price,
+                trang_thai=trang_thai_ban_dau,
             )
             db.add(detail)
 
@@ -430,28 +572,12 @@ def cap_nhat_trang_thai_don_thue(
             detail="Không tìm thấy đơn hàng",
         )
 
-    old_status = rental.trang_thai
-    allowed_statuses = CHUYEN_TRANG_THAI_HOP_LE.get(old_status or "", set())
-    if payload.trang_thai not in allowed_statuses:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=(
-                f"Không thể chuyển trạng thái đơn thuê từ "
-                f"'{old_status}' sang '{payload.trang_thai}'."
-            ),
-        )
-
-    if (
-        old_status == TRANG_THAI_DA_DAT
-        and payload.trang_thai == TRANG_THAI_DA_XAC_NHAN
-    ):
-        cap_nhat_so_tien_da_thanh_toan_thu_cong(rental)
-
-    rental.trang_thai = payload.trang_thai
-
-    db.add(rental)
-    if old_status != rental.trang_thai:
-        thong_bao_service.them_thong_bao_trang_thai_don(db, rental)
+    trang_thai_cu = cap_nhat_trang_thai_don_thue_noi_bo(
+        db,
+        rental,
+        payload.trang_thai,
+        tao_thong_bao_trang_thai=True,
+    )
     db.commit()
     db.refresh(rental)
     don_thue_da_cap_nhat = tim_kiem_don_thue(
@@ -460,20 +586,10 @@ def cap_nhat_trang_thai_don_thue(
         account,
     )
     if (
-        old_status == TRANG_THAI_DA_DAT
+        trang_thai_cu == TRANG_THAI_DA_DAT
         and don_thue_da_cap_nhat.trang_thai == TRANG_THAI_DA_XAC_NHAN
     ):
-        try:
-            gui_email_service.gui_email_thong_bao_don_thue_da_xac_nhan_cho_khach_hang(
-                don_thue=don_thue_da_cap_nhat,
-                khach_hang=don_thue_da_cap_nhat.customer,
-                danh_sach_chi_tiet=don_thue_da_cap_nhat.details,
-            )
-        except Exception:
-            logger.exception(
-                "Không thể chuẩn bị email xác nhận đơn thuê #%s.",
-                don_thue_da_cap_nhat.id_don_thue,
-            )
+        _gui_email_xac_nhan_don_thue(don_thue_da_cap_nhat)
     return don_thue_da_cap_nhat
 
 
@@ -503,10 +619,125 @@ def huy_don_thue(
         rental.ghi_chu = f"{rental.ghi_chu or ''}\nLy do huy: {reason}".strip()[:255]
 
     db.add(rental)
+    dong_bo_trang_thai_tu_don_thue_xuong_chi_tiet(
+        db,
+        rental,
+        TRANG_THAI_DON_THUE_DA_HUY,
+    )
     thong_bao_service.them_thong_bao_huy_don(db, rental)
     db.commit()
     db.refresh(rental)
     return tim_kiem_don_thue(db, rental.id_don_thue, account)
+
+
+def dong_bo_trang_thai_tu_chi_tiet_len_don_thue(
+    db: Session,
+    don_thue: DonThue,
+    account: TaiKhoan,
+    *,
+    trang_thai_muc_tieu: str,
+) -> DonThue:
+    if don_thue.trang_thai == trang_thai_muc_tieu:
+        return tim_kiem_don_thue(db, don_thue.id_don_thue, account)
+
+    trang_thai_cu = cap_nhat_trang_thai_don_thue_noi_bo(
+        db,
+        don_thue,
+        trang_thai_muc_tieu,
+        tao_thong_bao_trang_thai=True,
+    )
+    db.commit()
+    db.refresh(don_thue)
+    don_thue_da_cap_nhat = tim_kiem_don_thue(db, don_thue.id_don_thue, account)
+    if (
+        trang_thai_cu == TRANG_THAI_DA_DAT
+        and don_thue_da_cap_nhat.trang_thai == TRANG_THAI_DA_XAC_NHAN
+    ):
+        _gui_email_xac_nhan_don_thue(don_thue_da_cap_nhat)
+    return don_thue_da_cap_nhat
+
+
+def cap_nhat_trang_thai_chi_tiet_don_thue(
+    db: Session,
+    id_chi_tiet_don_thue: int,
+    payload: TrangThaiChiTietDonThueCapNhat,
+    account: TaiKhoan,
+) -> ChiTietDonThue:
+    if not _xem_toan_bo(account):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Bạn không có quyền cập nhật trạng thái chi tiết đơn thuê",
+        )
+
+    chi_tiet = lay_chi_tiet_don_thue_hoac_404(
+        db,
+        id_chi_tiet_don_thue,
+        khoa_du_lieu=True,
+    )
+    if chi_tiet.id_don_thue is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Chi tiết đơn thuê chưa gắn với đơn thuê hợp lệ.",
+        )
+
+    don_thue = db.scalar(
+        select(DonThue)
+        .where(DonThue.id_don_thue == chi_tiet.id_don_thue)
+        .with_for_update()
+    )
+    if not don_thue:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy đơn thuê",
+        )
+
+    if payload.trang_thai == chi_tiet.trang_thai:
+        db.refresh(chi_tiet)
+        return chi_tiet
+
+    cac_trang_thai_hop_le = _lay_cac_trang_thai_co_the_chuyen(chi_tiet.trang_thai)
+    if payload.trang_thai not in cac_trang_thai_hop_le:
+        _bao_loi_chuyen_trang_thai_khong_hop_le(
+            chi_tiet.trang_thai,
+            payload.trang_thai,
+            "chi tiết đơn thuê",
+        )
+
+    chi_tiet.trang_thai = payload.trang_thai
+    db.add(chi_tiet)
+    db.flush()
+
+    danh_sach_chi_tiet = lay_danh_sach_chi_tiet_don_thue(
+        db,
+        don_thue.id_don_thue,
+        khoa_du_lieu=True,
+    )
+    trang_thai_dong_nhat = kiem_tra_tat_ca_chi_tiet_cung_trang_thai(danh_sach_chi_tiet)
+    if trang_thai_dong_nhat:
+        don_thue_da_cap_nhat = dong_bo_trang_thai_tu_chi_tiet_len_don_thue(
+            db,
+            don_thue,
+            account,
+            trang_thai_muc_tieu=trang_thai_dong_nhat,
+        )
+        chi_tiet_moi = next(
+            (
+                muc
+                for muc in don_thue_da_cap_nhat.details
+                if muc.id_chi_tiet_don_thue == id_chi_tiet_don_thue
+            ),
+            None,
+        )
+        if not chi_tiet_moi:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Không thể tải lại chi tiết đơn thuê sau khi cập nhật.",
+            )
+        return chi_tiet_moi
+
+    db.commit()
+    db.refresh(chi_tiet)
+    return lay_chi_tiet_don_thue_hoac_404(db, id_chi_tiet_don_thue)
 
 
 def cap_nhat_anh_thanh_toan_don_thue(

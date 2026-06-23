@@ -1,10 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer, String, Unicode, func
+from sqlalchemy import DECIMAL, DateTime, Enum, ForeignKey, Integer, String, Unicode, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+from app.models.hang_so import TRANG_THAI_DON_HANG
 
 class DonThue(Base):
     __tablename__ = "DON_THUE"
@@ -53,6 +54,11 @@ class ChiTietDonThue(Base):
     ngay_tra: Mapped[datetime | None] = mapped_column(DateTime)
     so_luong: Mapped[int | None] = mapped_column(Integer)
     gia_thue: Mapped[Decimal | None] = mapped_column(DECIMAL(10, 2))
+    trang_thai: Mapped[str | None] = mapped_column(
+        Enum(*TRANG_THAI_DON_HANG, name="trang_thai_chi_tiet_don_thue"),
+        default="Da dat",
+        server_default="Da dat",
+    )
 
     rental = relationship("DonThue", back_populates="details")
     device = relationship("ThietBi", back_populates="rental_details")

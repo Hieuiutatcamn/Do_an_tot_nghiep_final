@@ -45,7 +45,7 @@ def build_me_response(account: TaiKhoan, customer: KhachHang | None = None) -> T
         customer=HoSoKhachHangPhanHoi.model_validate(active_customer) if active_customer else None,
         id=account.id_tai_khoan,
         ho_ten=active_customer.ho_ten if active_customer else None,
-        email=active_customer.email if active_customer else None,
+        email=active_customer.thu_dien_tu if active_customer else None,
         anh_dai_dien=account.anh_dai_dien,
         nha_cung_cap=account.nha_cung_cap or "local",
     )

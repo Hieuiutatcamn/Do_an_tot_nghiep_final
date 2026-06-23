@@ -83,7 +83,7 @@ Widget (`hop_thoai_ho_tro.js`) đã trỏ sẵn vào URL này.
   ```
   Kỳ vọng: `{ "response": "..." }`.
 
-- **Trên web:** mở trang user (http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/index.html) → mở chat widget → hỏi:
+- **Trên web:** mở trang user (http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/index.html) → mở chat widget → hỏi:
   - "Có những máy ảnh nào đang cho thuê?"
   - "Máy Canon giá bao nhiêu?"
   - "Có khuyến mãi nào đang chạy không?"

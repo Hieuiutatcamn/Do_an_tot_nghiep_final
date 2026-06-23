@@ -164,7 +164,7 @@ def lay_thiet_bi_kha_dung(
 
 @router.get("/{id_thiet_bi}", response_model=ThietBiPhanHoi)
 def lay_thiet_bi(id_thiet_bi: int, db: Annotated[Session, Depends(get_db)]):
-    return thiet_bi_service.lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    return thiet_bi_service.tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
 
 
 @router.get("/{id_thiet_bi}/availability", response_model=KhaDungThietBiPhanHoi)
@@ -175,7 +175,7 @@ def lay_kha_dung_thiet_bi(
     ngay_tra: Annotated[date | None, Query()] = None,
     so_luong: Annotated[int, Query(gt=0)] = 1,
 ):
-    device = thiet_bi_service.lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    device = thiet_bi_service.tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     if ngay_nhan is None and ngay_tra is None:
         total_quantity = int(device.so_luong or 0)
         return KhaDungThietBiPhanHoi(
@@ -235,7 +235,7 @@ async def tai_len_anh_thiet_bi(
     _: Annotated[TaiKhoan, Depends(require_admin)],
     image: Annotated[UploadFile, File(...)],
 ):
-    thiet_bi_service.lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    thiet_bi_service.tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     image_path = await save_upload_file(image, f"devices/{id_thiet_bi}")
     return thiet_bi_service.cap_nhat_anh_thiet_bi(db, id_thiet_bi, image_path)
 
@@ -248,7 +248,7 @@ async def tai_len_nhieu_anh_thiet_bi(
     existing_images: Annotated[str, Form()] = "[]",
     images: Annotated[list[UploadFile] | None, File()] = None,
 ):
-    thiet_bi_service.lay_thiet_bi_hoac_404(db, id_thiet_bi)
+    thiet_bi_service.tim_kiem_thiet_bi_theo_id(db, id_thiet_bi)
     kept_images = _parse_kept_product_images(existing_images, id_thiet_bi)
     upload_images = images or []
 

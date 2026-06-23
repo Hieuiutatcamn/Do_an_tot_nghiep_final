@@ -142,6 +142,7 @@ def test_vnpay_url_return_and_ipn_are_verified_and_idempotent(client, monkeypatc
     assert email_admin == [rental_id]
     detail = client.get(f"/api/v1/rentals/{rental_id}", headers=headers).json()
     assert detail["trang_thai"] == "Da xac nhan"
+    assert all(item["trang_thai"] == "Da xac nhan" for item in detail["details"])
     assert detail["phuong_thuc_thanh_toan"] == "VNPAY"
     assert detail["ma_giao_dich_vnpay"] == "14587421"
     assert float(detail["so_tien_da_thanh_toan"]) == 200000
@@ -194,6 +195,7 @@ def test_vnpay_rejects_bad_signature_amount_and_failed_transaction(client, monke
     assert failed_response.json()["RspCode"] == "00"
     detail = client.get(f"/api/v1/rentals/{rental_id}", headers=headers).json()
     assert detail["trang_thai"] == "Cho thanh toan"
+    assert all(item["trang_thai"] == "Cho thanh toan" for item in detail["details"])
     assert float(detail["so_tien_da_thanh_toan"]) == 0
     assert "trang_thai_thanh_toan" not in detail
 
@@ -249,6 +251,7 @@ def test_pending_vnpay_holds_inventory_then_expires_and_releases_it(client, monk
     assert response.status_code == 201, response.text
     rental = response.json()
     assert rental["trang_thai"] == "Cho thanh toan"
+    assert all(item["trang_thai"] == "Cho thanh toan" for item in rental["details"])
     deadline = datetime.fromisoformat(rental["han_thanh_toan_vnpay"])
 
     held = client.get(
@@ -273,6 +276,7 @@ def test_pending_vnpay_holds_inventory_then_expires_and_releases_it(client, monk
     )
     assert expired_detail.status_code == 200, expired_detail.text
     assert expired_detail.json()["trang_thai"] == "Da huy"
+    assert all(item["trang_thai"] == "Da huy" for item in expired_detail.json()["details"])
 
     released = client.get(
         "/api/v1/devices/1/availability",
@@ -322,6 +326,7 @@ def test_return_can_restore_auto_cancelled_order_when_pay_date_is_in_time(client
     assert response.json()["thanh_cong"] is True
     detail = client.get(f"/api/v1/rentals/{rental_id}", headers=headers).json()
     assert detail["trang_thai"] == "Da xac nhan"
+    assert all(item["trang_thai"] == "Da xac nhan" for item in detail["details"])
     assert detail["ma_giao_dich_vnpay"] == "15589741"
 
 
@@ -347,6 +352,7 @@ def test_return_rejects_payment_after_deadline(client, monkeypatch):
     assert response.json()["thanh_cong"] is False
     detail = client.get(f"/api/v1/rentals/{rental_id}", headers=headers).json()
     assert detail["trang_thai"] == "Cho thanh toan"
+    assert all(item["trang_thai"] == "Cho thanh toan" for item in detail["details"])
     assert detail["ma_giao_dich_vnpay"] is None
 
 

@@ -62,6 +62,8 @@ DB_NAME=do_an_tot_nghiep
 APP_DEBUG=true
 JWT_SECRET_KEY=change-this-access-secret
 JWT_REFRESH_SECRET_KEY=change-this-refresh-secret
+RESET_PASSWORD_TOKEN_EXPIRE_MINUTES=30
+RESET_PASSWORD_FRONTEND_URL=http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dat_lai_mat_khau.html
 ```
 
 Chạy migration:
@@ -91,6 +93,7 @@ http://127.0.0.1:8000/docs
 ## API chính
 
 - Auth: `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh`, `GET /api/v1/auth/me`
+- Password reset: `POST /api/v1/auth/forgot-password`, `POST /api/v1/auth/reset-password`
 - OAuth: `GET /api/v1/auth/google/login`, `GET /api/v1/auth/google/callback`, `GET /api/v1/auth/facebook/login`, `GET /api/v1/auth/facebook/callback`
 - Tài khoản: CRUD quản trị tại `/api/v1/accounts`
 - Khách hàng: CRUD quản trị tại `/api/v1/customers`
@@ -109,14 +112,14 @@ Thêm Client ID/Secret vào `.env` và đăng ký callback URL tương ứng t�
 
 ```env
 BACKEND_PUBLIC_URL=http://127.0.0.1:8000
-OAUTH_FRONTEND_LOGIN_URL=http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html
+OAUTH_FRONTEND_LOGIN_URL=http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/dang_nhap.html
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 FACEBOOK_CLIENT_ID=
 FACEBOOK_CLIENT_SECRET=
 FACEBOOK_API_VERSION=v22.0
 FACEBOOK_REDIRECT_URI=http://localhost:8000/api/v1/auth/facebook/callback
-FACEBOOK_FRONTEND_SUCCESS_URL=http://127.0.0.1:5500/Webthuemayanh_FE/user/Sunlens_Camera/trang_chu.html
+FACEBOOK_FRONTEND_SUCCESS_URL=http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/trang_chu.html
 ```
 
 Callback URL:

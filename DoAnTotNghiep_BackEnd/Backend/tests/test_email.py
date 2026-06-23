@@ -84,6 +84,25 @@ def test_noi_dung_email_html_tieng_viet_va_escape_du_lieu():
     assert "0906 586 982" in html_xac_nhan
 
 
+def test_noi_dung_email_dat_lai_mat_khau_chua_link_reset_dung():
+    _, khach_hang, _ = _du_lieu_email_mau()
+    link = (
+        "http://127.0.0.1:5500/DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/"
+        "user/Sunlens_Camera/dat_lai_mat_khau.html?token=abc123"
+    )
+
+    html_reset = gui_email_service.tao_noi_dung_email_dat_lai_mat_khau(
+        khach_hang=khach_hang,
+        link_dat_lai=link,
+        thoi_han_phut=30,
+    )
+
+    assert "Đặt lại mật khẩu" in html_reset
+    assert "30" in html_reset
+    assert "dat_lai_mat_khau.html?token=abc123" in html_reset
+    assert "&lt;Nguyễn Văn A&gt;" in html_reset
+
+
 def test_gui_email_thieu_api_key_khong_phat_sinh_loi(monkeypatch):
     monkeypatch.setattr(
         gui_email_service,

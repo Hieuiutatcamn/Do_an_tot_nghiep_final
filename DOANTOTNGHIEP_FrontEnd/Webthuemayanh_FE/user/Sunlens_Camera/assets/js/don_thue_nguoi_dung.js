@@ -497,6 +497,14 @@
         return price * quantity * days;
     }
 
+    function layTrangThaiChiTietDonThue(item, donThue) {
+        return item?.trang_thai
+            || item?.Trang_thai
+            || item?.status
+            || getOrderStatus(donThue)
+            || '';
+    }
+
     function formatCurrency(value) {
         const number = Number(value || 0);
         if (Number.isNaN(number)) return escapeHtml(value);
@@ -544,6 +552,38 @@
         const key = getStatusKey(status);
         const className = key === 'payment-pending' ? 'pending' : key;
         return `<span class="status-badge-user status-${className}">${getStatusText(status)}</span>`;
+    }
+
+    function layTenTrangThaiChiTietDonThue(trangThaiChiTiet) {
+        const mapping = {
+            'Cho thanh toan': 'Chờ thanh toán',
+            'Da dat': 'Đã đặt',
+            'Da xac nhan': 'Đã xác nhận',
+            'Dang thue': 'Đang thuê',
+            'Da thue': 'Đã thuê',
+            'Da huy': 'Đã hủy',
+            'Da qua han': 'Quá hạn',
+        };
+
+        const tenTrangThaiChiTiet = mapping[String(trangThaiChiTiet || '').trim()];
+        return tenTrangThaiChiTiet || getStatusText(trangThaiChiTiet);
+    }
+
+    function taoHuyHieuTrangThaiChiTiet(trangThaiChiTiet) {
+        const khoaTrangThai = getStatusKey(trangThaiChiTiet);
+        const lopMau = khoaTrangThai === 'payment-pending' ? 'pending' : khoaTrangThai;
+        const tenTrangThaiChiTiet = layTenTrangThaiChiTietDonThue(trangThaiChiTiet);
+        return `<span class="status-badge-user status-${lopMau}">${escapeHtml(tenTrangThaiChiTiet)}</span>`;
+    }
+
+    function hienThiTrangThaiChiTietDonThue(item, donThue) {
+        const trangThaiChiTiet = layTrangThaiChiTietDonThue(item, donThue);
+        const huyHieuTrangThaiChiTiet = taoHuyHieuTrangThaiChiTiet(trangThaiChiTiet);
+        return `
+            <div class="meta-full-width meta-trang-thai-chi-tiet">
+                Trạng thái thiết bị trong đơn: <strong>${huyHieuTrangThaiChiTiet}</strong>
+            </div>
+        `;
     }
 
     function canCancelOrder(status) {
@@ -899,12 +939,12 @@
     }
 
     function renderOrderItems(order) {
-        const items = getOrderItems(order);
-        if (!items.length) {
+        const danhSachThietBi = getOrderItems(order);
+        if (!danhSachThietBi.length) {
             return '<p class="text-muted mb-0">Không có chi tiết thiết bị thuê.</p>';
         }
 
-        return items.map(function (item) {
+        return danhSachThietBi.map(function (item) {
             const image = getDeviceImage(item);
             const name = getDeviceName(item);
             return `
@@ -922,6 +962,7 @@
                             <div>Số lượng: <strong>${escapeHtml(getItemQuantity(item))}</strong></div>
                             <div>Số ngày thuê: <strong>${escapeHtml(getItemRentalDays(item))}</strong></div>
                             <div>Thành tiền: <strong>${formatCurrency(getItemTotal(item))}</strong></div>
+                            ${hienThiTrangThaiChiTietDonThue(item, order)}
                         </div>
                     </div>
                 </div>
@@ -1613,6 +1654,9 @@
         viewOrderDetail,
         renderOrderDetail,
         getStatusBadge,
+        layTenTrangThaiChiTietDonThue,
+        taoHuyHieuTrangThaiChiTiet,
+        hienThiTrangThaiChiTietDonThue,
         formatCurrency,
         formatDate,
         renderPaymentImage,

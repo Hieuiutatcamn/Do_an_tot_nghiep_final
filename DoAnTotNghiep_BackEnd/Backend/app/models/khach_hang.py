@@ -1,7 +1,7 @@
 from datetime import date
 
 from sqlalchemy import Date, ForeignKey, String, Unicode
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, synonym
 
 from app.database.base import Base
 
@@ -19,8 +19,9 @@ class KhachHang(Base):
     so_cccd: Mapped[str | None] = mapped_column("So_CCCD", String(20), unique=True)
     anh_cccd_mat_truoc: Mapped[str | None] = mapped_column("Anh_CCCD_mat_truoc", String(255))
     anh_cccd_mat_sau: Mapped[str | None] = mapped_column("Anh_CCCD_mat_sau", String(255))
-    email: Mapped[str | None] = mapped_column("thu_dien_tu", String(100), unique=True)
+    thu_dien_tu: Mapped[str | None] = mapped_column("thu_dien_tu", String(100), unique=True)
     anh_cccd: Mapped[str | None] = mapped_column("Anh_CCCD", String(255))
+    email = synonym("thu_dien_tu")
 
     account = relationship("TaiKhoan", back_populates="customer")
     cart_items = relationship("GioHang", back_populates="customer", cascade="all, delete-orphan")
