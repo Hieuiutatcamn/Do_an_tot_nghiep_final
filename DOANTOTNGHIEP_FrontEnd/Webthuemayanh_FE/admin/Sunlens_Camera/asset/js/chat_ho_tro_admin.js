@@ -60,36 +60,84 @@
         return date.toLocaleString('vi-VN');
     }
 
-    function normalizeStatus(status) {
-        const value = String(status || '').trim().toUpperCase();
-        return {
-            AI: 'AI',
-            AI_DANG_XU_LY: 'AI',
-            WAITING_STAFF: 'WAITING_STAFF',
-            CHO_NHAN_VIEN: 'WAITING_STAFF',
-            IN_PROGRESS: 'IN_PROGRESS',
-            NHAN_VIEN_DANG_XU_LY: 'IN_PROGRESS',
-            CLOSED: 'CLOSED',
-            DA_DONG: 'CLOSED',
-        }[value] || value;
+    function khoaChuanHoaTicketChat(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .toLowerCase()
+            .replace(/[\s-]+/g, '_');
     }
 
-    function statusText(status) {
+    function chuanHoaTrangThaiTicketChat(status) {
+        const value = khoaChuanHoaTicketChat(status);
         return {
-            AI: '🟢 AI đang xử lý',
-            WAITING_STAFF: '🟡 Chờ nhân viên',
-            IN_PROGRESS: '🔵 Nhân viên đang xử lý',
-            CLOSED: '🔴 Đã đóng',
-        }[normalizeStatus(status)] || status || '-';
+            moi: 'MOI',
+            cho_nhan_vien: 'MOI',
+            online: 'MOI',
+            chuyen_nhan_vien: 'MOI',
+            waiting_staff: 'MOI',
+            dang_xu_ly: 'DANG_XU_LY',
+            nhan_vien_dang_xu_ly: 'DANG_XU_LY',
+            in_progress: 'DANG_XU_LY',
+            da_xu_ly: 'DA_XU_LY',
+            da_dong: 'DA_XU_LY',
+            dong: 'DA_XU_LY',
+            closed: 'DA_XU_LY',
+        }[value] || 'MOI';
     }
 
-    function statusClass(status) {
+    function layTenTrangThaiTicketChat(status) {
         return {
-            AI: 'ai',
-            WAITING_STAFF: 'waiting',
-            IN_PROGRESS: 'staff',
-            CLOSED: 'closed',
-        }[normalizeStatus(status)] || 'ai';
+            MOI: 'Mới',
+            DANG_XU_LY: 'Đang xử lý',
+            DA_XU_LY: 'Đã xử lý',
+        }[chuanHoaTrangThaiTicketChat(status)] || 'Mới';
+    }
+
+    function taoHuyHieuTrangThaiTicketChat(status) {
+        const normalizedStatus = chuanHoaTrangThaiTicketChat(status);
+        return {
+            MOI: '<span class="chat-status waiting">Mới</span>',
+            DANG_XU_LY: '<span class="chat-status processing">Đang xử lý</span>',
+            DA_XU_LY: '<span class="chat-status done">Đã xử lý</span>',
+        }[normalizedStatus] || '<span class="chat-status waiting">Mới</span>';
+    }
+
+    function chuanHoaYeuCauTicketChat(value) {
+        const normalizedValue = khoaChuanHoaTicketChat(value);
+        return {
+            hoi_san_pham: 'hoi_san_pham',
+            hoi_gia_thue: 'hoi_gia_thue',
+            hoi_don_thue: 'hoi_don_thue',
+            khieu_nai: 'khieu_nai',
+            hoan_tien: 'hoan_tien',
+            huy_don: 'huy_don',
+            can_nhan_vien: 'can_nhan_vien',
+            can_nhan_vien_ho_tro: 'can_nhan_vien',
+            can_xac_nhan: 'can_nhan_vien',
+            khac: 'khac',
+        }[normalizedValue] || '';
+    }
+
+    function layTenYeuCauTicketChat(value) {
+        return {
+            hoi_san_pham: 'Hỏi sản phẩm',
+            hoi_gia_thue: 'Hỏi giá thuê',
+            hoi_don_thue: 'Hỏi đơn thuê',
+            khieu_nai: 'Khiếu nại',
+            hoan_tien: 'Hoàn tiền',
+            huy_don: 'Hủy đơn',
+            can_nhan_vien: 'Cần nhân viên hỗ trợ',
+            khac: 'Khác',
+        }[chuanHoaYeuCauTicketChat(value)] || '';
+    }
+
+    function rutGonNoiDungTicketChat(value, maxLength = 80) {
+        const text = layNoiDungVanBan(value).replace(/\s+/g, ' ').trim();
+        if (!text) return '';
+        if (text === 'Yêu cầu hỗ trợ từ khách hàng.') return '';
+        return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
     }
 
     function senderText(senderType) {
@@ -109,45 +157,64 @@
     }
 
     function conversationStatus(conversation) {
-        return normalizeStatus(conversation?.trang_thai || conversation?.status);
+        return chuanHoaTrangThaiTicketChat(conversation?.trang_thai || conversation?.status);
     }
 
     function isClosedConversation(conversation) {
-        return conversationStatus(conversation) === 'CLOSED';
+        return conversationStatus(conversation) === 'DA_XU_LY';
     }
 
     function isStaffConversation(conversation) {
-        return String(conversation?.che_do_chat || conversation?.chat_mode || '').toUpperCase() === 'STAFF'
-            || conversationStatus(conversation) === 'IN_PROGRESS'
-            || Boolean(employeeId(conversation));
+        return Boolean(employeeId(conversation))
+            || conversationStatus(conversation) === 'DANG_XU_LY';
     }
 
     function isWaitingForStaff(conversation) {
         return Boolean(conversation?.can_nhan_vien ?? conversation?.need_staff)
-            || Number(conversation?.unread_customer_count || conversation?.so_tin_nhan_khach_chua_doc || 0) > 0
-            || conversationStatus(conversation) === 'WAITING_STAFF';
+            || Number(conversation?.unread_customer_count || conversation?.so_tin_nhan_khach_chua_doc || 0) > 0;
     }
 
     function canAssign(conversation) {
-        return Boolean(conversation) && !isClosedConversation(conversation) && !isStaffConversation(conversation);
+        return Boolean(conversation) && !isClosedConversation(conversation) && !employeeId(conversation);
     }
 
     function canReply(conversation) {
-        return Boolean(conversation) && !isClosedConversation(conversation) && isStaffConversation(conversation);
+        return Boolean(conversation) && !isClosedConversation(conversation) && Boolean(employeeId(conversation));
     }
 
     function customerName(conversation) {
-        return conversation?.ten_khach_hang
-            || conversation?.ten_khach_hang
-            || conversation?.khach_hang
-            || `Khách hàng #${conversation?.id_khach_hang || '-'}`;
+        return `Khách hàng #${conversation?.id_khach_hang || '-'}`;
     }
 
     function employeeName(conversation) {
-        return conversation?.employee_name
+        return conversation?.nhan_vien_phu_trach
+            || conversation?.employee_name
             || conversation?.staff_name
             || conversation?.ten_nhan_vien
             || '';
+    }
+
+    function hienThiNhanVienPhuTrach(conversation) {
+        return employeeName(conversation) || 'Chưa gán nhân viên';
+    }
+
+    function hienThiYeuCauTicketChat(conversation) {
+        const tenYeuCau = layTenYeuCauTicketChat(conversation?.yeu_cau);
+        if (tenYeuCau && tenYeuCau !== 'Khác') {
+            return tenYeuCau;
+        }
+        const noiDungTam = rutGonNoiDungTicketChat(
+            conversation?.noi_dung_yeu_cau
+            || conversation?.noi_dung_ticket
+            || conversation?.last_message
+        );
+        if (noiDungTam) {
+            return noiDungTam;
+        }
+        if (tenYeuCau) {
+            return tenYeuCau;
+        }
+        return 'Khác';
     }
 
     function employeeId(conversation) {
@@ -165,10 +232,6 @@
             || conversation?.ngay_tao
             || conversation?.created_at
             || '';
-    }
-
-    function chatModeText(mode) {
-        return String(mode || 'AI').toUpperCase() === 'STAFF' ? 'Nhân viên' : 'AI';
     }
 
     function layNoiDungTinNhan(message) {
@@ -266,17 +329,17 @@
         list.innerHTML = state.conversations.map((conversation) => {
             const id = conversationId(conversation);
             const isActive = Number(id) === Number(state.selectedConversationId);
-            const mode = chatModeText(conversation.che_do_chat || conversation.chat_mode);
-            const assignedEmployee = employeeName(conversation);
             const status = conversation.trang_thai || conversation.status;
             return `
                 <button class="admin-chat-conversation ${isActive ? 'is-active' : ''}" type="button" data-conversation-id="${escapeHtml(id)}">
                     <span class="admin-chat-conversation-head">
                         <span class="admin-chat-customer">${escapeHtml(customerName(conversation))}</span>
-                        <span class="chat-status ${statusClass(status)}">${escapeHtml(statusText(status))}</span>
+                        ${taoHuyHieuTrangThaiTicketChat(status)}
                     </span>
-                    <span class="admin-chat-meta">Loại chat: ${escapeHtml(mode)} · Cập nhật ${escapeHtml(formatDateTime(updatedAt(conversation)))}</span>
-                    <span class="admin-chat-meta">${assignedEmployee ? `Nhân viên: ${escapeHtml(assignedEmployee)}` : 'Chưa gán nhân viên'}</span>
+                    <span class="admin-chat-meta">Yêu cầu: ${escapeHtml(hienThiYeuCauTicketChat(conversation))}</span>
+                    <span class="admin-chat-meta">Trạng thái: ${escapeHtml(layTenTrangThaiTicketChat(status))}</span>
+                    <span class="admin-chat-meta">Cập nhật: ${escapeHtml(formatDateTime(updatedAt(conversation)))}</span>
+                    <span class="admin-chat-meta">Nhân viên: ${escapeHtml(hienThiNhanVienPhuTrach(conversation))}</span>
                 </button>
             `;
         }).join('');
@@ -313,12 +376,11 @@
 
         if (title) title.textContent = customerName(conversation);
         if (subtitle) {
-            const assignedEmployee = employeeName(conversation);
             const status = conversation.trang_thai || conversation.status;
             subtitle.innerHTML = `
-                <span class="chat-status ${statusClass(status)}">${escapeHtml(statusText(status))}</span>
-                <span> · Loại chat: ${escapeHtml(chatModeText(conversation.che_do_chat || conversation.chat_mode))}</span>
-                ${assignedEmployee ? ` · ${escapeHtml(assignedEmployee)}` : ''}
+                <span class="admin-chat-detail-meta">Trạng thái: ${taoHuyHieuTrangThaiTicketChat(status)}</span>
+                <span class="admin-chat-detail-meta">Yêu cầu: ${escapeHtml(hienThiYeuCauTicketChat(conversation))}</span>
+                <span class="admin-chat-detail-meta">Nhân viên phụ trách: ${escapeHtml(hienThiNhanVienPhuTrach(conversation))}</span>
             `;
         }
 
@@ -329,7 +391,7 @@
         if (input) {
             input.disabled = !replyEnabled;
             input.placeholder = isClosed
-                ? 'Cuộc trò chuyện đã đóng.'
+                ? 'Ticket chat đã hoàn tất.'
                 : replyEnabled
                     ? 'Nhập phản hồi cho khách hàng...'
                     : 'Bấm "Nhận xử lý" để trả lời khách hàng.';
@@ -508,7 +570,7 @@
 
     async function dongCuocTroChuyen() {
         if (!state.selectedConversationId) return;
-        const ok = window.confirm('Bạn muốn đóng cuộc trò chuyện này?');
+        const ok = window.confirm('Bạn muốn hoàn tất ticket chat này?');
         if (!ok) return;
 
         try {
@@ -516,12 +578,13 @@
                 method: 'PUT',
             });
             state.selectedConversation = conversationFromResponse(updated) || updated;
-            setNotice('Đã đóng cuộc trò chuyện.');
+            setNotice('Đã hoàn tất ticket chat.');
             await taiDanhSachCuocTroChuyen(true);
+            await taiTinNhan(true);
             updateDetailHeader();
         } catch (error) {
             console.warn(error);
-            setNotice(error.message || 'Không thể đóng cuộc trò chuyện.', 'error');
+            setNotice(error.message || 'Không thể hoàn tất ticket chat.', 'error');
         }
     }
 

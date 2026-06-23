@@ -338,7 +338,6 @@ CREATE TABLE `khach_hang` (
   `Anh_CCCD_mat_truoc` varchar(255) DEFAULT NULL,
   `Anh_CCCD_mat_sau` varchar(255) DEFAULT NULL,
   `thu_dien_tu` varchar(100) DEFAULT NULL,
-  `Anh_CCCD` varchar(255) DEFAULT NULL,
   `gioi_tinh` varchar(20) DEFAULT NULL,
   `ngay_sinh` date DEFAULT NULL,
   `dia_chi` varchar(255) DEFAULT NULL,

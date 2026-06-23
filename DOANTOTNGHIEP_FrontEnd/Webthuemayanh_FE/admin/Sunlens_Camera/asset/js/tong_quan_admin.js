@@ -6,6 +6,7 @@
     let accounts = [];
     let currentFilter = 'all';
     let displayedOrders = [];
+    let dashboardInitialized = false;
 
     async function loadDashboardStats(filter = 'all') {
         AdminApi.requireAuth();
@@ -398,7 +399,10 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initDashboard() {
+        if (dashboardInitialized) return;
+        dashboardInitialized = true;
+
         window.parseDateOnly = parseDateOnly;
         window.formatDateTime = AdminApi.formatDateTime;
         window.getStatusText = AdminApi.rentalStatusText;
@@ -433,6 +437,12 @@
         if (exportBtn) exportBtn.addEventListener('click', exportDashboard);
 
         loadDashboardStats('all');
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    } else {
+        initDashboard();
+    }
 })();
 

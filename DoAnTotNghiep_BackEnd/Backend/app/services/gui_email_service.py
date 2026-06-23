@@ -97,18 +97,11 @@ def _xac_dinh_nguoi_nhan_resend(
     if nguoi_nhan.lower() == nguoi_nhan_thu_nghiem.lower():
         return nguoi_nhan, tieu_de, noi_dung_html
 
-    if str(getattr(settings, "app_env", "development")).lower() == "production":
-        logger.error(
-            "Không thể gửi email production tới %s bằng onboarding@resend.dev. "
-            "Hãy xác minh domain trên Resend và đổi EMAIL_FROM.",
-            _che_dia_chi_email(nguoi_nhan),
-        )
-        return None, tieu_de, noi_dung_html
-
     nguoi_nhan_da_che = _che_dia_chi_email(nguoi_nhan)
     logger.warning(
-        "Resend sandbox: chuyển email dự kiến gửi tới %s về địa chỉ kiểm thử.",
+        "Resend sandbox: chuyển email dự kiến gửi tới %s về địa chỉ kiểm thử %s.",
         nguoi_nhan_da_che,
+        _che_dia_chi_email(nguoi_nhan_thu_nghiem),
     )
     tieu_de_thu_nghiem = f"[TEST cho {nguoi_nhan_da_che}] {tieu_de}"
     thong_bao_thu_nghiem = (

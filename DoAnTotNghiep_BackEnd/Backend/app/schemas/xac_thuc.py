@@ -29,7 +29,6 @@ class DangKyYeuCau(BaseModel):
     so_cccd: str | None = Field(default=None, max_length=20, examples=["001001000099"])
     anh_cccd_mat_truoc: str | None = None
     anh_cccd_mat_sau: str | None = None
-    anh_cccd: str | None = None
 
 
 class DangNhapYeuCau(BaseModel):
@@ -99,7 +98,6 @@ class HoSoKhachHangPhanHoi(BaseModel):
     )
     anh_cccd_mat_truoc: str | None = None
     anh_cccd_mat_sau: str | None = None
-    anh_cccd: str | None = None
 
 
 class ToiPhanHoi(BaseModel):

@@ -72,7 +72,6 @@ def dang_ky_khach_hang(db: Session, payload: DangKyYeuCau) -> TokenPhanHoi:
         thu_dien_tu=str(payload.email) if payload.email else None,
         anh_cccd_mat_truoc=payload.anh_cccd_mat_truoc,
         anh_cccd_mat_sau=payload.anh_cccd_mat_sau,
-        anh_cccd=payload.anh_cccd,
     )
     db.add(customer)
     try:

@@ -124,6 +124,13 @@
             font-size: 13px;
         }
 
+        .admin-chat-detail-meta {
+            color: #475569;
+            display: block;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         .chat-status {
             border-radius: 999px;
             display: inline-flex;
@@ -134,10 +141,9 @@
             white-space: nowrap;
         }
 
-        .chat-status.ai { background: rgba(14, 165, 233, 0.14); color: #0369a1; }
         .chat-status.waiting { background: rgba(245, 158, 11, 0.18); color: #b45309; }
-        .chat-status.staff { background: rgba(5, 150, 105, 0.15); color: #047857; }
-        .chat-status.closed { background: rgba(100, 116, 139, 0.16); color: #475569; }
+        .chat-status.processing { background: rgba(37, 99, 235, 0.14); color: #1d4ed8; }
+        .chat-status.done { background: rgba(5, 150, 105, 0.15); color: #047857; }
 
         .admin-chat-detail {
             display: flex;
@@ -481,11 +487,11 @@
                     <div class="admin-chat-detail-header">
                         <div class="admin-chat-title">
                             <strong id="chatDetailTitle">Chọn cuộc trò chuyện</strong>
-                            <span id="chatDetailSubtitle">Xem tin nhắn và trả lời khách hàng</span>
+                            <span id="chatDetailSubtitle">Xem tin nhắn và xử lý ticket chat</span>
                         </div>
                         <div class="admin-chat-actions">
                             <button class="admin-chat-btn" id="assignConversationBtn" type="button" disabled>Nhận xử lý</button>
-                            <button class="admin-chat-btn danger" id="closeConversationBtn" type="button" disabled>Đóng</button>
+                            <button class="admin-chat-btn danger" id="closeConversationBtn" type="button" disabled>Hoàn tất</button>
                         </div>
                     </div>
                     <div class="admin-chat-messages" id="chatMessageList">

@@ -1,0 +1,44 @@
+{
+  "counts": {
+    "tai_khoan": 7,
+    "khach_hang": 5,
+    "nhan_vien": 2,
+    "don_thue": 10,
+    "chi_tiet_don_thue": 15,
+    "gio_hang": 4,
+    "khieu_nai": 3,
+    "thong_bao": 12,
+    "chat_ticket": 1,
+    "cuoc_tro_chuyen": 1,
+    "tin_nhan_chat": 4,
+    "tin_nhan_ai": 6,
+    "thiet_bi": 20,
+    "ma_giam_gia": 4
+  },
+  "suspicious_accounts_customers": [],
+  "orders_with_bad_or_missing_payment_image": [],
+  "employees": [
+    {
+      "Id_nhan_vien": 1,
+      "Dang_nhap": "admin",
+      "ho_ten": "Trần Công Hiếu",
+      "sdt": "0901000001"
+    },
+    {
+      "Id_nhan_vien": 3,
+      "Dang_nhap": "nv01",
+      "ho_ten": "Lê Văn Nam",
+      "sdt": "0901000002"
+    }
+  ],
+  "conversations": [
+    {
+      "id_cuoc_tro_chuyen": 5,
+      "id_khach_hang": 1,
+      "id_nhan_vien": 1,
+      "che_do_chat": "STAFF",
+      "trang_thai": "NHAN_VIEN_DANG_XU_LY",
+      "chu_de": "Tư vấn thuê máy quay vlog"
+    }
+  ]
+}

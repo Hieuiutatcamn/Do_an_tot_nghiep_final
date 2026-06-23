@@ -23,7 +23,6 @@ class KhachHangCoBan(BaseModel):
         default=None,
         validation_alias=AliasChoices("email", "thu_dien_tu"),
     )
-    anh_cccd: str | None = Field(default=None, max_length=255)
 
 
 class KhachHangTao(KhachHangCoBan):
@@ -52,5 +51,4 @@ class KhachHangPhanHoi(MoHinhORM):
         default=None,
         validation_alias=AliasChoices("email", "thu_dien_tu"),
     )
-    anh_cccd: str | None = None
     account: TaiKhoanPhanHoi | None = None

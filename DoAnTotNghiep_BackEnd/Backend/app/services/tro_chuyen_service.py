@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any
+import unicodedata
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -21,6 +22,120 @@ OPEN_CHAT_STATUSES = {"CHO_NHAN_VIEN", "NHAN_VIEN_DANG_XU_LY"}
 STAFF_ONLINE_WINDOW_MINUTES = 5
 # Loai ticket hop le (khop enum LOAI_VE_CHAT trong models/hang_so.py)
 LOAI_VE_CHAT_HOP_LE = {"KHIEU_NAI", "HUY_DON", "HOAN_TIEN", "CAN_XAC_NHAN", "KHAC"}
+TRANG_THAI_TICKET_CHAT_MO = {"MOI", "DANG_XU_LY"}
+NOI_DUNG_YEU_CAU_MAC_DINH = "Yêu cầu hỗ trợ từ khách hàng."
+
+
+def khoa_chuan_hoa_ticket_chat(value: str | None) -> str:
+    normalized = unicodedata.normalize("NFKD", str(value or ""))
+    ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
+    ascii_value = ascii_value.lower().replace("-", "_").replace(" ", "_")
+    while "__" in ascii_value:
+        ascii_value = ascii_value.replace("__", "_")
+    return ascii_value.strip("_")
+
+
+def chuan_hoa_trang_thai_ticket_chat(
+    ticket_status: str | None,
+    conversation_status: str | None = None,
+) -> str:
+    status_key = khoa_chuan_hoa_ticket_chat(ticket_status)
+    conversation_key = khoa_chuan_hoa_ticket_chat(conversation_status)
+    mapping = {
+        "moi": "MOI",
+        "cho_nhan_vien": "MOI",
+        "online": "MOI",
+        "chuyen_nhan_vien": "MOI",
+        "waiting_staff": "MOI",
+        "dang_xu_ly": "DANG_XU_LY",
+        "nhan_vien_dang_xu_ly": "DANG_XU_LY",
+        "in_progress": "DANG_XU_LY",
+        "da_xu_ly": "DA_XU_LY",
+        "dong": "DA_XU_LY",
+        "da_dong": "DA_XU_LY",
+        "closed": "DA_XU_LY",
+    }
+    if status_key in mapping:
+        return mapping[status_key]
+    if conversation_key in mapping:
+        return mapping[conversation_key]
+    return "MOI"
+
+
+def chuan_hoa_yeu_cau_ticket_chat(value: str | None) -> str | None:
+    request_key = khoa_chuan_hoa_ticket_chat(value)
+    mapping = {
+        "hoi_san_pham": "hoi_san_pham",
+        "hoi_gia_thue": "hoi_gia_thue",
+        "hoi_don_thue": "hoi_don_thue",
+        "khieu_nai": "khieu_nai",
+        "hoan_tien": "hoan_tien",
+        "huy_don": "huy_don",
+        "can_nhan_vien": "can_nhan_vien",
+        "can_nhan_vien_ho_tro": "can_nhan_vien",
+        "can_xac_nhan": "can_nhan_vien",
+        "khac": "khac",
+    }
+    return mapping.get(request_key)
+
+
+def lay_ticket_chat_uu_tien(conversation: CuocTroChuyen) -> PhieuChat | None:
+    tickets = list(conversation.tickets or [])
+    if not tickets:
+        return None
+
+    def sap_xep(items: list[PhieuChat]) -> PhieuChat:
+        return sorted(
+            items,
+            key=lambda item: (item.created_at or datetime.min, item.id_ticket or 0),
+            reverse=True,
+        )[0]
+
+    tickets_mo = [ticket for ticket in tickets if ticket.trang_thai in TRANG_THAI_TICKET_CHAT_MO]
+    return sap_xep(tickets_mo) if tickets_mo else sap_xep(tickets)
+
+
+def lay_tin_nhan_khach_dau_tien(conversation: CuocTroChuyen) -> str | None:
+    messages = sorted(
+        list(conversation.messages or []),
+        key=lambda item: (item.created_at or datetime.min, item.id_tin_nhan or 0),
+    )
+    for message in messages:
+        if message.sender_type == "CUSTOMER":
+            noi_dung = str(message.noi_dung or "").strip()
+            if noi_dung:
+                return noi_dung
+    return None
+
+
+def lay_noi_dung_yeu_cau_ticket_chat(
+    conversation: CuocTroChuyen,
+    ticket: PhieuChat | None,
+) -> str | None:
+    candidates = [
+        ticket.noi_dung if ticket else None,
+        conversation.chu_de,
+        lay_tin_nhan_khach_dau_tien(conversation),
+    ]
+    for candidate in candidates:
+        normalized = str(candidate or "").strip()
+        if normalized and normalized != NOI_DUNG_YEU_CAU_MAC_DINH:
+            return normalized
+    return str(ticket.noi_dung).strip() if ticket and ticket.noi_dung else None
+
+
+def dong_bo_trang_thai_ticket_chat(
+    db: Session,
+    conversation: CuocTroChuyen,
+    trang_thai_moi: str,
+) -> PhieuChat | None:
+    ticket = lay_ticket_chat_uu_tien(conversation)
+    if not ticket:
+        return None
+    ticket.trang_thai = trang_thai_moi
+    db.add(ticket)
+    db.flush()
+    return ticket
 
 
 def gui_tro_chuyen(
@@ -164,6 +279,7 @@ def lay_cuoc_tro_chuyen_admin(db: Session) -> dict[str, Any]:
             selectinload(CuocTroChuyen.customer),
             selectinload(CuocTroChuyen.employee),
             selectinload(CuocTroChuyen.messages),
+            selectinload(CuocTroChuyen.tickets),
         )
         .order_by(
             (CuocTroChuyen.trang_thai == "CHO_NHAN_VIEN").desc(),
@@ -174,7 +290,7 @@ def lay_cuoc_tro_chuyen_admin(db: Session) -> dict[str, Any]:
     waiting_count = sum(1 for conversation in conversations if cuoc_tro_chuyen_can_xu_ly(conversation))
     unread_message_count = sum(dem_tin_nhan_khach_chua_doc(conversation) for conversation in conversations)
     return {
-        "items": [cuoc_tro_chuyen_sang_dict(conversation, waiting_count=waiting_count) for conversation in conversations],
+        "items": [ticket_chat_admin_sang_dict(conversation, waiting_count=waiting_count) for conversation in conversations],
         "waiting_count": waiting_count,
         "unread_message_count": unread_message_count,
     }
@@ -199,20 +315,22 @@ def gan_cuoc_tro_chuyen(db: Session, conversation_id: int, account: TaiKhoan) ->
     conversation.need_staff = False
     conversation.trang_thai = "NHAN_VIEN_DANG_XU_LY"
     danh_dau_tin_nhan_khach_da_doc(conversation)
+    dong_bo_trang_thai_ticket_chat(db, conversation, "DANG_XU_LY")
     db.add(conversation)
     db.commit()
     db.refresh(conversation)
-    return cuoc_tro_chuyen_sang_dict(conversation)
+    return ticket_chat_admin_sang_dict(conversation)
 
 
 def dong_cuoc_tro_chuyen(db: Session, conversation_id: int) -> dict[str, Any]:
     conversation = lay_cuoc_tro_chuyen_hoac_404(db, conversation_id)
     conversation.trang_thai = "DA_DONG"
     conversation.need_staff = False
+    dong_bo_trang_thai_ticket_chat(db, conversation, "DA_XU_LY")
     db.add(conversation)
     db.commit()
     db.refresh(conversation)
-    return cuoc_tro_chuyen_sang_dict(conversation)
+    return ticket_chat_admin_sang_dict(conversation)
 
 
 def admin_tra_loi(db: Session, account: TaiKhoan, conversation_id: int, message: str) -> dict[str, Any]:
@@ -222,6 +340,7 @@ def admin_tra_loi(db: Session, account: TaiKhoan, conversation_id: int, message:
         conversation.id_nhan_vien = employee.id_nhan_vien
     if conversation.trang_thai != "DA_DONG":
         conversation.trang_thai = "NHAN_VIEN_DANG_XU_LY"
+        dong_bo_trang_thai_ticket_chat(db, conversation, "DANG_XU_LY")
     conversation.need_staff = False
     danh_dau_tin_nhan_khach_da_doc(conversation)
     staff_message = them_tin_nhan_chat(
@@ -322,6 +441,7 @@ def lay_cuoc_tro_chuyen_hoac_404(db: Session, conversation_id: int) -> CuocTroCh
             selectinload(CuocTroChuyen.customer),
             selectinload(CuocTroChuyen.employee),
             selectinload(CuocTroChuyen.messages),
+            selectinload(CuocTroChuyen.tickets),
         )
         .where(CuocTroChuyen.id_cuoc_tro_chuyen == conversation_id)
     )
@@ -486,6 +606,35 @@ def cuoc_tro_chuyen_sang_dict(
         "unread_customer_count": unread_customer_count,
         "so_tin_nhan_khach_chua_doc": unread_customer_count,
     }
+
+
+def ticket_chat_admin_sang_dict(
+    conversation: CuocTroChuyen,
+    waiting_count: int | None = None,
+) -> dict[str, Any]:
+    conversation_data = cuoc_tro_chuyen_sang_dict(conversation, waiting_count=waiting_count)
+    ticket = lay_ticket_chat_uu_tien(conversation)
+    yeu_cau = chuan_hoa_yeu_cau_ticket_chat(ticket.loai_ticket if ticket else None)
+    noi_dung_yeu_cau = lay_noi_dung_yeu_cau_ticket_chat(conversation, ticket)
+    if not yeu_cau:
+        yeu_cau = "khac" if noi_dung_yeu_cau else None
+
+    conversation_data.update(
+        {
+            "id_ticket_chat": ticket.id_ticket if ticket else None,
+            "loai_chat": conversation.chat_mode,
+            "trang_thai": chuan_hoa_trang_thai_ticket_chat(
+                ticket.trang_thai if ticket else None,
+                conversation.trang_thai,
+            ),
+            "trang_thai_cuoc_tro_chuyen": conversation.trang_thai,
+            "yeu_cau": yeu_cau,
+            "noi_dung_yeu_cau": noi_dung_yeu_cau,
+            "nhan_vien_phu_trach": conversation.employee.ho_ten if conversation.employee else None,
+            "ngay_cap_nhat": conversation.updated_at,
+        }
+    )
+    return conversation_data
 
 
 def tin_nhan_sang_dict(message: TinNhanCuocTroChuyen) -> dict[str, Any]:

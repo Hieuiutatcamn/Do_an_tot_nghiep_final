@@ -51,7 +51,7 @@
             pathId: 'userSettingAvatarPath',
             previewId: 'userSettingAvatarPreview',
             imgId: 'userSettingAvatarImg',
-            field: 'anh_cccd',
+            field: 'anh_dai_dien',
             uploadSide: 'avatar',
             aliases: [
                 'avatar',
@@ -59,11 +59,8 @@
                 'anh_avatar',
                 'image',
                 'image_url',
-                'anh_cccd',
-                'Anh_cccd',
-                'Anh_CCCD',
             ],
-            payloadFields: ['anh_cccd', 'Anh_cccd', 'Anh_CCCD', 'avatar', 'anh_dai_dien'],
+            payloadFields: ['anh_dai_dien'],
         },
         front: {
             fileId: 'userSettingCccdFrontFile',
@@ -494,9 +491,9 @@
                                                     <span>Chưa có ảnh</span>
                                                 </div>
                                             </div>
-                                            <input type="hidden" id="userSettingAvatarPath" name="anh_cccd">
+                                            <input type="hidden" id="userSettingAvatarPath" name="anh_dai_dien">
                                             <input type="file" class="form-control" id="userSettingAvatarFile" accept="image/*">
-                                            <div class="user-image-note">Lưu vào trường Anh_cccd</div>
+                                            <div class="user-image-note">Lưu vào trường anh_dai_dien</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -1124,7 +1121,6 @@
             cccd: payload.cccd || null,
             dia_chi: payload.dia_chi || null,
             ngay_sinh: payload.ngay_sinh || null,
-            anh_cccd: payload.anh_cccd || payload.Anh_cccd || payload.Anh_CCCD || null,
             anh_cccd_mat_truoc: payload.anh_cccd_mat_truoc || payload.Anh_cccd_mat_truoc || payload.Anh_CCCD_mat_truoc || null,
             anh_cccd_mat_sau: payload.anh_cccd_mat_sau || payload.Anh_cccd_mat_sau || payload.Anh_CCCD_mat_sau || null,
         };

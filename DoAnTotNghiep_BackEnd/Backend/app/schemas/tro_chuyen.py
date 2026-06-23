@@ -101,6 +101,32 @@ class CuocTroChuyenPhanHoi(MoHinhORM):
     so_tin_nhan_khach_chua_doc: int | None = None
 
 
+class TicketChatAdminPhanHoi(MoHinhORM):
+    id_cuoc_tro_chuyen: int
+    id_ticket_chat: int | None = None
+    id_khach_hang: int
+    id_nhan_vien: int | None = None
+    loai_chat: str | None = None
+    chat_mode: str | None = None
+    trang_thai: Literal["MOI", "DANG_XU_LY", "DA_XU_LY"]
+    trang_thai_cuoc_tro_chuyen: str | None = None
+    yeu_cau: str | None = None
+    noi_dung_yeu_cau: str | None = None
+    nhan_vien_phu_trach: str | None = None
+    ngay_cap_nhat: datetime | None = None
+    chu_de: str | None = None
+    need_staff: bool | None = False
+    can_nhan_vien: bool | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    customer_name: str | None = None
+    employee_name: str | None = None
+    last_message: str | None = None
+    waiting_count: int | None = None
+    unread_customer_count: int | None = None
+    so_tin_nhan_khach_chua_doc: int | None = None
+
+
 class GuiTroChuyenPhanHoi(BaseModel):
     success: bool = True
     staff_online: bool | None = None
@@ -119,7 +145,7 @@ class TrangThaiNhanVienPhanHoi(BaseModel):
 
 
 class DanhSachCuocTroChuyenAdminPhanHoi(BaseModel):
-    items: list[CuocTroChuyenPhanHoi]
+    items: list[TicketChatAdminPhanHoi]
     waiting_count: int = 0
     unread_message_count: int = 0
 

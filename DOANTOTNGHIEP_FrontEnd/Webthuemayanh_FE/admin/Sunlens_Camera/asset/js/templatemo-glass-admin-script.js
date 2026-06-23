@@ -107,7 +107,7 @@
     }
 
     function initCounters() {
-        const counters = document.querySelectorAll('.stat-value');
+        const counters = document.querySelectorAll('.stat-value:not([data-dashboard-counter="true"])');
         counters.forEach(counter => {
             const text = counter.textContent;
             const value = parseInt(text.replace(/[^0-9]/g, ''));

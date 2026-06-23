@@ -1,0 +1,276 @@
+{
+  "counts": {
+    "tai_khoan": 7,
+    "khach_hang": 5,
+    "nhan_vien": 2,
+    "don_thue": 10,
+    "chi_tiet_don_thue": 15,
+    "gio_hang": 4,
+    "khieu_nai": 3,
+    "thong_bao": 12,
+    "chat_ticket": 1,
+    "cuoc_tro_chuyen": 1,
+    "tin_nhan_chat": 4,
+    "tin_nhan_ai": 6,
+    "thiet_bi": 20,
+    "ma_giam_gia": 4
+  },
+  "final_accounts": [
+    {
+      "id_tai_khoan": 1,
+      "Dang_nhap": "admin",
+      "Vai_tro": "Admin",
+      "Id_khach_hang": null,
+      "ho_ten": null,
+      "thu_dien_tu": null
+    },
+    {
+      "id_tai_khoan": 3,
+      "Dang_nhap": "nv01",
+      "Vai_tro": "Nhan vien",
+      "Id_khach_hang": null,
+      "ho_ten": null,
+      "thu_dien_tu": null
+    },
+    {
+      "id_tai_khoan": 6,
+      "Dang_nhap": "kh01",
+      "Vai_tro": "Khach hang",
+      "Id_khach_hang": 1,
+      "ho_ten": "Công Hiếu Trần",
+      "thu_dien_tu": "sunlenscamera@gmail.com"
+    },
+    {
+      "id_tai_khoan": 7,
+      "Dang_nhap": "kh02",
+      "Vai_tro": "Khach hang",
+      "Id_khach_hang": 2,
+      "ho_ten": "Nguyễn Thị Lan",
+      "thu_dien_tu": "lan.nguyen@sunlens.demo"
+    },
+    {
+      "id_tai_khoan": 8,
+      "Dang_nhap": "kh03",
+      "Vai_tro": "Khach hang",
+      "Id_khach_hang": 3,
+      "ho_ten": "Trần Minh Khoa",
+      "thu_dien_tu": "khoa.tran@sunlens.demo"
+    },
+    {
+      "id_tai_khoan": 9,
+      "Dang_nhap": "kh04",
+      "Vai_tro": "Khach hang",
+      "Id_khach_hang": 4,
+      "ho_ten": "Lê Hoàng An",
+      "thu_dien_tu": "an.le@sunlens.demo"
+    },
+    {
+      "id_tai_khoan": 10,
+      "Dang_nhap": "kh05",
+      "Vai_tro": "Khach hang",
+      "Id_khach_hang": 5,
+      "ho_ten": "Phạm Ngọc Mai",
+      "thu_dien_tu": "mai.pham@sunlens.demo"
+    }
+  ],
+  "final_orders": [
+    {
+      "Id_don_thue": 1,
+      "Id_khach_hang": 1,
+      "trang_thai": "Da qua han",
+      "Anh_chuyen_khoan": "/uploads/payment/ce730ee986af4456b7ffb98119fe259c.jpg"
+    },
+    {
+      "Id_don_thue": 2,
+      "Id_khach_hang": 2,
+      "trang_thai": "Da qua han",
+      "Anh_chuyen_khoan": "/uploads/payment/eb8a9eb1301c45d491b02659b7c98321.jpg"
+    },
+    {
+      "Id_don_thue": 3,
+      "Id_khach_hang": 3,
+      "trang_thai": "Da qua han",
+      "Anh_chuyen_khoan": "/uploads/payment/24b05a9131e54e1b940047b7b69ec76a.jpg"
+    },
+    {
+      "Id_don_thue": 4,
+      "Id_khach_hang": 4,
+      "trang_thai": "Da qua han",
+      "Anh_chuyen_khoan": "/uploads/payment/65e7cbe8ab9e4187982746674b46d404.jpg"
+    },
+    {
+      "Id_don_thue": 5,
+      "Id_khach_hang": 5,
+      "trang_thai": "Da thue",
+      "Anh_chuyen_khoan": "/uploads/payment/b68a3f5a62374ea986fbeae94f6993da.jpg"
+    },
+    {
+      "Id_don_thue": 39,
+      "Id_khach_hang": 1,
+      "trang_thai": "Da dat",
+      "Anh_chuyen_khoan": "/uploads/payment/24b05a9131e54e1b940047b7b69ec76a.jpg"
+    },
+    {
+      "Id_don_thue": 42,
+      "Id_khach_hang": 2,
+      "trang_thai": "Da xac nhan",
+      "Anh_chuyen_khoan": "/uploads/payment/eb8a9eb1301c45d491b02659b7c98321.jpg"
+    },
+    {
+      "Id_don_thue": 64,
+      "Id_khach_hang": 1,
+      "trang_thai": "Da huy",
+      "Anh_chuyen_khoan": "/uploads/payment/1b93244412a64b5b855a2f1675427d58.jpg"
+    },
+    {
+      "Id_don_thue": 65,
+      "Id_khach_hang": 1,
+      "trang_thai": "Da thue",
+      "Anh_chuyen_khoan": "/uploads/payment/8d4ed01511f84a33be0cdc6b24b7b525.jpg"
+    },
+    {
+      "Id_don_thue": 67,
+      "Id_khach_hang": 1,
+      "trang_thai": "Dang thue",
+      "Anh_chuyen_khoan": "/uploads/payment/daaea642f20b459197bd52283da45863.jpg"
+    }
+  ],
+  "checks": {
+    "orphan_orders_customer": 0,
+    "orphan_order_details_order": 0,
+    "orphan_order_details_device": 0,
+    "orphan_complaints": 0,
+    "orphan_notifications": 0,
+    "orphan_carts": 0,
+    "orphan_chat_ticket": 0,
+    "orphan_chat_message": 0,
+    "image_checks": [
+      {
+        "group": "avatar",
+        "path": "assets/images/user/cccd_anh_dai_dien_1.png",
+        "exists": true
+      },
+      {
+        "group": "avatar",
+        "path": "assets/images/user/cccd_avatar_1.png",
+        "exists": true
+      },
+      {
+        "group": "avatar",
+        "path": "assets/images/user/user1_1.png",
+        "exists": true
+      },
+      {
+        "group": "avatar",
+        "path": "assets/images/user/user1.2.png",
+        "exists": true
+      },
+      {
+        "group": "avatar",
+        "path": "assets/images/user/cccd_avatar_1.png",
+        "exists": true
+      },
+      {
+        "group": "cccd_front",
+        "path": "assets/images/user/cccd_front_1.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_front",
+        "path": "assets/images/user/cccd_front_2.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_front",
+        "path": "assets/images/user/cccd_front_3.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_front",
+        "path": "assets/images/user/cccd_front_2.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_front",
+        "path": "assets/images/user/cccd_front_3.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_back",
+        "path": "assets/images/user/cccd_back_1.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_back",
+        "path": "assets/images/user/cccd_back_2.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_back",
+        "path": "assets/images/user/cccd_back_3.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_back",
+        "path": "assets/images/user/cccd_back_2.jpg",
+        "exists": true
+      },
+      {
+        "group": "cccd_back",
+        "path": "assets/images/user/cccd_back_3.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/ce730ee986af4456b7ffb98119fe259c.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/eb8a9eb1301c45d491b02659b7c98321.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/24b05a9131e54e1b940047b7b69ec76a.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/65e7cbe8ab9e4187982746674b46d404.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/b68a3f5a62374ea986fbeae94f6993da.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/24b05a9131e54e1b940047b7b69ec76a.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/eb8a9eb1301c45d491b02659b7c98321.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/1b93244412a64b5b855a2f1675427d58.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/8d4ed01511f84a33be0cdc6b24b7b525.jpg",
+        "exists": true
+      },
+      {
+        "group": "payment",
+        "path": "/uploads/payment/daaea642f20b459197bd52283da45863.jpg",
+        "exists": true
+      }
+    ]
+  },
+  "orphan_upload_count": 14
+}

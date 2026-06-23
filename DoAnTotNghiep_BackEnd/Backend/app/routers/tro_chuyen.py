@@ -15,6 +15,7 @@ from app.schemas.tro_chuyen import (
     GuiTroChuyenPhanHoi,
     NhanVienChatYeuCau,
     CuocTroChuyenPhanHoi,
+    TicketChatAdminPhanHoi,
     TinNhanNhanVienYeuCau,
     NhanVienOnlineYeuCau,
     TrangThaiNhanVienPhanHoi,
@@ -124,21 +125,21 @@ def admin_tra_loi(
     return tro_chuyen_service.admin_tra_loi(db, account, payload.conversation_id, payload.message)
 
 
-@admin_router.put("/chat/assign/{conversation_id}", response_model=CuocTroChuyenPhanHoi)
+@admin_router.put("/chat/assign/{conversation_id}", response_model=TicketChatAdminPhanHoi)
 def admin_gan_cuoc_tro_chuyen(
     conversation_id: int,
     db: Annotated[Session, Depends(get_db)],
     account: Annotated[TaiKhoan, Depends(require_staff)],
-) -> CuocTroChuyenPhanHoi:
+) -> TicketChatAdminPhanHoi:
     return tro_chuyen_service.gan_cuoc_tro_chuyen(db, conversation_id, account)
 
 
-@admin_router.put("/chat/close/{conversation_id}", response_model=CuocTroChuyenPhanHoi)
+@admin_router.put("/chat/close/{conversation_id}", response_model=TicketChatAdminPhanHoi)
 def admin_dong_cuoc_tro_chuyen(
     conversation_id: int,
     db: Annotated[Session, Depends(get_db)],
     _: Annotated[TaiKhoan, Depends(require_staff)],
-) -> CuocTroChuyenPhanHoi:
+) -> TicketChatAdminPhanHoi:
     return tro_chuyen_service.dong_cuoc_tro_chuyen(db, conversation_id)
 
 

@@ -34,7 +34,7 @@ def test_customer_message_is_forwarded_without_automatic_reply(client):
 
 def test_customer_and_admin_share_staff_conversation_history(client):
     customer_headers = auth_headers(client)
-    admin_headers = auth_headers(client, "admin", "secret123")
+    admin_headers = auth_headers(client, "nhanvien", "secret123")
 
     request_staff = client.post(
         "/api/v1/chat/request-staff",
@@ -78,6 +78,20 @@ def test_customer_and_admin_share_staff_conversation_history(client):
     assert admin_conversations.status_code == 200, admin_conversations.text
     assert admin_conversations.json()["unread_message_count"] == 2
     assert admin_conversations.json()["waiting_count"] == 1
+    admin_ticket = admin_conversations.json()["items"][0]
+    assert admin_ticket["id_cuoc_tro_chuyen"] == conversation_id
+    assert admin_ticket["id_ticket_chat"] is not None
+    assert admin_ticket["id_khach_hang"] == request_data["conversation"]["id_khach_hang"]
+    assert admin_ticket["loai_chat"] == "STAFF"
+    assert admin_ticket["trang_thai"] == "MOI"
+    assert admin_ticket["yeu_cau"] == "khac"
+    assert admin_ticket["noi_dung_yeu_cau"] in {
+        "Yêu cầu hỗ trợ từ khách hàng.",
+        "Xin chào nhân viên",
+        "Tôi cần hỗ trợ đơn thuê",
+    }
+    assert admin_ticket["nhan_vien_phu_trach"] is None
+    assert admin_ticket["ngay_cap_nhat"] is not None
 
     admin_history = client.get(
         f"/api/v1/admin/chat/messages/{conversation_id}",
@@ -102,6 +116,11 @@ def test_customer_and_admin_share_staff_conversation_history(client):
     )
     assert admin_reply.status_code == 200, admin_reply.text
 
+    updated_admin_conversations = client.get("/api/v1/admin/chat/conversations", headers=admin_headers)
+    assert updated_admin_conversations.status_code == 200, updated_admin_conversations.text
+    assert updated_admin_conversations.json()["items"][0]["trang_thai"] == "DANG_XU_LY"
+    assert updated_admin_conversations.json()["items"][0]["nhan_vien_phu_trach"] == "Nhan vien SunLens"
+
     customer_history = client.get(
         f"/api/v1/chat/messages/{conversation_id}",
         headers=customer_headers,
@@ -121,7 +140,7 @@ def test_customer_and_admin_share_staff_conversation_history(client):
 
 def test_online_employee_is_assigned_to_new_conversation(client):
     customer_headers = auth_headers(client)
-    admin_headers = auth_headers(client, "admin", "secret123")
+    admin_headers = auth_headers(client, "nhanvien", "secret123")
 
     online_response = client.put(
         "/api/v1/admin/staff/online",
@@ -156,3 +175,40 @@ def test_online_employee_is_assigned_to_new_conversation(client):
     assert request_data["conversation"]["trang_thai"] == "NHAN_VIEN_DANG_XU_LY"
     assert request_data["conversation"]["need_staff"] is True
     assert request_data["messages"] == []
+
+
+def test_admin_assign_and_complete_ticket_updates_ticket_status(client):
+    customer_headers = auth_headers(client)
+    admin_headers = auth_headers(client, "nhanvien", "secret123")
+
+    request_staff = client.post(
+        "/api/v1/chat/request-staff",
+        json={"loai_yeu_cau": "KHIEU_NAI"},
+        headers=customer_headers,
+    )
+    assert request_staff.status_code == 200, request_staff.text
+    conversation_id = request_staff.json()["conversation"]["id_cuoc_tro_chuyen"]
+
+    assign_response = client.put(
+        f"/api/v1/admin/chat/assign/{conversation_id}",
+        headers=admin_headers,
+    )
+    assert assign_response.status_code == 200, assign_response.text
+    assign_data = assign_response.json()
+    assert assign_data["trang_thai"] == "DANG_XU_LY"
+    assert assign_data["trang_thai_cuoc_tro_chuyen"] == "NHAN_VIEN_DANG_XU_LY"
+    assert assign_data["yeu_cau"] == "khieu_nai"
+    assert assign_data["nhan_vien_phu_trach"] == "Nhan vien SunLens"
+
+    close_response = client.put(
+        f"/api/v1/admin/chat/close/{conversation_id}",
+        headers=admin_headers,
+    )
+    assert close_response.status_code == 200, close_response.text
+    close_data = close_response.json()
+    assert close_data["trang_thai"] == "DA_XU_LY"
+    assert close_data["trang_thai_cuoc_tro_chuyen"] == "DA_DONG"
+
+    reloaded = client.get("/api/v1/admin/chat/conversations", headers=admin_headers)
+    assert reloaded.status_code == 200, reloaded.text
+    assert reloaded.json()["items"][0]["trang_thai"] == "DA_XU_LY"

@@ -290,11 +290,24 @@
             }),
         });
         const contentType = response.headers.get('content-type') || '';
-        const data = contentType.includes('application/json') ? await response.json() : await response.text();
+        const rawText = await response.text();
+        let data = rawText;
+
+        if (contentType.includes('application/json') && rawText.trim()) {
+            try {
+                data = JSON.parse(rawText);
+            } catch (error) {
+                throw new Error('n8n trả về JSON không hợp lệ. Hãy kiểm tra node Respond to Webhook và node Gemini trong workflow.');
+            }
+        }
 
         if (!response.ok) {
             const detail = typeof data === 'object' && data && (data.detail || data.message || data.error);
             throw new Error(detail || `Chatbot AI lỗi ${response.status}`);
+        }
+
+        if (!rawText.trim()) {
+            throw new Error('n8n không trả về dữ liệu. Hãy kiểm tra credential Gemini/MySQL và execution log của workflow.');
         }
 
         return normalizeAIReply(data);

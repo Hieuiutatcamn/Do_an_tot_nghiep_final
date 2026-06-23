@@ -70,16 +70,15 @@ CREATE TABLE KHACH_HANG (
     Anh_CCCD_mat_truoc VARCHAR(255),
     Anh_CCCD_mat_sau VARCHAR(255),
     email VARCHAR(100),
-    Anh_CCCD VARCHAR(255),
     FOREIGN KEY (Id_tai_khoan) REFERENCES TAI_KHOAN(id_tai_khoan)
 );
 
 INSERT INTO KHACH_HANG
-(Id_tai_khoan, ho_ten, sdt, So_CCCD, Anh_CCCD_mat_truoc, Anh_CCCD_mat_sau, email, Anh_CCCD)
+(Id_tai_khoan, ho_ten, sdt, So_CCCD, Anh_CCCD_mat_truoc, Anh_CCCD_mat_sau, email)
 VALUES
-(6,'Nguyen Van A','0911111111','001001000001','cccd_truoc1.jpg','cccd_sau1.jpg','a@gmail.com','anh_dai_dien1.jpg'),
-(7,'Tran Thi B','0911111112','001001000002','cccd_truoc2.jpg','cccd_sau2.jpg','b@gmail.com','anh_dai_dien2.jpg'),
-(8,'Le Van C','0911111113','001001000003','cccd_truoc3.jpg','cccd_sau3.jpg','c@gmail.com','anh_dai_dien3.jpg'),
+(6,'Nguyen Van A','0911111111','001001000001','cccd_truoc1.jpg','cccd_sau1.jpg','a@gmail.com'),
+(7,'Tran Thi B','0911111112','001001000002','cccd_truoc2.jpg','cccd_sau2.jpg','b@gmail.com'),
+(8,'Le Van C','0911111113','001001000003','cccd_truoc3.jpg','cccd_sau3.jpg','c@gmail.com'),
 (9,'Pham Thi D','0911111114','001001000004','cccd_truoc4.jpg','cccd_sau4.jpg','d@gmail.com','anh_dai_dien4.jpg'),
 (10,'Vo Minh E','0911111115','001001000005','cccd_truoc5.jpg','cccd_sau5.jpg','e@gmail.com','anh_dai_dien5.jpg'),
 (11,'Hoang Gia F','0911111116','001001000006','cccd_truoc6.jpg','cccd_sau6.jpg','f@gmail.com','anh_dai_dien6.jpg'),

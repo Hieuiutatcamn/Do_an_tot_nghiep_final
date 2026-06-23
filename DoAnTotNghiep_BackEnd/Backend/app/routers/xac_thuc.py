@@ -55,7 +55,6 @@ REGISTER_FIELDS = (
     "so_cccd",
     "anh_cccd_mat_truoc",
     "anh_cccd_mat_sau",
-    "anh_cccd",
 )
 
 

@@ -20,7 +20,6 @@ class KhachHang(Base):
     anh_cccd_mat_truoc: Mapped[str | None] = mapped_column("Anh_CCCD_mat_truoc", String(255))
     anh_cccd_mat_sau: Mapped[str | None] = mapped_column("Anh_CCCD_mat_sau", String(255))
     thu_dien_tu: Mapped[str | None] = mapped_column("thu_dien_tu", String(100), unique=True)
-    anh_cccd: Mapped[str | None] = mapped_column("Anh_CCCD", String(255))
     email = synonym("thu_dien_tu")
 
     account = relationship("TaiKhoan", back_populates="customer")
