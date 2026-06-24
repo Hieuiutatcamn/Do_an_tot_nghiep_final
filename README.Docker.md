@@ -95,7 +95,8 @@ docker compose exec db mysql -uroot -p123456 do_an_tot_nghiep
 - **Backend ghi ảnh vào cây frontend.** 3 API (thiết bị, CCCD khách hàng, avatar) lưu ảnh ra
   `DOANTOTNGHIEP_FrontEnd/Webthuemayanh_FE/user/Sunlens_Camera/assets/images/...`.
   Vì vậy thư mục `DOANTOTNGHIEP_FrontEnd` được **mount chung** vào cả `backend` (ghi) lẫn `frontend` (đọc).
-  Bố cục thư mục trong container được giữ giống repo (`/workspace/...`) để đường dẫn này khớp.
+  Trong nginx, thư mục này được mount thành subfolder `/usr/share/nginx/html/DOANTOTNGHIEP_FrontEnd`
+  để URL Docker giữ nguyên tiền tố `/DOANTOTNGHIEP_FrontEnd/...` như frontend/backend đang hardcode.
 - **Một worker duy nhất.** Backend có vòng lặp nền quét đơn VNPay hết hạn; chạy nhiều worker sẽ lặp thừa nên cố định `--workers 1`.
 - **Ảnh upload `/uploads`** được giữ qua volume `DoAnTotNghiep_BackEnd/Backend/uploads`.
 - **Dữ liệu DB** nằm trong volume `db_data`. Seed chỉ nạp **một lần** khi volume rỗng — muốn nạp lại phải `docker compose down -v`.

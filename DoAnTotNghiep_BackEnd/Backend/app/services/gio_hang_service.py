@@ -105,7 +105,7 @@ def them_vao_gio_hang(db: Session, payload: MucGioHangTao, account: TaiKhoan) ->
     customer_id = _require_customer_id(account)
     device = db.get(ThietBi, payload.id_thiet_bi)
     if not device:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ThietBi not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Thiết bị không tồn tại.")
     _kiem_tra_ngay_nhan_va_ngay_tra(payload.ngay_nhan, payload.ngay_tra)
     kiem_tra_lich_thue_service.dam_bao_kha_dung(
         db,
@@ -162,7 +162,7 @@ def cap_nhat_muc_gio_hang(
 
     _kiem_tra_ngay_nhan_va_ngay_tra(item.ngay_nhan, item.ngay_tra)
     if not item.device:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ThietBi not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Thiết bị không tồn tại.")
     kiem_tra_lich_thue_service.dam_bao_kha_dung(
         db,
         item.device,
