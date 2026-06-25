@@ -23,6 +23,7 @@ from app.schemas.don_thue import (
 from app.services import (
     gio_hang_service,
     gui_email_service,
+    khach_hang_service,
     kiem_tra_lich_thue_service,
     ma_giam_gia_service,
     thong_bao_service,
@@ -224,6 +225,33 @@ def _so_luong_thue_trung_lich(
     )
 
 
+def dong_bo_ho_so_khach_hang_khi_dat_thue(
+    db: Session,
+    customer_id: int,
+    payload: DonThueTao,
+    account: TaiKhoan,
+) -> KhachHang:
+    customer = db.scalar(
+        select(KhachHang)
+        .where(KhachHang.id_khach_hang == customer_id)
+        .with_for_update()
+    )
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy thông tin khách hàng.",
+        )
+
+    if _xem_toan_bo(account) and payload.thong_tin_khach_hang_tu_thanh_toan is None:
+        return customer
+
+    return khach_hang_service.cap_nhat_thong_tin_khach_hang_tu_thanh_toan(
+        db,
+        customer,
+        payload.thong_tin_khach_hang_tu_thanh_toan,
+    )
+
+
 def tao_don_thue(
     db: Session,
     payload: DonThueTao,
@@ -235,7 +263,19 @@ def tao_don_thue(
         if not account.customer:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Không tìm thấy thông tin khách hàng.")
         customer_id = account.customer.id_khach_hang
-    should_clear_cart = gio_hang_service.gio_hang_khop_muc_don_thue(db, customer_id, payload.items)
+
+    try:
+        dong_bo_ho_so_khach_hang_khi_dat_thue(db, customer_id, payload, account)
+        should_clear_cart = gio_hang_service.gio_hang_khop_muc_don_thue(db, customer_id, payload.items)
+    except HTTPException:
+        db.rollback()
+        raise
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Thông tin hồ sơ khách hàng đã được sử dụng bởi khách hàng khác.",
+        ) from exc
 
     phuong_thuc_thanh_toan = payload.phuong_thuc_thanh_toan
     if not phuong_thuc_thanh_toan and payload.anh_chuyen_khoan:
@@ -331,6 +371,12 @@ def tao_don_thue(
     except HTTPException:
         db.rollback()
         raise
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Thông tin hồ sơ khách hàng đã được sử dụng bởi khách hàng khác.",
+        ) from exc
     except SQLAlchemyError as exc:
         db.rollback()
         logger.exception("Không thể lưu DON_THUE và CHI_TIET_DON_THUE")

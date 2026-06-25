@@ -272,6 +272,18 @@
                                     <div class="checkout-info">
 
                                         <h6>Thông tin cá nhân</h6>
+                                        <div id="checkout-profile-settings-panel"
+                                             class="alert alert-info d-none align-items-start justify-content-between gap-3 flex-wrap"
+                                             role="alert">
+                                            <div id="checkout-profile-settings-message">
+                                                Để thay đổi thông tin cá nhân, vui lòng cập nhật tại Cài đặt tài khoản.
+                                            </div>
+                                            <button type="button"
+                                                    class="btn btn-outline-primary btn-sm"
+                                                    id="open-account-settings-from-checkout">
+                                                Mở cài đặt tài khoản
+                                            </button>
+                                        </div>
 
                                         <div class="row">
 
@@ -1028,7 +1040,7 @@ function setInputValue(id, value, overwrite) {
         return false;
     }
 
-    if (input.dataset.userEdited === 'true') {
+    if (input.dataset.userEdited === 'true' && !overwrite) {
         return false;
     }
 
@@ -1151,6 +1163,144 @@ function selectedCheckoutImagePath(side) {
         ]);
 }
 
+function giaTriHoSoKhachHang(hoSo, truong) {
+    var mappings = {
+        ho_ten: ['ho_ten', 'ten_khach_hang', 'full_name', 'name'],
+        email: ['email', 'thu_dien_tu'],
+        sdt: ['sdt', 'so_dien_thoai', 'phone'],
+        so_cccd: ['so_cccd', 'cccd', 'cmnd', 'So_CCCD'],
+        dia_chi: ['dia_chi', 'address', 'dia_chi_hien_tai'],
+        gioi_tinh: ['gioi_tinh', 'gender'],
+        ngay_sinh: ['ngay_sinh', 'birthDate', 'date_of_birth'],
+        anh_cccd_mat_truoc: ['anh_cccd_mat_truoc', 'Anh_cccd_mat_truoc', 'Anh_CCCD_mat_truoc', 'cccdFrontPath'],
+        anh_cccd_mat_sau: ['anh_cccd_mat_sau', 'Anh_cccd_mat_sau', 'Anh_CCCD_mat_sau', 'cccdBackPath']
+    };
+
+    return truongNguoiDungHienTai(hoSo || {}, mappings[truong] || [truong]);
+}
+
+function kiemTraHoSoKhachHangDayDu(hoSo) {
+    return [
+        'ho_ten',
+        'email',
+        'sdt',
+        'so_cccd',
+        'dia_chi',
+        'anh_cccd_mat_truoc',
+        'anh_cccd_mat_sau'
+    ].every(function (truong) {
+        return giaTriHoSoKhachHang(hoSo, truong);
+    });
+}
+
+function capNhatTrangThaiKhoaInput(id, biKhoa) {
+    var input = document.getElementById(id);
+    if (!input) {
+        return;
+    }
+
+    input.readOnly = Boolean(biKhoa);
+    input.classList.toggle('bg-light', Boolean(biKhoa));
+    if (biKhoa) {
+        input.setAttribute('title', 'Để thay đổi thông tin cá nhân, vui lòng cập nhật tại Cài đặt tài khoản.');
+    } else {
+        input.removeAttribute('title');
+    }
+}
+
+function khoaTruongThongTinKhachHang(hoSo) {
+    [
+        ['full-name', 'ho_ten'],
+        ['phone', 'sdt'],
+        ['email', 'email'],
+        ['cccd', 'so_cccd'],
+        ['address', 'dia_chi']
+    ].forEach(function (item) {
+        capNhatTrangThaiKhoaInput(item[0], Boolean(giaTriHoSoKhachHang(hoSo, item[1])));
+    });
+
+    [
+        ['cccd-front', 'anh_cccd_mat_truoc'],
+        ['cccd-back', 'anh_cccd_mat_sau']
+    ].forEach(function (item) {
+        var input = document.getElementById(item[0]);
+        if (!input) {
+            return;
+        }
+        input.disabled = Boolean(giaTriHoSoKhachHang(hoSo, item[1]));
+        input.classList.toggle('bg-light', input.disabled);
+    });
+}
+
+function hienThiThongTinKhachHangTaiThanhToan(hoSo) {
+    if (!hoSo) {
+        return;
+    }
+
+    setInputValue('full-name', giaTriHoSoKhachHang(hoSo, 'ho_ten'), true);
+    setInputValue('phone', giaTriHoSoKhachHang(hoSo, 'sdt'), true);
+    setInputValue('email', giaTriHoSoKhachHang(hoSo, 'email'), true);
+    setInputValue('cccd', giaTriHoSoKhachHang(hoSo, 'so_cccd'), true);
+    setInputValue('address', giaTriHoSoKhachHang(hoSo, 'dia_chi'), true);
+    setInputValue('gender', giaTriHoSoKhachHang(hoSo, 'gioi_tinh'), true);
+    setInputValue('birth-date', giaTriHoSoKhachHang(hoSo, 'ngay_sinh'), true);
+
+    if (typeof updateTransferFields === 'function') {
+        updateTransferFields();
+    }
+}
+
+function capNhatThongBaoCaiDatTaiKhoan(hoSo) {
+    var panel = document.getElementById('checkout-profile-settings-panel');
+    var message = document.getElementById('checkout-profile-settings-message');
+    if (!panel || !message) {
+        return;
+    }
+
+    var daCoThongTin = [
+        'ho_ten',
+        'email',
+        'sdt',
+        'so_cccd',
+        'dia_chi',
+        'anh_cccd_mat_truoc',
+        'anh_cccd_mat_sau'
+    ].some(function (truong) {
+        return giaTriHoSoKhachHang(hoSo, truong);
+    });
+
+    panel.classList.toggle('d-none', !daCoThongTin);
+    panel.classList.toggle('d-flex', daCoThongTin);
+    message.textContent = kiemTraHoSoKhachHangDayDu(hoSo)
+        ? 'Để thay đổi thông tin cá nhân, vui lòng cập nhật tại Cài đặt tài khoản.'
+        : 'Các thông tin đã có trong hồ sơ được khóa tại trang thanh toán. Vui lòng nhập các thông tin còn thiếu hoặc cập nhật tại Cài đặt tài khoản.';
+}
+
+function moModalCaiDatTaiKhoanTuThanhToan(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    if (window.SunlensUserAccount && typeof window.SunlensUserAccount.openSettingsModal === 'function') {
+        window.SunlensUserAccount.openSettingsModal();
+        return;
+    }
+
+    alert('Chưa tải được Cài đặt tài khoản. Vui lòng thử lại sau.');
+}
+
+function layThongTinHoSoTuThanhToan() {
+    return {
+        ho_ten: formInputValue('full-name'),
+        email: formInputValue('email'),
+        sdt: formInputValue('phone'),
+        so_cccd: formInputValue('cccd'),
+        dia_chi: formInputValue('address'),
+        anh_cccd_mat_truoc: checkoutProfileState.cccdPaths.front,
+        anh_cccd_mat_sau: checkoutProfileState.cccdPaths.back
+    };
+}
+
 function setCccdMessage(message, type) {
     var messageElement = document.getElementById('cccd-message');
     if (!messageElement) {
@@ -1256,17 +1406,7 @@ function dienThongTinKhachHangTuHoSo(nguoiDungHienTai, overwrite) {
 }
 
 function loadCustomerInfo() {
-    var nguoiDungHienTai = docNguoiDungHienTaiTuLocalStorage();
-    if (nguoiDungHienTai) {
-        checkoutProfileState.profile = {
-            ...checkoutProfileState.profile,
-            ...nguoiDungHienTai
-        };
-        dienThongTinKhachHangTuHoSo(checkoutProfileState.profile, false);
-        refreshCccdPreviewFromProfile();
-    } else {
-        refreshCccdPreviewFromProfile();
-    }
+    refreshCccdPreviewFromProfile();
 
     if (!getCheckoutToken()) {
         return;
@@ -1280,12 +1420,13 @@ function loadCustomerInfo() {
             }
 
             checkoutProfileState.profile = {
-                ...checkoutProfileState.profile,
                 ...profile
             };
             saveCheckoutProfileToStorage(checkoutProfileState.profile);
-            dienThongTinKhachHangTuHoSo(checkoutProfileState.profile, true);
+            hienThiThongTinKhachHangTaiThanhToan(checkoutProfileState.profile);
             refreshCccdPreviewFromProfile();
+            khoaTruongThongTinKhachHang(checkoutProfileState.profile);
+            capNhatThongBaoCaiDatTaiKhoan(checkoutProfileState.profile);
             setCccdMessage('', 'success');
         })
         .catch(function (error) {
@@ -1294,16 +1435,12 @@ function loadCustomerInfo() {
 }
 
 function saveCustomerInfoToLocalStorage() {
-    var nguoiDungHienTai = docNguoiDungHienTaiTuLocalStorage();
-    nguoiDungHienTai = nguoiDungHienTai || {};
-
     var updatedUser = {
         ...checkoutProfileState.profile,
-        ...nguoiDungHienTai,
         ho_ten: formInputValue('full-name'),
         so_dien_thoai: formInputValue('phone'),
         sdt: formInputValue('phone'),
-        email: checkoutProfileState.profile.email || '',
+        email: formInputValue('email'),
         cccd: formInputValue('cccd'),
         so_cccd: formInputValue('cccd'),
         dia_chi: formInputValue('address'),
@@ -1388,6 +1525,8 @@ function uploadSelectedCheckoutCccdImages() {
     return Promise.all(uploads).then(function () {
         saveCustomerInfoToLocalStorage();
         refreshCccdPreviewFromProfile();
+        khoaTruongThongTinKhachHang(checkoutProfileState.profile);
+        capNhatThongBaoCaiDatTaiKhoan(checkoutProfileState.profile);
     });
 }
 
@@ -1442,6 +1581,11 @@ window.SunlensCheckoutProfile = {
     uploadSelectedCccdImages: uploadSelectedCheckoutCccdImages,
     saveCustomerInfo: saveCustomerInfoToLocalStorage,
     setCccdMessage: setCccdMessage,
+    kiemTraHoSoKhachHangDayDu: function () {
+        return kiemTraHoSoKhachHangDayDu(checkoutProfileState.profile);
+    },
+    layThongTinHoSoTuThanhToan: layThongTinHoSoTuThanhToan,
+    moModalCaiDatTaiKhoanTuThanhToan: moModalCaiDatTaiKhoanTuThanhToan,
     cccdPaths: function () {
         return {
             front: checkoutProfileState.cccdPaths.front,
@@ -1454,6 +1598,12 @@ document.addEventListener("DOMContentLoaded", function () {
     bindCustomerEditTracking();
     bindCccdPreviewInputs();
     loadCustomerInfo();
+
+    var accountSettingsButton = document.getElementById('open-account-settings-from-checkout');
+    if (accountSettingsButton && accountSettingsButton.dataset.checkoutSettingsBound !== 'true') {
+        accountSettingsButton.dataset.checkoutSettingsBound = 'true';
+        accountSettingsButton.addEventListener('click', moModalCaiDatTaiKhoanTuThanhToan);
+    }
 
     var checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {

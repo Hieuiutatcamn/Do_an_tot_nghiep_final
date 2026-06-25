@@ -293,10 +293,10 @@
                         <span class="sell-price">${formatCurrency(product.gia_thue)} / ngày</span>
                     </div>
                 </div>
-                <div class="d-block mb-2">
-                    <div class="d-flex flex-column flex-sm-column flex-md-column flex-lg-row justify-content-between px-2">
-                        <a href="${url}" class="btn btn-primary mb-2 mb-lg-0">Chi tiết</a>
-                        <a href="#" class="btn btn-secondary ms-lg-1 add-to-cart" data-product-id="${id}">Thêm vào giỏ</a>
+                <div class="product-card-actions px-2 mb-2">
+                    <div class="d-flex gap-2">
+                        <a href="${url}" class="btn btn-primary">Chi tiết</a>
+                        <a href="#" class="btn btn-secondary add-to-cart" data-product-id="${id}">Thêm vào giỏ</a>
                     </div>
                 </div>
             </div>

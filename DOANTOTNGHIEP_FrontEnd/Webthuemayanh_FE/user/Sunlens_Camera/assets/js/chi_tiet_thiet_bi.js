@@ -89,6 +89,17 @@
         return Math.max(1, Number(input && input.value) || 1);
     }
 
+    function tinhSoNgayThue(ngayNhan, ngayTra) {
+        const start = new Date(`${ngayNhan}T00:00:00`);
+        const end = new Date(`${ngayTra}T00:00:00`);
+        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) return 0;
+        return Math.max(1, Math.ceil((end - start) / 86400000));
+    }
+
+    function tinhThanhTienThueNgay(giaThue, soLuong, soNgayThue) {
+        return Number(giaThue || 0) * Number(soLuong || 1) * Number(soNgayThue || 1);
+    }
+
     function availabilityAvailable(data) {
         if (typeof data.available === 'boolean') return data.available;
         if (typeof data.kha_dung === 'boolean') return data.kha_dung;
@@ -229,6 +240,40 @@
 
     function firstProductImage(product) {
         return productImages(product)[0];
+    }
+
+    function taoDuLieuThueNgay() {
+        if (!currentProduct) {
+            throw new Error('Không tìm thấy thiết bị để thuê.');
+        }
+
+        const productId = currentProduct.id_thiet_bi || currentProduct.id;
+        const dates = selectedRentalDates();
+        const dateMessage = rentalDateErrorMessage(dates);
+        if (dateMessage) {
+            throw new Error(dateMessage);
+        }
+
+        const soLuong = requestedQuantity();
+        const giaThue = Number(currentProduct.gia_thue || 0);
+        const soNgayThue = tinhSoNgayThue(dates.ngay_nhan, dates.ngay_tra);
+
+        return {
+            id_thiet_bi: Number(productId),
+            ten_thiet_bi: currentProduct.ten_thiet_bi || 'Thiết bị chưa đặt tên',
+            gia_thue: giaThue,
+            so_luong: soLuong,
+            ngay_nhan: dates.ngay_nhan,
+            ngay_tra: dates.ngay_tra,
+            so_ngay_thue: soNgayThue,
+            thanh_tien: tinhThanhTienThueNgay(giaThue, soLuong, soNgayThue),
+            hinh_anh: firstProductImage(currentProduct),
+            danh_muc: categoryName(currentProduct),
+        };
+    }
+
+    function luuDuLieuThueNgay(duLieuThueNgay) {
+        sessionStorage.setItem('thue_ngay', JSON.stringify(duLieuThueNgay));
     }
 
     function destroyGallerySwipers() {
@@ -467,7 +512,7 @@
 
         const rentNowButton = byId('rent-now-btn');
         if (rentNowButton) {
-            rentNowButton.href = `thanh_toan.html?id=${encodeURIComponent(productId)}`;
+            rentNowButton.href = 'thanh_toan.html?mode=thue-ngay';
             rentNowButton.classList.add('disabled');
         }
 
@@ -506,6 +551,26 @@
         alert('Không thể kết nối API giỏ hàng.');
     }
 
+    function xuLyThueNgay(event) {
+        if (event) {
+            event.preventDefault();
+        }
+
+        const rentNowButton = byId('rent-now-btn');
+        if (rentNowButton && rentNowButton.classList.contains('disabled')) {
+            return;
+        }
+
+        try {
+            const duLieuThueNgay = taoDuLieuThueNgay();
+            luuDuLieuThueNgay(duLieuThueNgay);
+            window.location.href = 'thanh_toan.html?mode=thue-ngay';
+        } catch (error) {
+            console.error(error);
+            alert(error.message || 'Không thể chuẩn bị dữ liệu thuê ngay.');
+        }
+    }
+
     ready(function () {
         const params = new URLSearchParams(window.location.search);
         const productId = params.get('id');
@@ -514,6 +579,10 @@
 
         if (addToCartButton && !window.SunlensCart) {
             addToCartButton.addEventListener('click', addCurrentProductToCart);
+        }
+        const rentNowButton = byId('rent-now-btn');
+        if (rentNowButton) {
+            rentNowButton.addEventListener('click', xuLyThueNgay);
         }
         updateDateInputConstraints();
         if (inputs.start) {

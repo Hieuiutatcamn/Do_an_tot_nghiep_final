@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import AliasChoices, AliasPath, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AliasChoices, AliasPath, BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 from app.models.hang_so import TRANG_THAI_DON_HANG
 from app.schemas.chung import MoHinhTienTe
@@ -39,6 +39,33 @@ class MucDonThueTao(BaseModel):
         return self
 
 
+class ThongTinKhachHangThanhToan(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    ho_ten: str | None = Field(default=None, max_length=100)
+    email: EmailStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("email", "thu_dien_tu"),
+    )
+    sdt: str | None = Field(default=None, max_length=20)
+    so_cccd: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("so_cccd", "cccd"),
+        max_length=20,
+    )
+    dia_chi: str | None = Field(default=None, max_length=255)
+    anh_cccd_mat_truoc: str | None = Field(default=None, max_length=255)
+    anh_cccd_mat_sau: str | None = Field(default=None, max_length=255)
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def normalize_empty_string(cls, value: str | None) -> str | None:
+        if isinstance(value, str):
+            value = value.strip()
+            return value or None
+        return value
+
+
 class DonThueTao(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
@@ -58,6 +85,7 @@ class DonThueTao(BaseModel):
         max_length=50,
     )
     ghi_chu: str | None = Field(default=None, max_length=255)
+    thong_tin_khach_hang_tu_thanh_toan: ThongTinKhachHangThanhToan | None = None
     items: list[MucDonThueTao] = Field(
         min_length=1,
         validation_alias=AliasChoices("danh_sach_thiet_bi", "items"),

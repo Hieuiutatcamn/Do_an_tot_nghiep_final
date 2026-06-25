@@ -1,6 +1,120 @@
 from tests.conftest import auth_headers
 
 
+def rental_payload_with_profile(profile_payload=None):
+    payload = {
+        "danh_sach_thiet_bi": [
+            {
+                "id_thiet_bi": 1,
+                "ngay_nhan": "2026-07-20T08:00:00",
+                "ngay_tra": "2026-07-21T08:00:00",
+                "so_luong": 1,
+            }
+        ],
+    }
+    if profile_payload is not None:
+        payload["thong_tin_khach_hang_tu_thanh_toan"] = profile_payload
+    return payload
+
+
+def test_create_rental_updates_missing_customer_profile_from_checkout(client):
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "kh_checkout_missing",
+            "password": "123456",
+            "ho_ten": "Khach Moi",
+        },
+    )
+    assert register_response.status_code == 201, register_response.text
+    headers = {"Authorization": f"Bearer {register_response.json()['access_token']}"}
+
+    profile_payload = {
+        "ho_ten": "Khach Moi Thanh Toan",
+        "email": "checkout-missing@example.com",
+        "sdt": "0913333333",
+        "so_cccd": "001001333333",
+        "dia_chi": "Da Nang",
+        "anh_cccd_mat_truoc": "/uploads/cccd/checkout-front.jpg",
+        "anh_cccd_mat_sau": "/uploads/cccd/checkout-back.jpg",
+    }
+    create_response = client.post(
+        "/api/v1/rentals",
+        json=rental_payload_with_profile(profile_payload),
+        headers=headers,
+    )
+    assert create_response.status_code == 201, create_response.text
+    data = create_response.json()
+    assert data["khach_hang"]["ho_ten"] == "Khach Moi"
+    assert data["khach_hang"]["email"] == "checkout-missing@example.com"
+    assert data["khach_hang"]["sdt"] == "0913333333"
+    assert data["khach_hang"]["so_cccd"] == "001001333333"
+    assert data["khach_hang"]["dia_chi"] == "Da Nang"
+    assert data["khach_hang"]["anh_cccd_mat_truoc"] == "/uploads/cccd/checkout-front.jpg"
+    assert data["khach_hang"]["anh_cccd_mat_sau"] == "/uploads/cccd/checkout-back.jpg"
+
+    history_response = client.get("/api/v1/rentals/me/history", headers=headers)
+    assert history_response.status_code == 200, history_response.text
+    history_customer = history_response.json()["items"][0]["khach_hang"]
+    assert history_customer["email"] == "checkout-missing@example.com"
+    assert history_customer["sdt"] == "0913333333"
+    assert history_customer["so_cccd"] == "001001333333"
+    assert history_customer["dia_chi"] == "Da Nang"
+
+
+def test_create_rental_does_not_overwrite_complete_profile_from_checkout(client):
+    headers = auth_headers(client)
+    create_response = client.post(
+        "/api/v1/rentals",
+        json=rental_payload_with_profile(
+            {
+                "ho_ten": "Ten Bi Ghi De",
+                "email": "overwrite@example.com",
+                "sdt": "0919999999",
+                "so_cccd": "001001999999",
+                "dia_chi": "Dia chi bi ghi de",
+                "anh_cccd_mat_truoc": "/uploads/cccd/front-overwrite.jpg",
+                "anh_cccd_mat_sau": "/uploads/cccd/back-overwrite.jpg",
+            }
+        ),
+        headers=headers,
+    )
+    assert create_response.status_code == 201, create_response.text
+    customer = create_response.json()["khach_hang"]
+    assert customer["ho_ten"] == "Nguyen Van A"
+    assert customer["email"] == "a@example.com"
+    assert customer["sdt"] == "0911111111"
+    assert customer["so_cccd"] == "001001000001"
+    assert customer["dia_chi"] == "Da Nang"
+    assert customer["anh_cccd_mat_truoc"] == "/uploads/cccd/mat-truoc-mac-dinh.jpg"
+    assert customer["anh_cccd_mat_sau"] == "/uploads/cccd/mat-sau-mac-dinh.jpg"
+
+
+def test_create_rental_blocks_incomplete_profile_without_required_checkout_data(client):
+    register_response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "kh_checkout_invalid",
+            "password": "123456",
+            "ho_ten": "Khach Thieu Ho So",
+        },
+    )
+    assert register_response.status_code == 201, register_response.text
+    headers = {"Authorization": f"Bearer {register_response.json()['access_token']}"}
+
+    create_response = client.post(
+        "/api/v1/rentals",
+        json=rental_payload_with_profile({"email": "checkout-invalid@example.com"}),
+        headers=headers,
+    )
+    assert create_response.status_code == 400, create_response.text
+    assert "Vui lòng cập nhật đầy đủ hồ sơ khách hàng" in create_response.json()["detail"]
+
+    list_response = client.get("/api/v1/rentals", headers=headers)
+    assert list_response.status_code == 200, list_response.text
+    assert list_response.json()["total"] == 0
+
+
 def test_create_rental_calculates_total_and_blocks_insufficient_stock(client):
     headers = auth_headers(client)
     payload = {

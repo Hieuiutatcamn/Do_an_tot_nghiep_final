@@ -3,6 +3,7 @@
 
     const DEPOSIT_AMOUNT = 200000;
     const DISCOUNT_AMOUNT = 0;
+    const THUE_NGAY_STORAGE_KEY = 'thue_ngay';
 
     let checkoutCart = {
         items: [],
@@ -74,6 +75,105 @@
         if (element) {
             element.textContent = value;
         }
+    }
+
+    function laLuongThueNgay() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('mode') === 'thue-ngay';
+    }
+
+    function layDuLieuThueNgay() {
+        try {
+            const rawValue = sessionStorage.getItem(THUE_NGAY_STORAGE_KEY);
+            if (!rawValue) return null;
+            const data = JSON.parse(rawValue);
+            return data && typeof data === 'object' && !Array.isArray(data) ? data : null;
+        } catch (error) {
+            console.warn('Không đọc được dữ liệu thuê ngay:', error);
+            return null;
+        }
+    }
+
+    function tinhSoNgayThue(ngayNhan, ngayTra) {
+        const start = new Date(`${String(ngayNhan || '').slice(0, 10)}T00:00:00`);
+        const end = new Date(`${String(ngayTra || '').slice(0, 10)}T00:00:00`);
+        if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime())) return 0;
+        return Math.max(1, Math.ceil((end - start) / 86400000));
+    }
+
+    function chuanHoaDuLieuThueNgay(data) {
+        if (!data || typeof data !== 'object') return null;
+
+        const idThietBi = Number(data.id_thiet_bi || data.Id_thiet_bi || data.id);
+        const soLuong = Math.max(1, Number(data.so_luong || data.quantity || 1) || 1);
+        const giaThue = Number(data.gia_thue || data.gia_thue_ngay || 0) || 0;
+        const ngayNhan = String(data.ngay_nhan || data.startDate || '').slice(0, 10);
+        const ngayTra = String(data.ngay_tra || data.endDate || '').slice(0, 10);
+
+        if (!idThietBi || !ngayNhan || !ngayTra) return null;
+        if (cartApi().dateErrorMessage && cartApi().dateErrorMessage({ ngay_nhan: ngayNhan, ngay_tra: ngayTra })) {
+            return null;
+        }
+
+        const soNgayThue = Number(data.so_ngay_thue || data.rental_days || tinhSoNgayThue(ngayNhan, ngayTra)) || 0;
+        const thanhTien = Number(data.thanh_tien || (giaThue * soLuong * soNgayThue)) || 0;
+        const item = {
+            id_thiet_bi: idThietBi,
+            Id_thiet_bi: idThietBi,
+            ten_thiet_bi: data.ten_thiet_bi || data.name || 'Thiết bị chưa đặt tên',
+            gia_thue: giaThue,
+            so_luong: soLuong,
+            ngay_nhan: ngayNhan,
+            ngay_tra: ngayTra,
+            so_ngay_thue: soNgayThue,
+            thanh_tien: thanhTien,
+            hinh_anh: data.hinh_anh || data.image || '',
+            danh_muc: data.danh_muc || data.category || '',
+            la_thue_ngay: true,
+        };
+
+        return {
+            items: [item],
+            danh_sach: [item],
+            tong_san_pham: soLuong,
+            tong_so_ngay_thue: soNgayThue,
+            tong_tien_thue: thanhTien,
+        };
+    }
+
+    function renderThueNgayKhongHopLe() {
+        checkoutCart = cartApi().normalizeCartResponse(cartApi().emptyCartResponse());
+        const tbody = byId('checkoutCartItems');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center text-muted">
+                        Không tìm thấy dữ liệu thuê ngay. Vui lòng quay lại chọn thiết bị.
+                    </td>
+                </tr>
+            `;
+        }
+        resetDiscount();
+        updateTotals(checkoutCart);
+        setConfirmState(checkoutCart);
+    }
+
+    function hienThiSanPhamThueNgay() {
+        const data = chuanHoaDuLieuThueNgay(layDuLieuThueNgay());
+        if (!data) {
+            renderThueNgayKhongHopLe();
+            return;
+        }
+
+        hienThiGioHang(data);
+    }
+
+    function taoPayloadDatThueTuThueNgay(cart) {
+        return rentalItemsFromCart(cart);
+    }
+
+    function xoaDuLieuThueNgaySauKhiDat() {
+        sessionStorage.removeItem(THUE_NGAY_STORAGE_KEY);
     }
 
     function setDiscountMessage(message, type) {
@@ -212,7 +312,9 @@
         syncDiscountWithCart(checkoutCart);
         updateTotals(checkoutCart);
         setConfirmState(checkoutCart);
-        cartApi().updateCartCount(checkoutCart);
+        if (!laLuongThueNgay()) {
+            cartApi().updateCartCount(checkoutCart);
+        }
     }
 
     function updateTotals(cartData) {
@@ -499,8 +601,14 @@
             ghi_chu: noteValue() || null,
             anh_chuyen_khoan: null,
             phuong_thuc_thanh_toan: phuongThucThanhToan,
-            danh_sach_thiet_bi: rentalItemsFromCart(cart),
+            danh_sach_thiet_bi: laLuongThueNgay()
+                ? taoPayloadDatThueTuThueNgay(cart)
+                : rentalItemsFromCart(cart),
         };
+        const profile = checkoutProfile();
+        if (profile && typeof profile.layThongTinHoSoTuThanhToan === 'function') {
+            payload.thong_tin_khach_hang_tu_thanh_toan = profile.layThongTinHoSoTuThanhToan();
+        }
         if (maGiamGia.applied && maGiamGia.maGiamGia) {
             payload.ma_code = maGiamGia.maGiamGia;
             payload.ma_giam_gia = maGiamGia.maGiamGia;
@@ -774,7 +882,11 @@
             }
 
             if (!manualPayment) {
-                await damBaoGioHangDaXoa();
+                if (laLuongThueNgay()) {
+                    xoaDuLieuThueNgaySauKhiDat();
+                } else {
+                    await damBaoGioHangDaXoa();
+                }
                 await taoThanhToanVnpay(rentalId);
                 return;
             }
@@ -787,13 +899,21 @@
                 throw uploadError;
             }
 
-            await damBaoGioHangDaXoa();
+            if (laLuongThueNgay()) {
+                xoaDuLieuThueNgaySauKhiDat();
+            } else {
+                await damBaoGioHangDaXoa();
+            }
             alert('Đặt thuê thành công.');
             window.location.href = 'don_thue_cua_toi.html';
         } catch (error) {
             console.error('Rental API Error:', error);
             if (!manualPayment && rentalId) {
-                await damBaoGioHangDaXoa();
+                if (laLuongThueNgay()) {
+                    xoaDuLieuThueNgaySauKhiDat();
+                } else {
+                    await damBaoGioHangDaXoa();
+                }
                 alert(
                     `Đơn thuê #${rentalId} đã được tạo nhưng chưa mở được cổng VNPAY.\n`
                     + `${thongBaoLoiDatThue(error)}\n`
@@ -803,7 +923,11 @@
                 return;
             }
             if (error.donThueDaTao && error.idDonThue) {
-                await damBaoGioHangDaXoa();
+                if (laLuongThueNgay()) {
+                    xoaDuLieuThueNgaySauKhiDat();
+                } else {
+                    await damBaoGioHangDaXoa();
+                }
                 alert(
                     `Đơn thuê #${error.idDonThue} đã được tạo nhưng chưa tải được ảnh chuyển khoản.\n`
                     + `${thongBaoLoiDatThue(error)}\n`
@@ -825,7 +949,11 @@
 
         if (!cartApi()) return;
 
-        taiGioHang();
+        if (laLuongThueNgay()) {
+            hienThiSanPhamThueNgay();
+        } else {
+            taiGioHang();
+        }
 
         if (phoneInput && typeof window.updateTransferFields === 'function') {
             phoneInput.addEventListener('input', window.updateTransferFields);

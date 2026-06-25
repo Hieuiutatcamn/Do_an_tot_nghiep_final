@@ -79,6 +79,10 @@ def client():
             ho_ten="Nguyen Van A",
             sdt="0911111111",
             email="a@example.com",
+            so_cccd="001001000001",
+            dia_chi="Da Nang",
+            anh_cccd_mat_truoc="/uploads/cccd/mat-truoc-mac-dinh.jpg",
+            anh_cccd_mat_sau="/uploads/cccd/mat-sau-mac-dinh.jpg",
         )
         employee = NhanVien(
             id_tai_khoan=employee_account.id_tai_khoan,

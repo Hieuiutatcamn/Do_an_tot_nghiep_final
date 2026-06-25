@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
@@ -7,6 +9,16 @@ from app.models.hang_so import VAI_TRO_KHACH_HANG
 from app.models.khach_hang import KhachHang
 from app.schemas.khach_hang import KhachHangTao, KhachHangCapNhat
 from app.utils.pagination import PaginationParams
+
+TRUONG_HO_SO_BAT_BUOC = {
+    "ho_ten": "Họ tên",
+    "email": "Email",
+    "sdt": "Số điện thoại",
+    "so_cccd": "Số CCCD",
+    "dia_chi": "Địa chỉ",
+    "anh_cccd_mat_truoc": "Ảnh CCCD mặt trước",
+    "anh_cccd_mat_sau": "Ảnh CCCD mặt sau",
+}
 
 
 def lay_danh_sach_khach_hang(db: Session, params: PaginationParams) -> tuple[list[KhachHang], int]:
@@ -68,6 +80,81 @@ def _chuan_hoa_du_lieu_khach_hang(data: dict) -> dict:
         if "so_cccd" not in normalized or normalized.get("so_cccd") in (None, ""):
             normalized["so_cccd"] = cccd
     return normalized
+
+
+def _gia_tri_trong(value: Any) -> bool:
+    return value is None or (isinstance(value, str) and not value.strip())
+
+
+def _gia_tri_chuoi(value: Any) -> str | None:
+    if value is None:
+        return None
+    normalized = str(value).strip()
+    return normalized or None
+
+
+def _lay_gia_tri_khach_hang(customer: KhachHang, field: str) -> Any:
+    if field == "email":
+        return customer.email
+    return getattr(customer, field, None)
+
+
+def _gan_gia_tri_khach_hang(customer: KhachHang, field: str, value: Any) -> None:
+    if field == "email":
+        customer.email = value
+        return
+    setattr(customer, field, value)
+
+
+def kiem_tra_ho_so_khach_hang_day_du(customer: KhachHang | None) -> bool:
+    if not customer:
+        return False
+    return all(not _gia_tri_trong(_lay_gia_tri_khach_hang(customer, field)) for field in TRUONG_HO_SO_BAT_BUOC)
+
+
+def _du_lieu_thanh_toan_sang_dict(payload: Any) -> dict[str, Any]:
+    if payload is None:
+        return {}
+    if hasattr(payload, "model_dump"):
+        return payload.model_dump(exclude_unset=True)
+    if isinstance(payload, dict):
+        return dict(payload)
+    return {}
+
+
+def cap_nhat_thong_tin_khach_hang_tu_thanh_toan(
+    db: Session,
+    customer: KhachHang,
+    payload: Any,
+) -> KhachHang:
+    if kiem_tra_ho_so_khach_hang_day_du(customer):
+        return customer
+
+    data = _chuan_hoa_du_lieu_khach_hang(_du_lieu_thanh_toan_sang_dict(payload))
+    for field in TRUONG_HO_SO_BAT_BUOC:
+        current_value = _lay_gia_tri_khach_hang(customer, field)
+        incoming_value = _gia_tri_chuoi(data.get(field))
+        if _gia_tri_trong(current_value) and incoming_value:
+            _gan_gia_tri_khach_hang(customer, field, incoming_value)
+
+    if not kiem_tra_ho_so_khach_hang_day_du(customer):
+        missing_fields = [
+            label
+            for field, label in TRUONG_HO_SO_BAT_BUOC.items()
+            if _gia_tri_trong(_lay_gia_tri_khach_hang(customer, field))
+        ]
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Vui lòng cập nhật đầy đủ hồ sơ khách hàng trước khi đặt thuê: "
+                + ", ".join(missing_fields)
+                + "."
+            ),
+        )
+
+    db.add(customer)
+    db.flush()
+    return customer
 
 
 def cap_nhat_khach_hang(db: Session, customer_id: int, payload: KhachHangCapNhat) -> KhachHang:

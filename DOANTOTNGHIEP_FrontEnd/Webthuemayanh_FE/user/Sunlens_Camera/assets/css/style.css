@@ -624,6 +624,27 @@ color: var(--theme-default);
   color: var(--text-color);
   font-weight: 600;
 }
+
+.product .product-card .product-card-actions > .d-flex,
+.product .product-card > .d-block.mb-2 > .d-flex {
+  display: grid !important;
+  grid-template-columns: 70px minmax(118px, 1fr);
+  gap: 6px;
+}
+
+.product .product-card .product-card-actions .btn,
+.product .product-card > .d-block.mb-2 > .d-flex .btn {
+  align-items: center;
+  display: flex !important;
+  justify-content: center;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 5px !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
 .product .section-title {
   font-size: 30px;
   font-weight: 700;
